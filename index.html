@@ -1,0 +1,621 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--t50:#E1F5EE;--t100:#9FE1CB;--t600:#0F6E56;--t800:#085041;
+--p50:#EEEDFE;--p600:#534AB7;--p800:#3C3489;
+--a50:#FAEEDA;--a100:#FAC775;--a600:#854F0B;--a800:#633806;
+--c50:#FAECE7;--c600:#993C1D;--c800:#712B13;
+--b50:#E6F1FB;--b600:#185FA5;--b800:#0C447C;
+--g50:#EAF3DE;--g600:#3B6D11;--g800:#27500A;
+--r50:#FCEBEB;--r600:#A32D2D;--r800:#791F1F;
+}
+body{font-family:var(--font-sans)}
+.wrap{padding:1.5rem 0}
+.hdr{margin-bottom:1.5rem}
+.hdr h1{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.hdr p{font-size:13px;color:var(--color-text-secondary)}
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab:hover{background:var(--color-background-secondary)}
+.tab.active{background:var(--t600);color:white;border-color:var(--t600);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.sec{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.875rem;margin-top:1.5rem}
+.sec:first-child{margin-top:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.mcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem}
+.mcard-lbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:3px}
+.mcard-val{font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.mcard-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.rule{border-left:2px solid var(--t600);padding:10px 14px;margin-bottom:10px;background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+.rule-warn{border-left-color:var(--r600)}
+.rule-amber{border-left-color:var(--a600)}
+.rule-purple{border-left-color:var(--p600)}
+.rule h4{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.rule p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.cklist{list-style:none}
+.cklist li{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-top:.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.cklist li:first-child{border-top:none}
+.cb{width:18px;height:18px;min-width:18px;border:.5px solid var(--color-border-secondary);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:11px}
+.cb.done{background:var(--t600);border-color:var(--t600);color:white}
+.cb:hover{border-color:var(--t600)}
+.bdg{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:500}
+.bt{background:var(--t50);color:var(--t600)}
+.bp{background:var(--p50);color:var(--p600)}
+.ba{background:var(--a50);color:var(--a600)}
+.bc{background:var(--c50);color:var(--c600)}
+.bb{background:var(--b50);color:var(--b600)}
+.bg{background:var(--g50);color:var(--g600)}
+.br{background:var(--r50);color:var(--r600)}
+.div{height:.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1.5rem}
+.dc{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.dh{padding:7px;text-align:center;font-size:11px;font-weight:500}
+.dh.w{background:var(--t50);color:var(--t800)}
+.dh.r{background:var(--p50);color:var(--p800)}
+.dt{padding:5px 7px;font-size:11px;color:var(--color-text-secondary);border-top:.5px solid var(--color-border-tertiary);line-height:1.4}
+.dt.hl{color:var(--t600);font-weight:500}
+.dt.am{color:var(--a600)}
+.dt.pp{color:var(--p600)}
+.dt.rr{color:var(--r600)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem}
+.rcrd{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem}
+.rcrd-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rcrd-title{font-size:13px;font-weight:500}
+.rcrd-tasks{list-style:none}
+.rcrd-tasks li{font-size:12px;color:var(--color-text-secondary);padding:3px 0;display:flex;gap:5px;line-height:1.5}
+.rcrd-tasks li::before{content:"→";color:var(--t600);flex-shrink:0}
+.att-do{border-left:2px solid var(--g600)}
+.att-dont{border-left:2px solid var(--r600)}
+.att-c{background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 12px}
+.att-ct{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.att-do .att-ct{color:var(--g600)}
+.att-dont .att-ct{color:var(--r600)}
+.att-it{font-size:12px;color:var(--color-text-secondary);padding:2px 0;line-height:1.5}
+.jbox{width:100%;min-height:100px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px;font-size:13px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary);resize:vertical;line-height:1.6}
+.jlbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:5px}
+.jsec{margin-bottom:1rem}
+.svbtn{margin-top:10px;padding:7px 18px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer}
+.svbtn:hover{background:var(--color-background-secondary)}
+.svmsg{font-size:12px;color:var(--t600);margin-left:10px;opacity:0;transition:opacity .3s}
+.svmsg.show{opacity:1}
+.qt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.qc{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px}
+.qct{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.qcn{font-size:13px;font-weight:500}
+.qi{width:54px;border:.5px solid var(--color-border-secondary);border-radius:4px;padding:3px 5px;font-size:13px;text-align:center;background:var(--color-background-primary);color:var(--color-text-primary)}
+.qbg{height:4px;background:var(--color-border-tertiary);border-radius:2px}
+.qbf{height:4px;border-radius:2px;transition:width .3s}
+.narr-box{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.narr-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);margin-bottom:6px}
+.narr-old{font-size:13px;color:var(--r600);font-style:italic;line-height:1.6;text-decoration:line-through;margin-bottom:8px}
+.narr-new{font-size:13px;color:var(--t600);font-weight:500;line-height:1.6}
+.phase-blk{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem 1.1rem;margin-bottom:.875rem}
+.phase-hd{font-size:13px;font-weight:500;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
+.phase-body{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.burn-r{display:flex;gap:10px;padding:10px 0;border-top:.5px solid var(--color-border-tertiary)}
+.burn-r:first-child{border-top:none}
+.burn-n{font-size:17px;font-weight:500;color:var(--t600);min-width:24px}
+.burn-t strong{font-weight:500;display:block;font-size:13px;margin-bottom:2px}
+.burn-t span{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.profile-row{display:flex;align-items:center;gap:12px;margin-bottom:1rem;padding:.875rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--b50);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;color:var(--b600);flex-shrink:0}
+.profile-info{flex:1}
+.profile-info h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.profile-info p{font-size:12px;color:var(--color-text-secondary)}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.str-row{display:flex;gap:12px;margin-bottom:8px;font-size:13px;align-items:flex-start}
+.str-lbl{min-width:110px;color:var(--color-text-secondary);flex-shrink:0}
+.str-val{color:var(--color-text-primary);line-height:1.5}
+.risk-item{display:flex;gap:10px;padding:10px 0;border-top:.5px solid var(--color-border-tertiary);align-items:flex-start}
+.risk-item:first-child{border-top:none}
+.risk-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.risk-body{font-size:13px;line-height:1.5}
+.risk-body strong{font-weight:500;display:block;margin-bottom:2px}
+.risk-body span{color:var(--color-text-secondary)}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.roi-card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.875rem}
+.roi-hd{font-size:13px;font-weight:500;margin-bottom:4px}
+.roi-body{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.roi-badge{font-size:11px;float:right}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Javier Montelongo — Residency Master Training Log v2, fully integrated with ERAS application and strategy documents</h2>
+
+<div class="hdr">
+  <h1>Residency master log v2 — Javier Montelongo</h1>
+  <p>Kaiser SF Internal Medicine · June 15, 2025 · Anesthesia reapplication track · Updated with full application context</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sp('profile')">Profile</div>
+  <div class="tab" onclick="sp('narrative')">Narrative</div>
+  <div class="tab" onclick="sp('weekly')">Weekly split</div>
+  <div class="tab" onclick="sp('daily')">Daily tracker</div>
+  <div class="tab" onclick="sp('rotations')">Rotations</div>
+  <div class="tab" onclick="sp('attendings')">Attendings</div>
+  <div class="tab" onclick="sp('step3')">Step 3</div>
+  <div class="tab" onclick="sp('journal')">Journal</div>
+  <div class="tab" onclick="sp('burnout')">Burnout rules</div>
+</div>
+
+<!-- PROFILE -->
+<div id="panel-profile" class="panel active">
+  <div class="profile-row">
+    <div class="avatar">JM</div>
+    <div class="profile-info">
+      <h3>Javier Alejandro Montelongo</h3>
+      <p>MD, Lewis Katz / Temple · Kaiser SF IM intern · Anesthesia reapplicant · DOB 02/05/1998</p>
+      <div class="tag-row">
+        <span class="bdg bt">US MD</span>
+        <span class="bdg bb">GHHS</span>
+        <span class="bdg bg">Bilingual</span>
+        <span class="bdg ba">Published</span>
+        <span class="bdg bp">LMSA leadership</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="sec">Objective strengths</p>
+  <div class="str-row"><div class="str-lbl">Step 2 CK</div><div class="str-val">237 — below academic anes average, not catastrophic. Step 3 performance matters.</div></div>
+  <div class="str-row"><div class="str-lbl">Interviews received</div><div class="str-val">UCSD, Cedars-Sinai, OHSU (×3 including CCM track), UC Davis, Riverside, Sutter, Tower — interview-capable at academic level.</div></div>
+  <div class="str-row"><div class="str-lbl">Matched program</div><div class="str-val">Kaiser Permanente SF — IM categorical. Respectable, strong clinical training environment.</div></div>
+  <div class="str-row"><div class="str-lbl">Research</div><div class="str-val">2 peer-reviewed publications (Cell Reports Methods, Nature Communications). Perioperative AKI study. Bioinformatics depth.</div></div>
+  <div class="str-row"><div class="str-lbl">Leadership</div><div class="str-val">LMSA national chair ($140K raised, $30K scholarship fund, 40 schools). Chapter president (2× Chapter of Year).</div></div>
+  <div class="str-row"><div class="str-lbl">Service / advocacy</div><div class="str-val">Interpreter (Penn OB/GYN), Khalsa Food Pantry redesign, health equity instructor (MiMentor), community outreach.</div></div>
+  <div class="str-row"><div class="str-lbl">Personal adversity</div><div class="str-val">Section 8 upbringing, single-parent household, brother's death by suicide, mother's legal crisis during MS2. Real resilience, documented.</div></div>
+
+  <div class="div"></div>
+  <p class="sec">Objective risk factors — do not minimize these</p>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--r600)"></div>
+    <div class="risk-body"><strong>Reapplicant status</strong><span>Programs will ask: what materially changed? "Same applicant, now older" fails. The answer must be: objective clinical performance, matured identity, stronger faculty advocacy.</span></div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--r600)"></div>
+    <div class="risk-body"><strong>Prior academic concern (OHSU APD feedback)</strong><span>Concern was about sustained performance in a rigorous training environment — not interest, not intelligence. IM is your direct answer to this concern. Every evaluation matters.</span></div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--a600)"></div>
+    <div class="risk-body"><strong>Step 2 CK 237</strong><span>Below average for competitive academic anesthesia programs. Does not sink the application alone but reduced margin for error. Step 3 above average is important.</span></div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--a600)"></div>
+    <div class="risk-body"><strong>Personal statement was advocacy-centered, not physiology-centered</strong><span>Your current PS leads with personal hardship and frames anesthesia through vigilance / "last line of defense" — the exact clichés that read as shallow to APDs. This must change for reapplication.</span></div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--a600)"></div>
+    <div class="risk-body"><strong>Specialty question answers were generic</strong><span>"Ideal career" answer emphasized outreach and education over clinical identity — this is fine to include but must be anchored in a strong clinical/academic anesthesiology identity first.</span></div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-dot" style="background:var(--p600)"></div>
+    <div class="risk-body"><strong>Competitive specialty landscape</strong><span>Anesthesiology has become substantially more competitive. IM completion does not guarantee match. Strong performance + strong letters + strong Step 3 all required simultaneously.</span></div>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">Most accurate assessment</p>
+  <div class="rule">
+    <h4>You were interview-capable, not interview-dominant</h4>
+    <p>UCSD, Cedars, OHSU, UC Davis all interviewed you — they don't spend resources on hopeless applicants. But your profile had insufficient margin in a competitive cycle. The goal now is to expand that margin substantially: better clinical evidence, stronger letters, cleaner narrative, Step 3 above average.</p>
+  </div>
+</div>
+
+<!-- NARRATIVE -->
+<div id="panel-narrative" class="panel">
+  <p class="sec">What your current application signals — and what it needs to signal</p>
+
+  <div class="narr-box">
+    <div class="narr-lbl">Current personal statement framing (must change)</div>
+    <div class="narr-old">"Anesthesiologist as the patient's last line of defense" / "vigilant advocate" / "patients in their most vulnerable moments" / hardship → advocacy → anesthesia pipeline</div>
+    <div class="narr-lbl" style="margin-top:8px">Target framing for reapplication</div>
+    <div class="narr-new">"Internal medicine deepened my understanding of how chronic physiologic dysfunction becomes acutely consequential perioperatively — and reinforced my interest in the real-time, systems-based management of intraoperative and critical care instability."</div>
+  </div>
+
+  <p class="sec">Your three strongest intellectual themes (from actual application evidence)</p>
+  <div class="rule rule-purple">
+    <h4>1. Predictive physiologic reasoning</h4>
+    <p>Your perioperative AKI research, bioinformatics trajectory analysis, and repeated interest in deterioration-before-collapse all point here. This is the most sophisticated theme in your profile and the least used. Future PS should center here.</p>
+  </div>
+  <div class="rule rule-purple">
+    <h4>2. Longitudinal disease → acute instability transition</h4>
+    <p>This is your best IM → anesthesia intellectual bridge. IM taught how chronic physiologic dysfunction evolves; anesthesia is the moment when those processes become acutely consequential. No one else in the applicant pool has this framing because most haven't done IM first.</p>
+  </div>
+  <div class="rule rule-purple">
+    <h4>3. Operational systems thinking</h4>
+    <p>Your Khalsa food distribution redesign, LMSA infrastructure build, scholarship allocation system — these read as operational sophistication. Most applicants don't articulate this. It maps directly to perioperative systems, ICU coordination, OR workflow.</p>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">What to keep from your current application</p>
+  <ul class="cklist">
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> Bilingualism and cultural humility — genuine, documented, rare</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> Perioperative AKI research — directly relevant, your research narrative</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> LMSA leadership — but reframe toward operational complexity, not just advocacy</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> GHHS — signals character, keep it brief</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> Adversity narrative — but as context, not center of gravity</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg bt">Keep</span> Brother's death — only if you can frame it without trauma-centering. It has a place as the origin of why systems and prevention matter to you, but it cannot drive the PS.</span></li>
+  </ul>
+
+  <div class="div"></div>
+  <p class="sec">What to retire from your current application</p>
+  <ul class="cklist">
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg br">Retire</span> "Last line of defense" — saturated, used by nearly every anesthesia applicant</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg br">Retire</span> "Vigilant advocate while patients are asleep" — cliché that signals surface-level specialty understanding</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg br">Retire</span> Leading with hardship in paragraph 1 — opens as a hardship essay, not a physician essay</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg br">Retire</span> "Anticipatory preparation" as the primary intellectual draw — this is logistical, not physiologic</span></li>
+    <li><div class="cb done" onclick="tc(this)"><i class="ti ti-check" aria-hidden="true"></i></div><span><span class="bdg br">Retire</span> Ideal career answer centered on outreach/education as primary identity — lead with clinical/academic anesthesiology identity first</span></li>
+  </ul>
+
+  <div class="div"></div>
+  <p class="sec">Language transformation — say this, not that</p>
+  <div class="rule rule-amber">
+    <h4>"I like fast-paced environments"</h4>
+    <p>→ "I am drawn to environments where physiologic priorities evolve dynamically and require continuous reassessment of real-time data."</p>
+  </div>
+  <div class="rule rule-amber">
+    <h4>"I like critical care"</h4>
+    <p>→ "I am interested in moments when chronic physiologic reserve is exhausted and small perturbations propagate into multi-system instability."</p>
+  </div>
+  <div class="rule rule-amber">
+    <h4>"Patients depend on the anesthesiologist"</h4>
+    <p>→ "The perioperative window represents a physiologically compressed moment where chronic disease trajectories become acutely consequential — requiring simultaneous management of interacting organ systems under time pressure."</p>
+  </div>
+  <div class="rule rule-amber">
+    <h4>"IM gave me perspective"</h4>
+    <p>→ "Internal medicine provided a longitudinal view of disease evolution that directly informs my thinking about perioperative risk — I now understand not just what a patient's creatinine is, but where it has been and where it is going."</p>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">Reapplication interview — the three questions to prepare now</p>
+  <div class="rule">
+    <h4>"Why didn't you match anesthesia the first time?"</h4>
+    <p>Do not be evasive. Do not overcorrect into self-flagellation. The honest, mature answer: "My application had real strengths, but I had not yet demonstrated sustained clinical performance in a rigorous environment over time. I chose IM specifically because it would provide exactly that evidence — objective evaluations, complex inpatient cases, and ICU experience. My performance in IM is my answer to that question."</p>
+  </div>
+  <div class="rule">
+    <h4>"Why anesthesia specifically — and why now?"</h4>
+    <p>Do not use vigilance, last line of defense, or advocacy. Instead: frame the perioperative window as a physiologically compelling intersection of chronic disease, acute stress, and real-time systems management that requires exactly the reasoning you've developed in IM.</p>
+  </div>
+  <div class="rule">
+    <h4>"What do you bring that others don't?"</h4>
+    <p>Three genuine differentiators: (1) perioperative AKI research with direct specialty relevance, (2) IM-trained longitudinal physiologic reasoning most anesthesia applicants lack, (3) operational leadership experience at scale that maps to ICU coordination and OR systems.</p>
+  </div>
+</div>
+
+<!-- WEEKLY SPLIT -->
+<div id="panel-weekly" class="panel">
+  <p class="sec">Weekly educational split — intern year</p>
+  <div class="dgrid">
+    <div class="dc"><div class="dh w">Mon</div><div class="dt hl">15–20 UWorld (timed)</div><div class="dt">Review all explanations, right + wrong</div><div class="dt am">Anki: 25–30 reviews + 5 new</div><div class="dt">OpenEvidence: 1 clinical Q from rounds</div></div>
+    <div class="dc"><div class="dh w">Tue</div><div class="dt hl">15–20 UWorld (timed)</div><div class="dt pp">AMBOSS: 1 physiology deep dive</div><div class="dt am">Anki: reviews only</div><div class="dt">3-sentence clinical reflection</div></div>
+    <div class="dc"><div class="dh w">Wed</div><div class="dt hl">10–15 UWorld</div><div class="dt">ICU Book / UpToDate 15 min</div><div class="dt am">Anki: 20–25 reviews + 5 new</div><div class="dt pp">Anesthesia lit: 1 article scan</div></div>
+    <div class="dc"><div class="dh w">Thu</div><div class="dt hl">15–20 UWorld (timed)</div><div class="dt">Review weak categories</div><div class="dt am">Anki: reviews only</div><div class="dt pp">Journal: connect case to anesthesia physiology</div></div>
+    <div class="dc"><div class="dh w">Fri</div><div class="dt hl">10–15 UWorld</div><div class="dt">Weekly gap review</div><div class="dt am">Anki: 20–25 reviews + 5 new</div><div class="dt pp">Mentor touchpoint if scheduled</div></div>
+    <div class="dc"><div class="dh r">Sat</div><div class="dt">Optional: 1 AMBOSS or UpToDate</div><div class="dt am">Anki: reviews only</div><div class="dt">Physical reset</div><div class="dt pp">Week reflection journal</div></div>
+    <div class="dc"><div class="dh r">Sun</div><div class="dt rr">No UWorld. Full rest.</div><div class="dt am">Anki reviews only if light</div><div class="dt">Plan next week's topic</div><div class="dt">Social recharge — protect this</div></div>
+  </div>
+
+  <p class="sec">Monthly topic rotation (aligned to anesthesia relevance)</p>
+  <div class="rule">
+    <h4>Months 1–2: Hemodynamics + shock physiology</h4>
+    <p>Septic, cardiogenic, distributive, obstructive shock. Fluid responsiveness. Vasopressors. This is your perioperative foundation and the direct bridge between IM and anesthesia reasoning.</p>
+  </div>
+  <div class="rule">
+    <h4>Months 3–4: Acid-base + pulmonology + ventilators</h4>
+    <p>ARDS, lung-protective ventilation, ABG interpretation. Think as an anesthesiologist managing real-time gas exchange. This is your OR/ICU cross-training topic.</p>
+  </div>
+  <div class="rule">
+    <h4>Months 5–6: Cardiology + EKG mastery</h4>
+    <p>ACS, HFrEF/HFpEF, arrhythmias, valvular disease. Know every EKG finding cold. This is your cardiac anesthesia foundation — the highest-acuity subspecialty you're targeting.</p>
+  </div>
+  <div class="rule">
+    <h4>Months 7–9: Nephrology + AKI + electrolytes</h4>
+    <p>Your research area. Leverage it. Perioperative AKI, electrolyte emergencies, renal-cardiac crosstalk. When attendings find out you have a publication on perioperative AKI, they will ask you about it — be the expert.</p>
+  </div>
+  <div class="rule">
+    <h4>Months 10–15: Step 3 integration + CCS practice</h4>
+    <p>All systems review. CCS cases daily. Biostatistics. Pharmacology. By now clinical exposure should be accelerating your performance substantially.</p>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">Monthly volume targets</p>
+  <div class="cards">
+    <div class="mcard"><div class="mcard-lbl">UWorld Qs / month</div><div class="mcard-val">250–350</div><div class="mcard-sub">Sustainable pace</div></div>
+    <div class="mcard"><div class="mcard-lbl">AMBOSS deep dives</div><div class="mcard-val">8–12</div><div class="mcard-sub">Physiology focus</div></div>
+    <div class="mcard"><div class="mcard-lbl">Anki reviews</div><div class="mcard-val">600–900</div><div class="mcard-sub">Via daily habit</div></div>
+    <div class="mcard"><div class="mcard-lbl">Anesthesia lit scans</div><div class="mcard-val">4–6</div><div class="mcard-sub">Periop / cardiac / ICU</div></div>
+  </div>
+</div>
+
+<!-- DAILY TRACKER -->
+<div id="panel-daily" class="panel">
+  <p class="sec">Daily question tracker</p>
+  <div class="qt">
+    <div class="qc"><div class="qct"><div class="qcn">UWorld</div><input class="qi" type="number" id="uw" value="0" min="0" max="30" onchange="ub('uw',this.value,20)"/></div><div class="mcard-sub" style="margin-bottom:5px">Target: 20/day</div><div class="qbg"><div class="qbf" id="uw-b" style="width:0%;background:var(--t600)"></div></div></div>
+    <div class="qc"><div class="qct"><div class="qcn">AMBOSS</div><input class="qi" type="number" id="am" value="0" min="0" max="20" onchange="ub('am',this.value,10)"/></div><div class="mcard-sub" style="margin-bottom:5px">Target: 10/day</div><div class="qbg"><div class="qbf" id="am-b" style="width:0%;background:var(--p600)"></div></div></div>
+    <div class="qc"><div class="qct"><div class="qcn">Anki</div><input class="qi" type="number" id="anki" value="0" min="0" max="100" onchange="ub('anki',this.value,30)"/></div><div class="mcard-sub" style="margin-bottom:5px">Target: 30/day</div><div class="qbg"><div class="qbf" id="anki-b" style="width:0%;background:var(--a600)"></div></div></div>
+  </div>
+
+  <p class="sec">Today's checklist</p>
+  <ul class="cklist">
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bt">UWorld</span> 15–20 questions, timed tutor mode. Write the teaching point of every wrong answer in your own words.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg ba">Anki</span> Clear all due reviews first. Add 5 new cards from today's clinical encounter or reading.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bb">Pre-rounds</span> Know your patients' overnight vitals, events, and lab trends before anyone else on the team.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bb">Clinical Q</span> Look up 1 question from rounds on OpenEvidence or UpToDate — same day, while fresh.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bp">Reading</span> 10–15 min: ICU Book / AMBOSS physiology / UpToDate overview on this rotation's core topic.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bg">Reflection</span> 2–3 sentences: what happened today that connected IM physiology to perioperative thinking?</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bc">Wellness</span> Real meal, water, 10 minutes outside. Non-negotiable.</span></li>
+  </ul>
+
+  <div class="div"></div>
+  <p class="sec">How to use your specific tools</p>
+  <div class="rule"><h4>UWorld — timed tutor mode, always</h4><p>Rotate categories to match your rotation. Wrong answers are the product: synthesize each teaching point in your own words. Never re-read passively.</p></div>
+  <div class="rule"><h4>AMBOSS — depth after UWorld raises a question</h4><p>Use the physiology articles, especially for: shock states, acid-base, ventilator management, AKI. These are your anesthesia-relevant topics. Build an annotated reading list.</p></div>
+  <div class="rule"><h4>Anki — AnKing deck, IM core tags only</h4><p>Add a custom perioperative anesthesia sub-deck. When you encounter an anesthesia-relevant clinical moment, make a card. This deck becomes part of your reapplication narrative.</p></div>
+  <div class="rule"><h4>OpenEvidence — point-of-care during clinical day</h4><p>Not for studying. For real-time clinical decision support. Get in the habit of checking it during rounds so attendings see you reaching for evidence, not Google.</p></div>
+</div>
+
+<!-- ROTATIONS -->
+<div id="panel-rotations" class="panel">
+  <p class="sec">Rotation priorities — what to master and why it matters for anesthesia</p>
+  <div class="two-col">
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg bt">MICU / ICU</span><span style="font-size:11px;color:var(--t600);margin-left:4px">Highest priority</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Medical intensive care</div>
+      <ul class="rcrd-tasks">
+        <li>Ventilator modes, PEEP, driving pressure, lung protection — know these cold</li>
+        <li>Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi</li>
+        <li>Shock: MAP targets, fluid responsiveness, ScvO2, lactate interpretation</li>
+        <li>Sedation/analgesia: RASS, propofol, dexmedetomidine — anesthesia overlap territory</li>
+        <li>Invasive monitoring: A-line, CVP, interpret every number mechanistically</li>
+        <li>For every case: ask "how would perioperative risk look for this patient?"</li>
+        <li>Ask to observe or participate in procedures: intubations, lines, bronchoscopy</li>
+      </ul>
+    </div>
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg bb">CCU / Cardiology</span><span style="font-size:11px;color:var(--b600);margin-left:4px">Cardiac anes foundation</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Inpatient cardiology</div>
+      <ul class="rcrd-tasks">
+        <li>Read every EKG yourself before the attending. Build speed and pattern recognition.</li>
+        <li>HFrEF vs HFpEF: congestion vs perfusion, diuresis targets, GDMT cold</li>
+        <li>ACS: STEMI vs NSTEMI, cath timing, antiplatelet risk perioperatively</li>
+        <li>Valvular disease: which lesions are highest perioperative risk and why</li>
+        <li>Echo: learn to interpret reports, ask to observe TTE/TEE if possible</li>
+        <li>Hemodynamics: understand Frank-Starling, preload, afterload, contractility deeply</li>
+      </ul>
+    </div>
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg bp">Nephrology</span><span style="font-size:11px;color:var(--p600);margin-left:4px">Your research area</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Nephrology / consult</div>
+      <ul class="rcrd-tasks">
+        <li>AKI: prerenal vs intrinsic vs postrenal — mechanistic differentiation</li>
+        <li>Perioperative AKI specifically — your publication makes you the room expert</li>
+        <li>Electrolyte emergencies: K+, Na+, Ca2+, Mg2+ — anesthesia emergencies</li>
+        <li>Acid-base: master the 5-step approach, mixed disorders, compensation rules</li>
+        <li>Connect every AKI case to surgical risk — write clinical notes that reflect this</li>
+        <li>Ask about contrast nephropathy — bridges radiology, surgery, anesthesia</li>
+      </ul>
+    </div>
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg bc">Pulmonology</span><span style="font-size:11px;color:var(--c600);margin-left:4px">Ventilator mastery</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Pulmonology / step-down</div>
+      <ul class="rcrd-tasks">
+        <li>ARDS: Berlin criteria, prone positioning, lung-protective ventilation</li>
+        <li>COPD/asthma exacerbations: NIV vs intubation thresholds</li>
+        <li>Interpret every ABG before the attending. Build speed.</li>
+        <li>PFTs: obstructive vs restrictive, interpret with clinical context</li>
+        <li>PE: risk stratify, anticoagulation vs thrombolytics vs catheter-directed</li>
+        <li>Ask attendings about perioperative respiratory risk — show specialty interest</li>
+      </ul>
+    </div>
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg ba">General medicine</span><span style="font-size:11px;color:var(--a600);margin-left:4px">Evaluation foundation</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Inpatient general IM</div>
+      <ul class="rcrd-tasks">
+        <li>Pre-round before everyone. Know labs, vitals, overnight events first.</li>
+        <li>Present with a one-liner, an assessment, AND a plan — not just a fact list</li>
+        <li>Anticipate next steps: "K+ trending down — I already ordered a recheck for 4pm"</li>
+        <li>Show your physiologic reasoning out loud during presentations</li>
+        <li>Make sure every attending knows your name and your goals by week 2</li>
+        <li>Ask for feedback at end of rotation, not just at evaluation time</li>
+      </ul>
+    </div>
+    <div class="rcrd">
+      <div class="rcrd-hd"><span class="bdg bg">Outpatient / continuity</span><span style="font-size:11px;color:var(--g600);margin-left:4px">Longitudinal thinking</span></div>
+      <div class="rcrd-title" style="font-size:13px;font-weight:500;margin-bottom:6px">Outpatient IM clinic</div>
+      <ul class="rcrd-tasks">
+        <li>DM, HTN, HLD: understand how chronic disease accumulates perioperative risk</li>
+        <li>Preop clearance questions: what does surgery need from medicine?</li>
+        <li>Preventive medicine screening guidelines — Step 3 loves these</li>
+        <li>Use lighter days for deeper UWorld sessions and AMBOSS reading</li>
+        <li>Polypharmacy and drug interactions — pharmacology depth for Step 3 and anesthesia</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ATTENDINGS -->
+<div id="panel-attendings" class="panel">
+  <p class="sec">What actually impresses attendings — and what sinks you</p>
+  <div class="two-col">
+    <div class="att-do att-c">
+      <div class="att-ct"><i class="ti ti-check" aria-hidden="true"></i> Do this</div>
+      <div class="att-it">Pre-round before everyone. Know labs, vitals, overnight events before they do.</div>
+      <div class="att-it">Arrive with a one-liner AND assessment AND plan. Not a data dump.</div>
+      <div class="att-it">Look things up and return with an answer same day — always.</div>
+      <div class="att-it">Anticipate tasks: "K+ trending down — I already ordered a recheck."</div>
+      <div class="att-it">Use physiologic reasoning language out loud during presentations.</div>
+      <div class="att-it">Own mistakes cleanly. No excuses. "I missed that, here's what I'd do differently."</div>
+      <div class="att-it">Thank attendings for specific teaching moments with specificity.</div>
+      <div class="att-it">Ask for feedback at end of rotation. "One thing I should improve?"</div>
+      <div class="att-it">Show up to optional teaching even post-call. It is noticed.</div>
+      <div class="att-it">Flag deteriorating patients early. Flagging is not weakness.</div>
+    </div>
+    <div class="att-dont att-c">
+      <div class="att-ct"><i class="ti ti-x" aria-hidden="true"></i> Never do this</div>
+      <div class="att-it">Come to rounds without knowing overnight events for your patients.</div>
+      <div class="att-it">Say "I don't know" without following up. The sin is not following up.</div>
+      <div class="att-it">Present facts without a plan. Show clinical reasoning, not data retrieval.</div>
+      <div class="att-it">Be on your phone during rounds — even if others are.</div>
+      <div class="att-it">Complain about workload to attendings or seniors in your first 6 months.</div>
+      <div class="att-it">Make the same mistake twice without showing you've processed it.</div>
+      <div class="att-it">Disappear after rounds. Attendings notice who is reachable.</div>
+      <div class="att-it">Generic feedback: "How am I doing?" Ask specific questions instead.</div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">The one-liner formula</p>
+  <div class="rule">
+    <h4>[Age] [sex] with [key PMH] presenting with [chief complaint] found to have [working diagnosis], now HD[X], currently [trajectory].</h4>
+    <p>Example: "Ms. Rivera is a 58-year-old woman with HFrEF EF 25% and CKD3 presenting with progressive dyspnea found to have acute decompensated heart failure, now HD2, currently improving on IV furosemide — net 2.2L negative over 24 hours, creatinine stable at 1.8."</p>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">Building your LOR ecosystem — the most important long-term task</p>
+  <div class="rule">
+    <h4>Target: 2–3 IM attending writers + 1–2 active anesthesia mentors</h4>
+    <p>Identify your IM target attendings by month 3. Work especially hard on their rotations. Tell them your anesthesia goal early — not as an apology, but as context. Ask for a letter at month 9–10, not month 11.</p>
+  </div>
+  <div class="rule rule-amber">
+    <h4>Anesthesia mentor cadence: every 6–8 weeks</h4>
+    <p>Brief update email. Share a clinical case connecting IM reasoning to perioperative thinking. Reference something specific from your last conversation. Do not go silent for 12 months and then ask for a letter. This is the most common error reapplicants make.</p>
+  </div>
+  <div class="rule rule-warn">
+    <h4>OHSU specifically gave you directional feedback — use it</h4>
+    <p>The APD emphasized: clinical consistency, mentorship relationships, strong anesthesia letters, interview clarity and confidence. These are your four concrete targets. Every month of IM should be generating evidence on all four fronts.</p>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div id="panel-step3" class="panel">
+  <p class="sec">Step 3 strategy — your specific situation</p>
+  <div class="rule rule-warn">
+    <h4>Step 3 must perform above average — this is not optional</h4>
+    <p>Step 3 will not erase Step 2 CK 237 but it CAN reassure programs that your standardized testing is reliable. A score at or above 240 is the target. Steady daily questions from day one, not a cram in month 14.</p>
+  </div>
+
+  <div class="phase-blk">
+    <div class="phase-hd">Phase 1: Foundation (months 1–6) <span class="bdg bt roi-badge">June–Dec 2025</span></div>
+    <div class="phase-body">15–20 UWorld Qs on clinical days, 20–25 on lighter days. Never skip more than 2 consecutive days. Focus: cardiopulm, nephrology, ID, hemodynamics. Integrate with whatever rotation you're on. Do not treat Step 3 as a separate project.</div>
+  </div>
+  <div class="phase-blk">
+    <div class="phase-hd">Phase 2: Breadth (months 7–12) <span class="bdg bp roi-badge">Jan–June 2026</span></div>
+    <div class="phase-body">Cycle through all systems. Begin CCS (Clinical Case Simulations) practice — 13 CCS cases on Step 3 and most residents underprep them. Track your UWorld percentage by category. Target 60%+ in all categories before scheduling.</div>
+  </div>
+  <div class="phase-blk">
+    <div class="phase-hd">Phase 3: Integration (months 13–15) <span class="bdg ba roi-badge">July–Sept 2026</span></div>
+    <div class="phase-body">2-week dedicated push: 30 Qs/day, daily CCS cases, biostatistics sweep, pharmacology review. Take UWSA or AMBOSS practice exam to calibrate. Schedule exam. Target: 240+.</div>
+  </div>
+
+  <div class="div"></div>
+  <p class="sec">Step 3 high-yield — always tested</p>
+  <ul class="cklist">
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bt">Biostatistics</span> Sensitivity, specificity, PPV, NPV, NNT/NNH. Know the 2×2 table. Every single exam.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bt">Preventive medicine</span> Screening guidelines — mammography, colonoscopy, lung, cervical. Age thresholds tested every time.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bb">CCS cases</span> Order labs, imaging, AND treatment simultaneously. Time management matters — practice the workflow.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bp">Ethics/legal</span> Informed consent, capacity, advance directives, surrogate decision-making. Very high-yield.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg ba">IM core</span> Sepsis, AKI, ARDS, ACS, HF, PE, GI bleeding, DKA/HHS — master these cold. They appear constantly.</span></li>
+    <li><div class="cb" onclick="tc(this)"></div><span><span class="bdg bc">Pharmacology</span> Drug mechanisms, classic interactions, overdose presentations. High-yield for Step 3 and anesthesia reapplication.</span></li>
+  </ul>
+
+  <div class="div"></div>
+  <p class="sec">Resource stack</p>
+  <div class="roi-grid">
+    <div class="roi-card"><div class="roi-hd">UWorld IM <span class="bdg bt roi-badge">Daily driver</span></div><div class="roi-body">Primary question bank. 15–20 Qs/day. Timed tutor mode only. Category rotation, not random.</div></div>
+    <div class="roi-card"><div class="roi-hd">AMBOSS <span class="bdg bp roi-badge">2–3x/week</span></div><div class="roi-body">Deep physiology dives. Use after UWorld raises a question. Annotate the articles you read.</div></div>
+    <div class="roi-card"><div class="roi-hd">Anki (AnKing) <span class="bdg ba roi-badge">Daily habit</span></div><div class="roi-body">IM core tags + custom perioperative anesthesia sub-deck. 20–30 reviews + 5 new daily.</div></div>
+    <div class="roi-card"><div class="roi-hd">OpenEvidence <span class="bdg bb roi-badge">Clinical days</span></div><div class="roi-body">Point-of-care reference during clinical day. Not for studying. Build the habit visibly.</div></div>
+    <div class="roi-card"><div class="roi-hd">The ICU Book (Marino) <span class="bdg bc roi-badge">ICU rotation</span></div><div class="roi-body">Hemodynamics, ventilators, sedation. 10–15 min before bed when on ICU. Anesthesia overlap is dense here.</div></div>
+    <div class="roi-card"><div class="roi-hd">UpToDate <span class="bdg bg roi-badge">As needed</span></div><div class="roi-body">Definitive clinical overview for any new admission diagnosis. Reference for every new disease you haven't seen before.</div></div>
+  </div>
+</div>
+
+<!-- JOURNAL -->
+<div id="panel-journal" class="panel">
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem;line-height:1.6">Your journal is your reapplication material in raw form. The anesthesia connection prompt is the most important. When you write about a case linking IM physiology to perioperative thinking, you're building your PS, your interview answers, and your letter-writer talking points simultaneously.</p>
+
+  <div class="jsec">
+    <div class="jlbl">Clinical case this week — what was the physiology?</div>
+    <textarea class="jbox" id="j1" placeholder="Example: Admitted a patient with cardiogenic shock. The interplay between afterload reduction and contractility directly parallel what an anesthesiologist manages intraoperatively..."></textarea>
+  </div>
+  <div class="jsec">
+    <div class="jlbl">What did I miss or get wrong? What would I do differently?</div>
+    <textarea class="jbox" id="j2" placeholder="Example: Missed early signs of worsening acidosis on serial ABGs. Next time I will..."></textarea>
+  </div>
+  <div class="jsec">
+    <div class="jlbl">Anesthesia connection — how does what I saw this week connect to perioperative or critical care anesthesia?</div>
+    <textarea class="jbox" id="j3" placeholder="Example: Managing this septic patient's hemodynamics mirrors what an anesthesiologist does intraoperatively — titrating vasopressors, assessing fluid responsiveness, continuous physiologic reassessment under time pressure..."></textarea>
+  </div>
+  <div class="jsec">
+    <div class="jlbl">Teaching moment from an attending worth remembering</div>
+    <textarea class="jbox" id="j4" placeholder="Example: Dr. [name] walked through vasopressor hierarchy in a way I'd never heard. The logic was..."></textarea>
+  </div>
+  <div class="jsec">
+    <div class="jlbl">One thing I did well this week — be specific</div>
+    <textarea class="jbox" id="j5" style="min-height:70px" placeholder="Not 'I worked hard.' What specifically did you do well?"></textarea>
+  </div>
+  <div class="jsec">
+    <div class="jlbl">Mentor update due? (write draft here)</div>
+    <textarea class="jbox" id="j6" style="min-height:70px" placeholder="Brief, specific update: what clinical case connected to anesthesia this cycle? What are you reading? No need to be formal."></textarea>
+  </div>
+  <button class="svbtn" onclick="sj()">Save this week's entry <span class="svmsg" id="sm">Saved</span></button>
+  <div class="div"></div>
+  <p class="sec" style="margin-top:0">Saved entry</p>
+  <div id="se" style="font-size:13px;color:var(--color-text-secondary);font-style:italic">No entry saved yet.</div>
+</div>
+
+<!-- BURNOUT RULES -->
+<div id="panel-burnout" class="panel">
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem;line-height:1.6">You are a high-expectation person entering a high-pressure environment with an 18–24 month long game ahead. You have documented capacity to carry enormous loads — the adversity in your application proves that. The rules below exist because people who survive great adversity are often the worst at knowing when they're running on fumes.</p>
+
+  <div class="burn-r"><div class="burn-n">01</div><div class="burn-t"><strong>Sunday is protected — no exceptions</strong><span>No UWorld. No AMBOSS. Anki reviews only if light. Missing one Sunday of questions will not cost you the match. Burning out in month 4 might. Your brain consolidates during rest, not during another qbank session.</span></div></div>
+  <div class="burn-r"><div class="burn-n">02</div><div class="burn-t"><strong>Sleep before studying, always</strong><span>After 10pm if you're exhausted, close the qbank. A fatigued brain retains nothing and misfires on clinical decisions. Seven hours of sleep is more Step 3 prep than one hour of delirious UWorld at midnight.</span></div></div>
+  <div class="burn-r"><div class="burn-n">03</div><div class="burn-t"><strong>Bad weeks are data, not failure</strong><span>There will be weeks you complete 5 Qs instead of 100. Note what happened. Adjust. Do not spiral. Do not "make up" missed questions by doubling next week — that's how streaks die. Continuity beats volume.</span></div></div>
+  <div class="burn-r"><div class="burn-n">04</div><div class="burn-t"><strong>This is an 18–24 month long game</strong><span>You cannot sprint a marathon. Eighteen months of reliable, high-quality performance is your application — not one perfect rotation. Pace accordingly. Sustainable beats intense every time in residency.</span></div></div>
+  <div class="burn-r"><div class="burn-n">05</div><div class="burn-t"><strong>Fully commit to being an excellent IM resident — not a visiting anesthesia applicant</strong><span>The OHSU APD concern was about sustained performance. If you behave like you're just passing through IM, your evaluations will reflect that. Commit fully. Excellent IM performance IS your anesthesia application.</span></div></div>
+  <div class="burn-r"><div class="burn-n">06</div><div class="burn-t"><strong>Eat real food, move, protect one relationship</strong><span>Not soft suggestions. Physical and relational health directly predict cognitive performance. You do not get bonus points for suffering. You get bonus points for performing.</span></div></div>
+  <div class="burn-r"><div class="burn-n">07</div><div class="burn-t"><strong>Return to the journal when you lose the thread</strong><span>When residency overwhelms you, write. Not to vent — to reconnect with your north star: clinically mature physician demonstrating physiologic mastery and reliability, not an applicant still trying to prove interest.</span></div></div>
+  <div class="burn-r"><div class="burn-n">08</div><div class="burn-t"><strong>Get support if you need it</strong><span>You've processed enormous losses — your brother, your mother's legal crisis, financial instability. Kaiser SF has resident wellness resources. If you're feeling persistently hopeless or detached, use them. Asking for help is clinical decision-making applied to yourself.</span></div></div>
+
+  <div class="div"></div>
+  <p class="sec">Minimum viable week — when life is hard</p>
+  <div class="rule">
+    <h4>If you can only do three things in a given week:</h4>
+    <p>1. Show up to clinical work fully — your evaluations are your application. 2. 10 UWorld questions, even just 10 — continuity beats volume. 3. Anki reviews only, no new cards — keep the habit alive, not perfect.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+function sp(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function tc(el){
+  el.classList.toggle('done');
+  el.innerHTML=el.classList.contains('done')?'<i class="ti ti-check" aria-hidden="true"></i>':'';
+}
+function ub(id,val,target){
+  val=parseInt(val)||0;
+  const pct=Math.min(100,Math.round((val/target)*100));
+  document.getElementById(id+'-b').style.width=pct+'%';
+}
+function sj(){
+  const fields=['j1','j2','j3','j4','j5','j6'];
+  const labels=['Clinical case','What I missed','Anesthesia connection','Teaching moment','Did well','Mentor update'];
+  const date=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  let html='<strong>Entry — '+date+'</strong><br><br>';
+  fields.forEach((f,i)=>{
+    const v=document.getElementById(f).value;
+    if(v) html+='<strong>'+labels[i]+':</strong> '+v.replace(/\n/g,'<br>')+'<br><br>';
+  });
+  const se=document.getElementById('se');
+  se.innerHTML=html;se.style.fontStyle='normal';se.style.color='var(--color-text-primary)';
+  const sm=document.getElementById('sm');
+  sm.classList.add('show');setTimeout(()=>sm.classList.remove('show'),2000);
+}
+</script>
