@@ -780,7 +780,8 @@ async function pushToGitHub(triggerEl, statusEl){
     const sha = info.sha;
 
     // 2. Get current file content and update CANONICAL block
-    const currentContent = atob(info.content.replace(/\n/g,''));
+    const rawContent = info.content.replace(/\n/g,'');
+    const currentContent = decodeURIComponent(escape(atob(rawContent)));
     CANONICAL.lastUpdated = new Date().toISOString().split('T')[0];
     const canonicalStr = JSON.stringify(CANONICAL, null, 2);
     const updated = currentContent.replace(
