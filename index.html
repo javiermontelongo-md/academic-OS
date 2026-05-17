@@ -541,7 +541,10 @@ var RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, 
 let D = null;
 let CFG = { tok:'', usr:'javiermontelongo-md', repo:'academic-OS', file:'data.json', api:'' };
 
-function lCFG(){ try{ const d=localStorage.getItem('acad_v3'); if(d) Object.assign(CFG,JSON.parse(d)); }catch(e){} }
+function lCFG(){
+  try{ const d=localStorage.getItem('acad_v3'); if(d) Object.assign(CFG,JSON.parse(d)); }catch(e){}
+  try{ const k=localStorage.getItem('jm_api_key'); if(k) CFG.api=k; }catch(e){}
+}
 function sCFG(){ try{ localStorage.setItem('acad_v3',JSON.stringify(CFG)); }catch(e){} }
 lCFG();
 
@@ -818,8 +821,8 @@ async function testCon(){
     msg('gh-st',r.ok?'Connected -- '+CFG.file+' found and readable':'Failed -- check token and repo. Make sure '+CFG.file+' exists in the repo root.');
   }catch(e){msg('gh-st','Network error');}
 }
-function saveAPI(){CFG.api=document.getElementById('api-key').value.trim();sCFG();document.getElementById('api-st').textContent=CFG.api?'Key saved':'No key entered';}
-function clearAPI(){CFG.api='';document.getElementById('api-key').value='';document.getElementById('api-st').textContent='Cleared';sCFG();}
+function saveAPI(){CFG.api=document.getElementById('api-key').value.trim();sCFG();try{localStorage.setItem('jm_api_key',CFG.api);}catch(e){}document.getElementById('api-st').textContent=CFG.api?'Key saved (shared across both dashboards)':'No key entered';}
+function clearAPI(){CFG.api='';document.getElementById('api-key').value='';document.getElementById('api-st').textContent='Cleared';sCFG();try{localStorage.removeItem('jm_api_key');}catch(e){}}
 
 // ============================================================
 // FIELD MIGRATION TOOL
