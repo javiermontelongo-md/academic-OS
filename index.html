@@ -9,49 +9,35 @@
 <title>Academic OS</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0d0f0e; --s1:#141614; --s2:#1a1d1a; --s3:#212421;
-  --b:rgba(255,255,255,0.07); --b2:rgba(255,255,255,0.13);
-  --g:#7fff6e; --g2:#4fc3f7; --g3:#ffb74d; --g4:#ef9a9a; --g5:#ce93d8;
-  --t:#e8ede8; --t2:#9aa89a; --t3:#5a665a; --red:#ef5350;
-  --mono:'DM Mono',monospace; --serif:'Fraunces',serif; --sans:'DM Sans',sans-serif;
-  --r:10px; --rl:16px; --nav:62px; --safe:env(safe-area-inset-bottom,0px);
-}
+:root{--bg:#0d0f0e;--s1:#141614;--s2:#1a1d1a;--s3:#212421;--b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--g:#7fff6e;--g2:#4fc3f7;--g3:#ffb74d;--g4:#ef9a9a;--t:#e8ede8;--t2:#9aa89a;--t3:#5a665a;--red:#ef5350;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;--sans:'DM Sans',sans-serif;--r:10px;--rl:16px;--nav:62px;--safe:env(safe-area-inset-bottom,0px);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{height:100%;}
 body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100%;}
 .app{display:flex;flex-direction:column;min-height:100vh;}
-
-/* DESKTOP HEADER */
-.header{padding:18px 32px 0;border-bottom:1px solid var(--b);background:var(--s1);position:sticky;top:0;z-index:50;}
-.htop{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+.hdr{padding:18px 32px 0;border-bottom:1px solid var(--b);background:var(--s1);position:sticky;top:0;z-index:50;}
+.htop{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
 .logo{font-family:var(--serif);font-size:20px;font-weight:300;color:var(--g);letter-spacing:-.5px;}
 .logo span{color:var(--t2);font-style:italic;}
-.ptag{font-family:var(--mono);font-size:10px;background:rgba(127,255,110,.1);color:var(--g);border:1px solid rgba(127,255,110,.2);border-radius:4px;padding:2px 8px;letter-spacing:.06em;}
-.ptag.b{background:rgba(79,195,247,.1);color:var(--g2);border-color:rgba(79,195,247,.2);}
-.sync-pill{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--t3);display:flex;align-items:center;gap:6px;}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
-.sync-dot.ok{background:var(--g);}
-.sync-dot.saving{background:var(--g3);animation:pulse 1s infinite;}
-.sync-dot.error{background:var(--red);}
-.tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:1px;}
-.tab{font-family:var(--mono);font-size:11px;padding:9px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.04em;white-space:nowrap;border:none;background:none;}
-.tab:hover{color:var(--t2);}
-.tab.active{color:var(--g);border-bottom:2px solid var(--g);}
+.ptag{font-family:var(--mono);font-size:10px;background:rgba(127,255,110,.1);color:var(--g);border:1px solid rgba(127,255,110,.2);border-radius:4px;padding:2px 8px;}
+.ptag.b2{background:rgba(79,195,247,.1);color:var(--g2);border-color:rgba(79,195,247,.2);}
+.spill{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--t3);display:flex;align-items:center;gap:6px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
+.sdot.ok{background:var(--g);}.sdot.saving{background:var(--g3);animation:blink 1s infinite;}.sdot.err{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{font-family:var(--mono);font-size:11px;padding:9px 13px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
+.tab:hover{color:var(--t2);}.tab.on{color:var(--g);border-bottom:2px solid var(--g);}
 .main{flex:1;padding:24px 32px;max-width:1100px;width:100%;}
-.panel{display:none;}.panel.active{display:block;}
-.bottom-nav{display:none;}
-.mobile-bar{display:none;}
-
-/* SHARED */
+.panel{display:none;}.panel.on{display:block;}
+.bnav{display:none;}.mbar{display:none;}
 .card{background:var(--s1);border:1px solid var(--b);border-radius:var(--rl);padding:18px 20px;margin-bottom:14px;}
-.csm{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
-.stitle{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--t);margin-bottom:16px;}
-.stitle span{color:var(--g);}
+.h1{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--t);margin-bottom:16px;}
+.h1 span{color:var(--g);}
 .stat{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;}
 .sv{font-family:var(--mono);font-size:24px;font-weight:500;line-height:1;margin-bottom:4px;}
 .sv.g{color:var(--g);}.sv.b{color:var(--g2);}.sv.o{color:var(--g3);}.sv.r{color:var(--g4);}
@@ -61,297 +47,242 @@ input:focus,select:focus,textarea:focus{border-color:var(--g);}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a665a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;}
 select option{background:var(--s2);}
 textarea{resize:vertical;min-height:75px;line-height:1.5;}
-.ig{margin-bottom:12px;}
-.ig label{display:block;font-size:11px;color:var(--t2);margin-bottom:4px;font-family:var(--mono);letter-spacing:.04em;}
-.btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:9px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.ig{margin-bottom:12px;}.ig label{display:block;font-size:11px;color:var(--t2);margin-bottom:4px;font-family:var(--mono);}
+.btn{font-family:var(--mono);font-size:11px;padding:9px 16px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
 .bp{background:var(--g);color:#0a0f0a;font-weight:500;}.bp:active{background:#9fff90;}
-.bs{background:transparent;color:var(--t2);border:1px solid var(--b2);}.bs:active{border-color:var(--g);color:var(--g);}
+.bs{background:transparent;color:var(--t2);border:1px solid var(--b2);}.bs:active{color:var(--g);border-color:var(--g);}
 .bd{background:transparent;color:var(--red);border:1px solid rgba(239,83,80,.3);}
 .brow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 input[type=range]{-webkit-appearance:none;height:4px;background:var(--s3);border:none;border-radius:2px;padding:0;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--g);cursor:pointer;}
-.badge{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;letter-spacing:.04em;}
-.bg{background:rgba(127,255,110,.12);color:var(--g);border:1px solid rgba(127,255,110,.2);}
-.bb{background:rgba(79,195,247,.12);color:var(--g2);border:1px solid rgba(79,195,247,.2);}
-.bo{background:rgba(255,183,77,.12);color:var(--g3);border:1px solid rgba(255,183,77,.2);}
-.br{background:rgba(239,83,80,.12);color:var(--g4);border:1px solid rgba(239,83,80,.2);}
-.bgr{background:var(--s3);color:var(--t2);border:1px solid var(--b);}
+.bdg{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;}
+.bdg.g{background:rgba(127,255,110,.12);color:var(--g);border:1px solid rgba(127,255,110,.2);}
+.bdg.b{background:rgba(79,195,247,.12);color:var(--g2);border:1px solid rgba(79,195,247,.2);}
+.bdg.o{background:rgba(255,183,77,.12);color:var(--g3);border:1px solid rgba(255,183,77,.2);}
+.bdg.r{background:rgba(239,83,80,.12);color:var(--g4);border:1px solid rgba(239,83,80,.2);}
+.bdg.gr{background:var(--s3);color:var(--t2);border:1px solid var(--b);}
 .ci{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--b);}
 .ci:last-child{border-bottom:none;}
 .ci input[type=checkbox]{width:17px;height:17px;min-width:17px;margin-top:2px;accent-color:var(--g);cursor:pointer;}
 .ci label{font-size:13px;color:var(--t2);cursor:pointer;line-height:1.4;flex:1;}
-.ci.checked label{text-decoration:line-through;color:var(--t3);}
-.pbw{margin-bottom:9px;}
-.pbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:4px;}
-.pbb{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;}
-.pbf{height:100%;border-radius:3px;background:var(--g);transition:width .4s;}
+.ci.done label{text-decoration:line-through;color:var(--t3);}
+.pbw{margin-bottom:9px;}.pbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:4px;}
+.pbb{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;}.pbf{height:100%;border-radius:3px;background:var(--g);transition:width .4s;}
 .bbar{height:8px;border-radius:4px;background:var(--s3);overflow:hidden;margin:8px 0;}
 .bfill{height:100%;border-radius:4px;transition:width .3s,background .3s;}
 .air{background:var(--s2);border:1px solid rgba(127,255,110,.2);border-radius:var(--r);padding:15px 17px;margin-top:12px;}
-.air .albl{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.08em;margin-bottom:8px;}
+.air .al{font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.08em;margin-bottom:8px;}
 .air p{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:8px;}
-.air p:last-child{margin-bottom:0;}
-.air strong{color:var(--t);font-weight:500;}
-.air ul{padding-left:16px;}
-.air li{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:4px;}
-.loading{display:flex;align-items:center;gap:8px;color:var(--t3);font-family:var(--mono);font-size:11px;padding:10px 0;}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 1.2s ease-in-out infinite;}
+.air p:last-child{margin-bottom:0;}.air strong{color:var(--t);font-weight:500;}
+.spin{display:flex;align-items:center;gap:8px;color:var(--t3);font-family:var(--mono);font-size:11px;padding:10px 0;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:blink 1.2s ease-in-out infinite;}
 .dot:nth-child(2){animation-delay:.2s;}.dot:nth-child(3){animation-delay:.4s;}
-@keyframes pulse{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
-.le{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;}
+.le{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;gap:10px;}
 .ld{font-family:var(--mono);font-size:10px;color:var(--t3);white-space:nowrap;min-width:65px;margin-top:2px;}
 .lc{flex:1;}.lt{font-size:13px;color:var(--t);margin-bottom:2px;}.ldt{font-size:11px;color:var(--t2);}
-.wk{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:18px;padding-bottom:4px;}
-.dc{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:11px 9px;min-height:110px;min-width:85px;flex:1;}
-.dc.today{border-color:var(--g);}
-.dc.rest{opacity:.45;}
-.dn{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;margin-bottom:5px;}
+.wkg{display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:4px;scrollbar-width:none;}
+.wkg::-webkit-scrollbar{display:none;}
+.dc{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:11px 9px;min-height:100px;min-width:85px;flex:1;}
+.dc.today{border-color:var(--g);}.dc.rest{opacity:.45;}
+.dn{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:5px;}
 .dd{font-size:19px;font-weight:500;color:var(--t);margin-bottom:7px;}
-.dtask{font-size:10px;color:var(--t2);padding:3px 5px;border-radius:4px;margin-bottom:3px;background:var(--s3);}
-.dtask.uw{border-left:2px solid var(--g);}
-.dtask.rd{border-left:2px solid var(--g2);}
-.dtask.rt{border-left:2px solid var(--g3);color:var(--g3);background:rgba(255,183,77,.08);}
+.dt{font-size:10px;color:var(--t2);padding:3px 5px;border-radius:4px;margin-bottom:3px;background:var(--s3);}
+.dt.uw{border-left:2px solid var(--g);}.dt.rd{border-left:2px solid var(--g2);}.dt.rt{border-left:2px solid var(--g3);color:var(--g3);background:rgba(255,183,77,.08);}
 .chip{display:inline-block;font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;margin:3px;cursor:pointer;border:1px solid var(--b2);color:var(--t2);transition:all .15s;}
-.chip.sel{background:rgba(127,255,110,.12);color:var(--g);border-color:rgba(127,255,110,.3);}
+.chip.on{background:rgba(127,255,110,.12);color:var(--g);border-color:rgba(127,255,110,.3);}
 .tl{padding-left:15px;border-left:1px solid var(--b);}
 .tli{position:relative;padding:0 0 16px 18px;}
 .tli::before{content:'';position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--s3);border:1px solid var(--b2);}
 .tli.done::before{background:var(--g);border-color:var(--g);}
 .tli.now::before{background:var(--g2);border-color:var(--g2);box-shadow:0 0 8px rgba(79,195,247,.4);}
-.tli-date{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:2px;}
-.tli-title{font-size:13px;color:var(--t);margin-bottom:2px;}
-.tli-detail{font-size:11px;color:var(--t3);}
+.tli-d{font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:2px;}
+.tli-t{font-size:13px;color:var(--t);margin-bottom:2px;}.tli-s{font-size:11px;color:var(--t3);}
 .qbox{background:rgba(127,255,110,.05);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:15px;margin-bottom:12px;}
-.qbox-q{font-family:var(--mono);font-size:11px;color:var(--g);margin-bottom:8px;letter-spacing:.04em;}
-.qbox-a{font-size:13px;color:var(--t2);line-height:1.75;}
-.qbox-a strong{color:var(--t);}
+.qbox-q{font-family:var(--mono);font-size:11px;color:var(--g);margin-bottom:8px;}
+.qbox-a{font-size:13px;color:var(--t2);line-height:1.75;}.qbox-a strong{color:var(--t);}
 .lrow{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:12px;margin-bottom:8px;}
 .lbad{font-size:12px;color:var(--g4);margin-bottom:4px;text-decoration:line-through;}
 .larr{font-size:10px;color:var(--t3);margin-bottom:4px;font-family:var(--mono);}
 .lgood{font-size:12px;color:var(--g2);line-height:1.5;}
 .dvdr{height:1px;background:var(--b);margin:16px 0;}
-code{font-family:var(--mono);font-size:11px;background:var(--s3);padding:2px 6px;border-radius:4px;color:var(--t2);}
-.rbanner{background:linear-gradient(135deg,rgba(127,255,110,.05) 0%,rgba(79,195,247,.05) 100%);border:1px solid rgba(127,255,110,.15);border-radius:var(--rl);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.rname{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--g);}
-.save-btn{background:var(--g);color:#0a0f0a;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;margin-top:8px;}
-.save-btn:active{background:#9fff90;}
-.save-btn.saving{opacity:.7;pointer-events:none;}
-.api-info{background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;}
-.api-info p{font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:8px;}
-.api-info p:last-child{margin-bottom:0;}
-.api-info strong{color:var(--t);}
+.rbanner{background:linear-gradient(135deg,rgba(127,255,110,.05),rgba(79,195,247,.05));border:1px solid rgba(127,255,110,.15);border-radius:var(--rl);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.sbtn{background:var(--g);color:#0a0f0a;font-family:var(--mono);font-size:11px;font-weight:500;padding:12px 20px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;transition:all .15s;}
+.sbtn:active{background:#9fff90;}.sbtn.saving{opacity:.6;pointer-events:none;}
+.smsg{font-family:var(--mono);font-size:11px;color:var(--t3);text-align:center;margin-top:6px;min-height:16px;}
+.abox{background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+.abox p{font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:8px;}.abox p:last-child{margin-bottom:0;}.abox strong{color:var(--t);}
+.ov{position:fixed;inset:0;background:rgba(13,15,14,.92);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px;}
+.ov p{font-family:var(--mono);font-size:13px;color:var(--t2);}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
-
-/* MOBILE */
 @media(max-width:768px){
-  .header{display:none;}
-  .mobile-bar{display:flex !important;background:var(--s1);border-bottom:1px solid var(--b);padding:11px 16px 9px;align-items:center;justify-content:space-between;flex-shrink:0;}
-  .mobile-logo{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--g);}
-  .mobile-logo span{color:var(--t2);font-style:italic;}
+  .hdr{display:none;}
+  .mbar{display:flex !important;background:var(--s1);border-bottom:1px solid var(--b);padding:11px 16px 9px;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .mlogo{font-family:var(--serif);font-size:19px;font-weight:300;color:var(--g);}
+  .mlogo span{color:var(--t2);font-style:italic;}
   .app{height:100dvh;overflow:hidden;}
   .main{padding:0;max-width:100%;flex:1;overflow:hidden;position:relative;}
   .panel{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(var(--nav) + var(--safe) + 14px);display:none !important;}
-  .panel.active{display:block !important;}
-  .bottom-nav{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b);padding-bottom:var(--safe);z-index:100;height:calc(var(--nav) + var(--safe));overflow-x:auto;}
-  .nav-item{flex:1;min-width:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;cursor:pointer;gap:3px;border:none;background:none;}
-  .nav-icon{font-size:17px;line-height:1;}
-  .nav-label{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.04em;}
-  .nav-item.active .nav-label{color:var(--g);}
+  .panel.on{display:block !important;}
+  .bnav{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b);padding-bottom:var(--safe);z-index:100;height:calc(var(--nav) + var(--safe));overflow-x:auto;scrollbar-width:none;}
+  .bnav::-webkit-scrollbar{display:none;}
+  .ni{flex:1;min-width:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 2px;cursor:pointer;gap:3px;border:none;background:none;}
+  .nicon{font-family:var(--mono);font-size:14px;color:var(--t2);}
+  .nlbl{font-family:var(--mono);font-size:8px;color:var(--t3);}
+  .ni.on .nicon,.ni.on .nlbl{color:var(--g);}
   .g2,.g3,.g4{grid-template-columns:1fr;gap:10px;}
   .g2.k2{grid-template-columns:1fr 1fr;}
   .g4.k2{grid-template-columns:1fr 1fr;}
   .card{padding:15px;border-radius:13px;margin-bottom:12px;}
   .btn{width:100%;justify-content:center;padding:12px 16px;font-size:12px;margin-bottom:8px;}
-  .brow{flex-direction:column;gap:0;}
-  .btn-i{width:auto;}
+  .brow{flex-direction:column;gap:0;}.bi{width:auto;}
   input[type=range]::-webkit-slider-thumb{width:22px;height:22px;}
-  .ci{padding:10px 0;}
-  .ci input[type=checkbox]{width:20px;height:20px;min-width:20px;}
-  .ci label{font-size:14px;}
+  .ci{padding:10px 0;}.ci input[type=checkbox]{width:20px;height:20px;min-width:20px;}.ci label{font-size:14px;}
   input,select,textarea{font-size:16px;padding:11px 13px;border-radius:10px;}
-  .stitle{font-size:21px;}
+  .h1{font-size:21px;}
   .rbanner{flex-direction:column;align-items:flex-start;gap:10px;}
-  .rbanner>div:last-child{width:100%;}
-  .wk{flex-wrap:nowrap;}
-  .dc{min-width:78px;flex:0 0 78px;}
-  .save-btn{padding:13px 20px;font-size:12px;}
+  .wkg{flex-wrap:nowrap;}.dc{min-width:78px;flex:0 0 78px;}
 }
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- MOBILE BAR -->
-<div class="mobile-bar">
-  <div class="mobile-logo">Academic <span>OS</span></div>
+<div class="ov" id="ov">
+  <div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <p>Loading your data from GitHub...</p>
+</div>
+
+<div class="mbar">
+  <div class="mlogo">Academic <span>OS</span></div>
   <div style="display:flex;gap:8px;align-items:center;">
-    <div class="ptag" id="m-sync-tag">SYNCED</div>
-    <div id="m-date" style="font-family:var(--mono);font-size:10px;color:var(--t3);"></div>
+    <div id="ms" style="font-family:var(--mono);font-size:10px;color:var(--t3);">Loading...</div>
+    <div id="md" style="font-family:var(--mono);font-size:10px;color:var(--t3);"></div>
   </div>
 </div>
 
-<!-- DESKTOP HEADER -->
-<div class="header">
+<div class="hdr">
   <div class="htop">
     <div class="logo">Academic <span>OS</span></div>
     <div class="ptag">PRE-RESIDENCY</div>
-    <div class="ptag b">ANESTHESIA TRACK</div>
-    <div class="sync-pill">
-      <div class="sync-dot ok" id="sync-dot"></div>
-      <span id="sync-label">Synced</span>
+    <div class="ptag b2">ANESTHESIA TRACK</div>
+    <div class="spill">
+      <div class="sdot" id="sd"></div>
+      <span id="sl2">Loading...</span>
     </div>
-    <div id="d-date" style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-left:8px;"></div>
+    <div id="dd" style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-left:8px;"></div>
   </div>
   <div class="tabs">
-    <button class="tab active" onclick="goTab('today',this)">TODAY</button>
-    <button class="tab" onclick="goTab('week',this)">THIS WEEK</button>
-    <button class="tab" onclick="goTab('uworld',this)">UWORLD</button>
-    <button class="tab" onclick="goTab('reading',this)">READING</button>
-    <button class="tab" onclick="goTab('rotations',this)">ROTATIONS</button>
-    <button class="tab" onclick="goTab('narrative',this)">NARRATIVE</button>
-    <button class="tab" onclick="goTab('interview',this)">INTERVIEW</button>
-    <button class="tab" onclick="goTab('application',this)">APPLICATION</button>
-    <button class="tab" onclick="goTab('milestones',this)">MILESTONES</button>
-    <button class="tab" onclick="goTab('settings',this)">SETTINGS</button>
+    <button class="tab on" onclick="gT('today',this)">TODAY</button>
+    <button class="tab" onclick="gT('week',this)">THIS WEEK</button>
+    <button class="tab" onclick="gT('uworld',this)">UWORLD</button>
+    <button class="tab" onclick="gT('reading',this)">READING</button>
+    <button class="tab" onclick="gT('rotations',this)">ROTATIONS</button>
+    <button class="tab" onclick="gT('narrative',this)">NARRATIVE</button>
+    <button class="tab" onclick="gT('interview',this)">INTERVIEW</button>
+    <button class="tab" onclick="gT('application',this)">APPLICATION</button>
+    <button class="tab" onclick="gT('milestones',this)">MILESTONES</button>
+    <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
 
 <div class="main">
 
-<!-- ===== TODAY ===== -->
-<div id="panel-today" class="panel active">
-  <div class="stitle">Today's <span>plan</span></div>
+<!-- TODAY -->
+<div id="panel-today" class="panel on">
+  <div class="h1">Today's <span>plan</span></div>
   <div class="rbanner">
     <div>
       <div class="lbl">current rotation</div>
-      <div class="rname" id="today-rot-display">Pre-residency transition</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);">Orientation June 15 &middot; First rotation ~July 1</div>
+      <div style="font-family:var(--serif);font-size:19px;font-weight:300;color:var(--g);">Pre-residency transition</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);">Orientation June 15 - First rotation ~July 1</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <select id="mode-sel" style="width:170px;" onchange="modeChange()">
+      <select id="mode-sel" style="width:168px;" onchange="modeChg()">
         <option value="normal">NORMAL day</option>
         <option value="call">CALL day</option>
         <option value="postcall">POST-CALL</option>
         <option value="recovery">RECOVERY</option>
         <option value="rest">REST day</option>
       </select>
-      <button class="btn bp btn-i" onclick="genToday()">AI AI plan</button>
+      <button class="btn bp bi" onclick="genToday()">AI plan</button>
     </div>
   </div>
-
   <div class="card">
     <div class="lbl">daily check-in</div>
     <div style="display:flex;gap:18px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:120px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Energy</span><span id="v-e" style="font-family:var(--mono);color:var(--g);">7/10</span></div>
-        <input type="range" min="1" max="10" value="7" id="sl-e" oninput="upB()" style="width:100%;">
-      </div>
-      <div style="flex:1;min-width:120px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Sleep</span><span id="v-s" style="font-family:var(--mono);color:var(--g2);">7h</span></div>
-        <input type="range" min="0" max="9" value="7" id="sl-s" oninput="upB()" style="width:100%;">
-      </div>
-      <div style="flex:1;min-width:120px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Motivation</span><span id="v-m" style="font-family:var(--mono);">7/10</span></div>
-        <input type="range" min="1" max="10" value="7" id="sl-m" oninput="upB()" style="width:100%;">
-      </div>
+      <div style="flex:1;min-width:110px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Energy</span><span id="ve" style="font-family:var(--mono);color:var(--g);">7/10</span></div><input type="range" min="1" max="10" value="7" id="sle" oninput="upB()" style="width:100%;"></div>
+      <div style="flex:1;min-width:110px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Sleep</span><span id="vs" style="font-family:var(--mono);color:var(--g2);">7h</span></div><input type="range" min="0" max="9" value="7" id="sls" oninput="upB()" style="width:100%;"></div>
+      <div style="flex:1;min-width:110px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px;"><span>Motivation</span><span id="vm" style="font-family:var(--mono);">7/10</span></div><input type="range" min="1" max="10" value="7" id="slm" oninput="upB()" style="width:100%;"></div>
     </div>
-    <div style="margin-top:12px;">
-      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:4px;"><span>Burnout risk</span><span id="b-lbl">LOW</span></div>
-      <div class="bbar"><div class="bfill" id="b-fill" style="width:20%;background:var(--g);"></div></div>
-    </div>
+    <div style="margin-top:12px;"><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:4px;"><span>Burnout risk</span><span id="blbl">LOW</span></div><div class="bbar"><div class="bfill" id="bfill" style="width:20%;background:var(--g);"></div></div></div>
   </div>
-
   <div class="g2">
     <div class="card">
       <div class="lbl">study tasks</div>
-      <div class="ci" id="ci-uw"><input type="checkbox" id="cb-uw" onchange="chk('ci-uw')"><label for="cb-uw">[UW] UWorld &#8212; 15&#8211;20 questions, timed tutor</label></div>
-      <div class="ci" id="ci-anki"><input type="checkbox" id="cb-anki" onchange="chk('ci-anki')"><label for="cb-anki">[AK] Anki &#8212; clear due reviews + 5 new cards</label></div>
-      <div class="ci" id="ci-read"><input type="checkbox" id="cb-read" onchange="chk('ci-read')"><label for="cb-read">READ Reading &#8212; 10&#8211;15 min rotation topic</label></div>
-      <div class="ci" id="ci-oe"><input type="checkbox" id="cb-oe" onchange="chk('ci-oe')"><label for="cb-oe">[OE] OpenEvidence &#8212; 1 clinical Q from rounds</label></div>
+      <div class="ci" id="ci-uw"><input type="checkbox" id="cb-uw" onchange="chk('ci-uw')"><label for="cb-uw">UWorld -- 15-20 questions, timed tutor</label></div>
+      <div class="ci" id="ci-anki"><input type="checkbox" id="cb-anki" onchange="chk('ci-anki')"><label for="cb-anki">Anki -- clear due reviews + 5 new cards</label></div>
+      <div class="ci" id="ci-read"><input type="checkbox" id="cb-read" onchange="chk('ci-read')"><label for="cb-read">Reading -- 10-15 min rotation topic</label></div>
+      <div class="ci" id="ci-oe"><input type="checkbox" id="cb-oe" onchange="chk('ci-oe')"><label for="cb-oe">OpenEvidence -- 1 clinical Q from rounds</label></div>
     </div>
     <div class="card">
       <div class="lbl">clinical + application</div>
-      <div class="ci" id="ci-pr"><input type="checkbox" id="cb-pr" onchange="chk('ci-pr')"><label for="cb-pr">ROTS Pre-rounds &#8212; know everything first</label></div>
-      <div class="ci" id="ci-rf"><input type="checkbox" id="cb-rf" onchange="chk('ci-rf')"><label for="cb-rf">NOTE Reflection &#8212; 2&#8211;3 sentences periop connection</label></div>
-      <div class="ci" id="ci-wl"><input type="checkbox" id="cb-wl" onchange="chk('ci-wl')"><label for="cb-wl">[WL] Wellness &#8212; meal, water, 10 min outside</label></div>
-      <div class="ci" id="ci-aki"><input type="checkbox" id="cb-aki" onchange="chk('ci-aki')"><label for="cb-aki">[!!] Email Temple AKI PI &#8212; HIGH PRIORITY</label></div>
+      <div class="ci" id="ci-pr"><input type="checkbox" id="cb-pr" onchange="chk('ci-pr')"><label for="cb-pr">Pre-rounds -- know everything first</label></div>
+      <div class="ci" id="ci-rf"><input type="checkbox" id="cb-rf" onchange="chk('ci-rf')"><label for="cb-rf">Reflection -- 2-3 sentences periop connection</label></div>
+      <div class="ci" id="ci-wl"><input type="checkbox" id="cb-wl" onchange="chk('ci-wl')"><label for="cb-wl">Wellness -- meal, water, 10 min outside</label></div>
+      <div class="ci" id="ci-aki"><input type="checkbox" id="cb-aki" onchange="chk('ci-aki')"><label for="cb-aki">!! Email Temple AKI PI -- HIGH PRIORITY</label></div>
     </div>
   </div>
-
   <div class="card">
     <div class="lbl">ai coach</div>
-    <div id="today-out">
-      <div class="air"><div class="albl">* COACH</div>
-        <p>Pre-residency &#8212; the most underused week most residents ever get. Use it deliberately.</p>
-        <p><strong>UWorld today: Cardiology first.</strong> Hemodynamics, HF, arrhythmias &#8212; all map directly onto perioperative cases and anesthesia interviews.</p>
-        <p><strong>Most important task today:</strong> Email your Temple AKI PI. The perioperative AKI project is your top CV asset. Today, not this week.</p>
-      </div>
-    </div>
-    <div class="brow"><button class="btn bs btn-i" onclick="genToday()">AI Regenerate</button><button class="btn bs btn-i" onclick="goTab('uworld',null)">Log UWorld -&gt;</button></div>
+    <div id="today-out"><div class="air"><div class="al">COACH</div><p>Pre-residency -- the most underused week most residents ever get. Use it deliberately.</p><p><strong>UWorld today: Cardiology first.</strong> Hemodynamics, HF, arrhythmias map directly onto perioperative cases and anesthesia interviews.</p><p><strong>Most important task today:</strong> Email your Temple AKI PI. Today, not this week.</p></div></div>
+    <div class="brow"><button class="btn bs bi" onclick="genToday()">Regenerate</button><button class="btn bs bi" onclick="gT('uworld',null)">Log UWorld</button></div>
   </div>
 </div>
 
-<!-- ===== THIS WEEK ===== -->
+<!-- THIS WEEK -->
 <div id="panel-week" class="panel">
-  <div class="stitle">This <span>week</span></div>
+  <div class="h1">This <span>week</span></div>
   <div class="g2">
-    <div class="csm" style="margin-bottom:12px;">
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
       <div class="ig"><label>Rotation</label>
-        <select id="wk-rot" onchange="buildWeek()">
-          <option value="pre">Pre-residency</option><option value="gen">General medicine</option>
-          <option value="micu">MICU / ICU</option><option value="ccu">CCU</option>
-          <option value="cards">Cardiology</option><option value="neph">Nephrology</option>
-          <option value="pulm">Pulmonology</option><option value="gi">GI</option>
-          <option value="id">Infectious Disease</option><option value="periop">Periop / elective</option>
-          <option value="clinic">Outpatient</option>
+        <select id="wk-rot" onchange="buildWk()">
+          <option value="pre">Pre-residency</option><option value="gen">General medicine</option><option value="micu">MICU / ICU</option><option value="ccu">CCU</option><option value="cards">Cardiology</option><option value="neph">Nephrology</option><option value="pulm">Pulmonology</option><option value="periop">Periop / elective</option><option value="clinic">Outpatient</option>
         </select>
       </div>
       <div class="lbl">rest days</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;">
-        <span class="chip" onclick="toggleRest(this,'Sun')">SUN</span>
-        <span class="chip sel" onclick="toggleRest(this,'Sat')">SAT</span>
-        <span class="chip" onclick="toggleRest(this,'Mon')">MON</span>
-        <span class="chip" onclick="toggleRest(this,'Tue')">TUE</span>
-        <span class="chip" onclick="toggleRest(this,'Wed')">WED</span>
-        <span class="chip" onclick="toggleRest(this,'Thu')">THU</span>
-        <span class="chip" onclick="toggleRest(this,'Fri')">FRI</span>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;" id="rchips">
+        <span class="chip" onclick="togRest(this,'Sun')">SUN</span><span class="chip on" onclick="togRest(this,'Sat')">SAT</span><span class="chip" onclick="togRest(this,'Mon')">MON</span><span class="chip" onclick="togRest(this,'Tue')">TUE</span><span class="chip" onclick="togRest(this,'Wed')">WED</span><span class="chip" onclick="togRest(this,'Thu')">THU</span><span class="chip" onclick="togRest(this,'Fri')">FRI</span>
       </div>
     </div>
-    <div class="csm" style="margin-bottom:12px;">
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
       <div class="lbl">weekly progress</div>
-      <div class="pbw"><div class="pbl"><span>UWorld questions</span><span id="wq-v">0 / 105</span></div><div class="pbb"><div class="pbf" id="wq-b" style="width:0%;"></div></div></div>
-      <div class="pbw"><div class="pbl"><span>Articles read</span><span id="wa-v">0 / 5</span></div><div class="pbb"><div class="pbf" id="wa-b" style="width:0%;background:var(--g2);"></div></div></div>
+      <div class="pbw"><div class="pbl"><span>UWorld Qs</span><span id="wqv">0 / 105</span></div><div class="pbb"><div class="pbf" id="wqb" style="width:0%;"></div></div></div>
+      <div class="pbw"><div class="pbl"><span>Articles</span><span id="wav">0 / 5</span></div><div class="pbb"><div class="pbf" id="wab" style="width:0%;background:var(--g2);"></div></div></div>
       <div class="dvdr" style="margin:10px 0;"></div>
       <div class="lbl">update</div>
       <div class="g2 k2" style="gap:8px;">
-        <input type="number" id="inp-wq" placeholder="UWorld Qs" min="0" oninput="upWeekBars()">
-        <input type="number" id="inp-wa" placeholder="Articles" min="0" oninput="upWeekBars()">
+        <input type="number" id="iwq" placeholder="UWorld Qs" min="0" oninput="upWkB()">
+        <input type="number" id="iwa" placeholder="Articles" min="0" oninput="upWkB()">
       </div>
     </div>
   </div>
-  <div class="wk" id="wk-grid"></div>
-  <div class="card">
-    <div class="lbl">rotation guidance</div>
-    <div id="wk-guid" class="air"><div class="albl">* COACH</div><p>Select rotation above.</p></div>
-    <div class="brow"><button class="btn bs btn-i" onclick="genRotG()">AI AI guidance</button></div>
-  </div>
+  <div class="wkg" id="wk-grid"></div>
+  <div class="card"><div class="lbl">rotation guidance</div><div id="wk-guid" class="air"><div class="al">COACH</div><p>Select rotation above.</p></div><div class="brow"><button class="btn bs bi" onclick="genRotG()">AI guidance</button></div></div>
 </div>
 
-<!-- ===== UWORLD ===== -->
+<!-- UWORLD -->
 <div id="panel-uworld" class="panel">
-  <div class="stitle">UWorld <span>log</span></div>
+  <div class="h1">UWorld <span>log</span></div>
   <div class="g4 k2" style="margin-bottom:14px;">
-    <div class="stat"><div class="sv g" id="st-total">0</div><div class="sl">Total questions</div></div>
-    <div class="stat"><div class="sv b" id="st-avg">&#8212;</div><div class="sl">Avg score %</div></div>
-    <div class="stat"><div class="sv o" id="st-streak">0</div><div class="sl">Day streak</div></div>
+    <div class="stat"><div class="sv g" id="st-tot">0</div><div class="sl">Total questions</div></div>
+    <div class="stat"><div class="sv b" id="st-avg">--</div><div class="sl">Avg score %</div></div>
+    <div class="stat"><div class="sv o" id="st-str">0</div><div class="sl">Day streak</div></div>
     <div class="stat"><div class="sv" id="st-pct">0%</div><div class="sl">Est. complete</div></div>
   </div>
-
-  <!-- LOG SESSION -->
-  <div class="card" style="border:1px solid rgba(127,255,110,.2);">
-    <div class="lbl" style="color:var(--g);">log session</div>
+  <div class="card" style="border-color:rgba(127,255,110,.25);">
+    <div class="lbl" style="color:var(--g);">log session -- saves to data.json</div>
     <div class="g3" style="margin-bottom:10px;">
       <div class="ig"><label>Date</label><input type="date" id="uw-date"></div>
       <div class="ig"><label>Questions</label><input type="number" id="uw-q" value="15" min="1" max="120"></div>
@@ -360,830 +291,579 @@ code{font-family:var(--mono);font-size:11px;background:var(--s3);padding:2px 6px
     <div class="g2 k2" style="margin-bottom:10px;">
       <div class="ig"><label>Topic</label>
         <select id="uw-topic">
-          <option value="">Select...</option>
-          <option>Cardiology / EKG</option><option>Pulmonology / Ventilators</option>
-          <option>Nephrology / Acid-Base</option><option>Gastroenterology</option>
-          <option>Infectious Disease</option><option>Neurology</option>
-          <option>Hematology/Oncology</option><option>Endocrinology</option>
-          <option>Pharmacology / Overdose</option><option>Periop / Anesthesia</option>
-          <option>Biostatistics / EBM</option><option>Ethics / Preventive Med</option>
-          <option>Mixed / Random</option>
+          <option value="">Select...</option><option>Cardiology / EKG</option><option>Pulmonology / Ventilators</option><option>Nephrology / Acid-Base</option><option>Gastroenterology</option><option>Infectious Disease</option><option>Neurology</option><option>Hematology/Oncology</option><option>Endocrinology</option><option>Pharmacology / Overdose</option><option>Periop / Anesthesia</option><option>Biostatistics / EBM</option><option>Ethics / Preventive Med</option><option>Mixed / Random</option>
         </select>
       </div>
       <div class="ig"><label>Mode</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;">
-          <span class="chip sel" onclick="selMode(this,'timed')">TIMED</span>
-          <span class="chip" onclick="selMode(this,'tutor')">TUTOR</span>
-          <span class="chip" onclick="selMode(this,'review')">REVIEW</span>
+          <span class="chip on" onclick="selMd(this,'timed')">TIMED</span><span class="chip" onclick="selMd(this,'tutor')">TUTOR</span><span class="chip" onclick="selMd(this,'review')">REVIEW</span>
         </div>
       </div>
     </div>
-    <div class="ig"><label>What were you missing? (optional)</label><textarea id="uw-notes" placeholder="e.g. Mobitz I vs II kept tripping me up..."></textarea></div>
-    <button class="save-btn" id="uw-save-btn" onclick="saveUWorld()"> Save to GitHub</button>
-    <div id="uw-save-status" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-align:center;margin-top:6px;min-height:16px;"></div>
-    <div class="brow" style="justify-content:center;"><button class="btn bs btn-i" onclick="getUWRec()">AI What topic next?</button></div>
+    <div class="ig"><label>Notes (optional)</label><textarea id="uw-notes" placeholder="What were you missing? What concepts need review?"></textarea></div>
+    <button class="sbtn" id="uw-sbtn" onclick="saveUW()">Save to GitHub</button>
+    <div class="smsg" id="uw-smsg"></div>
+    <div class="brow" style="justify-content:center;"><button class="btn bs bi" onclick="getUWRec()">What topic next?</button></div>
     <div id="uw-rec"></div>
   </div>
-
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl">domain performance</div>
-    <div id="domain-bd"><div style="font-size:12px;color:var(--t3);font-style:italic;">Log sessions to see breakdown.</div></div>
-  </div>
-  <div class="card">
-    <div class="lbl">session history</div>
-    <div id="uw-hist"><div style="font-size:12px;color:var(--t3);font-style:italic;">No sessions yet.</div></div>
-  </div>
+  <div class="card" style="margin-bottom:14px;"><div class="lbl">domain performance</div><div id="dom-bd"><div style="font-size:12px;color:var(--t3);font-style:italic;">Log sessions to see breakdown.</div></div></div>
+  <div class="card"><div class="lbl">session history</div><div id="uw-hist"><div style="font-size:12px;color:var(--t3);font-style:italic;">No sessions yet.</div></div></div>
 </div>
 
-<!-- ===== READING ===== -->
+<!-- READING -->
 <div id="panel-reading" class="panel">
-  <div class="stitle">Daily <span>reading</span></div>
+  <div class="h1">Daily <span>reading</span></div>
   <div class="card" style="margin-bottom:14px;">
     <div class="lbl">generate reading list</div>
     <div class="g2 k2" style="margin-bottom:10px;">
-      <div class="ig"><label>Rotation</label>
-        <select id="rd-rot">
-          <option value="pre">Pre-residency</option><option value="micu">MICU / ICU</option>
-          <option value="ccu">CCU</option><option value="cards">Cardiology</option>
-          <option value="neph">Nephrology</option><option value="pulm">Pulmonology</option>
-          <option value="gen">General IM</option><option value="periop">Periop medicine</option>
-        </select>
-      </div>
-      <div class="ig"><label>Focus</label>
-        <select id="rd-focus">
-          <option>Clinical reasoning & management</option>
-          <option>Perioperative relevance (anesthesia bridge)</option>
-          <option>Physiology & mechanisms</option>
-          <option>Critical care systems</option>
-          <option>Landmark trials</option>
-        </select>
-      </div>
+      <div class="ig"><label>Rotation</label><select id="rd-rot"><option value="pre">Pre-residency</option><option value="micu">MICU / ICU</option><option value="ccu">CCU</option><option value="cards">Cardiology</option><option value="neph">Nephrology</option><option value="pulm">Pulmonology</option><option value="gen">General IM</option><option value="periop">Periop medicine</option></select></div>
+      <div class="ig"><label>Focus</label><select id="rd-focus"><option>Clinical reasoning and management</option><option>Perioperative relevance (anesthesia bridge)</option><option>Physiology and mechanisms</option><option>Critical care systems</option><option>Landmark trials</option></select></div>
     </div>
-    <button class="btn bp btn-i" onclick="genReading()">AI Generate with AI</button>
+    <button class="btn bp bi" onclick="genRd()">Generate with AI</button>
   </div>
-  <div id="rd-out">
-    <div class="card">
-      <div class="lbl">pre-residency week (mon&#8211;fri &middot; sat protected)</div>
-      <div id="reading-list-inner"></div>
-    </div>
-  </div>
-  <div id="rd-ai-out"></div>
+  <div class="card"><div class="lbl">pre-residency foundation (Mon-Fri -- Sat protected)</div><div id="rdlist"></div></div>
+  <div id="rd-ai"></div>
 </div>
 
-<!-- ===== ROTATIONS ===== -->
+<!-- ROTATIONS -->
 <div id="panel-rotations" class="panel">
-  <div class="stitle">Rotation <span>priorities</span></div>
+  <div class="h1">Rotation <span>priorities</span></div>
   <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;" id="rot-chips">
-    <span class="chip sel" onclick="showRot(this,'micu')">MICU/ICU</span>
-    <span class="chip" onclick="showRot(this,'ccu')">CCU</span>
-    <span class="chip" onclick="showRot(this,'neph')">Nephrology</span>
-    <span class="chip" onclick="showRot(this,'pulm')">Pulm</span>
-    <span class="chip" onclick="showRot(this,'gen')">General IM</span>
-    <span class="chip" onclick="showRot(this,'clinic')">Outpatient</span>
+    <span class="chip on" onclick="showRot(this,'micu')">MICU/ICU</span><span class="chip" onclick="showRot(this,'ccu')">CCU</span><span class="chip" onclick="showRot(this,'neph')">Nephrology</span><span class="chip" onclick="showRot(this,'pulm')">Pulm</span><span class="chip" onclick="showRot(this,'gen')">General IM</span><span class="chip" onclick="showRot(this,'clinic')">Outpatient</span>
   </div>
   <div id="rot-content"></div>
   <div class="dvdr"></div>
   <div class="g2">
-    <div class="card">
-      <div class="lbl" style="color:var(--g);">DO THIS</div>
-      <div style="font-size:12px;color:var(--t2);line-height:2.0;">
-        <div>&check; Pre-round before everyone. Know everything first.</div>
-        <div>&check; One-liner + assessment + plan. Not data dump.</div>
-        <div>&check; Look things up and return same day &#8212; always.</div>
-        <div>&check; Anticipate: "K+ low &#8212; I already ordered a recheck."</div>
-        <div>&check; Own mistakes: "I missed that, here's what I'd do differently."</div>
-        <div>&check; Ask specific feedback at rotation end.</div>
-        <div>&check; Flag deteriorating patients early.</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="lbl" style="color:var(--g4);">NEVER DO THIS</div>
-      <div style="font-size:12px;color:var(--t2);line-height:2.0;">
-        <div>x Come to rounds without knowing overnight events.</div>
-        <div>x Say "I don't know" without following up.</div>
-        <div>x Present facts without a plan.</div>
-        <div>x Phone during rounds.</div>
-        <div>x Complain about workload in first 6 months.</div>
-        <div>x Make same mistake twice without showing growth.</div>
-        <div>x Ask generic feedback: "How am I doing?"</div>
-      </div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:4px;">
-    <div class="lbl">one-liner formula</div>
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:12px;font-family:var(--mono);font-size:12px;color:var(--g2);line-height:1.8;">[Age] [sex] with [key PMH] presenting with [chief complaint] found to have [dx], now HD[X], currently [trajectory].</div>
+    <div class="card"><div class="lbl" style="color:var(--g);">DO THIS</div><div style="font-size:12px;color:var(--t2);line-height:2.0;"><div>Pre-round before everyone. Know everything first.</div><div>One-liner + assessment + plan. Not data dump.</div><div>Look things up and return same day -- always.</div><div>Anticipate: K+ low -- already ordered recheck at 4pm.</div><div>Ask specific feedback at rotation end.</div><div>Flag deteriorating patients early. Flagging is not weakness.</div></div></div>
+    <div class="card"><div class="lbl" style="color:var(--g4);">NEVER DO THIS</div><div style="font-size:12px;color:var(--t2);line-height:2.0;"><div>Come to rounds without knowing overnight events.</div><div>Say I don't know without following up same day.</div><div>Present facts without a plan or assessment.</div><div>Phone during rounds -- even if others are.</div><div>Complain about workload to attendings in first 6 months.</div><div>Make same mistake twice without showing growth.</div></div></div>
   </div>
 </div>
 
-<!-- ===== NARRATIVE ===== -->
+<!-- NARRATIVE -->
 <div id="panel-narrative" class="panel">
-  <div class="stitle">Narrative <span>builder</span></div>
+  <div class="h1">Narrative <span>builder</span></div>
   <div class="g2" style="margin-bottom:14px;">
     <div class="card">
       <div class="lbl" style="color:var(--g);">themes to build</div>
-      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--b);">
-        <div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">1. Predictive physiologic reasoning</div>
-        <div style="font-size:12px;color:var(--t2);line-height:1.5;">Trajectory recognition, deterioration-before-collapse. Center the PS here.</div>
-      </div>
-      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--b);">
-        <div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">2. Longitudinal disease -&gt; acute instability</div>
-        <div style="font-size:12px;color:var(--t2);line-height:1.5;">IM taught chronic dysfunction. Anesthesia = when it becomes acutely consequential.</div>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">3. Operational systems thinking</div>
-        <div style="font-size:12px;color:var(--t2);line-height:1.5;">Khalsa, LMSA infrastructure -&gt; OR systems, ICU coordination.</div>
-      </div>
+      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--b);"><div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">1. Predictive physiologic reasoning</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Trajectory recognition, deterioration-before-collapse. Center the personal statement here. Tied directly to AKI research.</div></div>
+      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--b);"><div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">2. Longitudinal disease -- acute instability</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">IM taught how chronic dysfunction evolves. Anesthesia is where those processes become acutely consequential. Best IM-to-anesthesia bridge available.</div></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--t);margin-bottom:3px;">3. Operational systems thinking</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Khalsa redesign, LMSA infrastructure at scale. Maps to OR systems, ICU coordination, perioperative medicine.</div></div>
     </div>
     <div class="card">
       <div class="lbl" style="color:var(--g4);">retire entirely</div>
-      <div style="font-size:12px;color:var(--t2);line-height:2.1;">
-        <div><span class="badge br" style="margin-right:6px;">OUT</span>"Last line of defense"</div>
-        <div><span class="badge br" style="margin-right:6px;">OUT</span>"Vigilant advocate while asleep"</div>
-        <div><span class="badge br" style="margin-right:6px;">OUT</span>Opening with hardship paragraph 1</div>
-        <div><span class="badge br" style="margin-right:6px;">OUT</span>"Love procedures / fast-paced"</div>
-      </div>
+      <div style="font-size:12px;color:var(--t2);line-height:2.1;"><div><span class="bdg r" style="margin-right:6px;">OUT</span>"Last line of defense"</div><div><span class="bdg r" style="margin-right:6px;">OUT</span>"Vigilant advocate while asleep"</div><div><span class="bdg r" style="margin-right:6px;">OUT</span>Opening paragraph centered on hardship</div><div><span class="bdg r" style="margin-right:6px;">OUT</span>"Love procedures / fast-paced environment"</div></div>
       <div class="dvdr"></div>
-      <div class="lbl" style="color:var(--g);">language upgrades</div>
-      <div class="lrow"><div class="lbad">"I like fast-paced environments"</div><div class="larr">-&gt;</div><div class="lgood">"I am drawn to environments where physiologic priorities evolve dynamically and require continuous reassessment."</div></div>
-      <div class="lrow"><div class="lbad">"IM gave me perspective"</div><div class="larr">-&gt;</div><div class="lgood">"IM gave me a longitudinal view of disease &#8212; I now understand where a creatinine has been and where it is going."</div></div>
+      <div class="lbl">language upgrades</div>
+      <div class="lrow"><div class="lbad">"I like fast-paced environments"</div><div class="larr">REPLACE WITH:</div><div class="lgood">"I am drawn to environments where physiologic priorities evolve dynamically and require continuous reassessment of real-time data."</div></div>
+      <div class="lrow"><div class="lbad">"IM gave me perspective"</div><div class="larr">REPLACE WITH:</div><div class="lgood">"IM gave me a longitudinal view of disease evolution -- I now understand not just what a creatinine is, but where it has been and where it is going."</div></div>
     </div>
   </div>
-
-  <!-- Journal -->
-  <div class="card" style="border:1px solid rgba(127,255,110,.2);">
-    <div class="lbl" style="color:var(--g);">monthly journal &#8212; save to github</div>
+  <div class="card" style="border-color:rgba(127,255,110,.25);">
+    <div class="lbl" style="color:var(--g);">monthly journal -- saves to data.json</div>
     <div class="g2 k2" style="margin-bottom:10px;">
-      <div class="ig"><label>Month</label>
-        <select id="jnl-month">
-          <option>May 2026 (pre-residency)</option><option>July 2026</option><option>August 2026</option>
-          <option>September 2026</option><option>October 2026</option><option>November 2026</option>
-          <option>December 2026</option><option>January 2027</option>
-        </select>
-      </div>
+      <div class="ig"><label>Month</label><select id="jnl-mo"><option>May 2026 (pre-residency)</option><option>July 2026</option><option>August 2026</option><option>September 2026</option><option>October 2026</option><option>November 2026</option><option>December 2026</option><option>January 2027</option></select></div>
       <div class="ig"><label>Clinical case</label><input type="text" id="jnl-case" placeholder="e.g. HFrEF admitted pre-op..."></div>
     </div>
-    <div class="ig"><label>Physiology &#8212; what happened, what did you miss?</label><textarea id="jnl-physio" placeholder="Write the clinical reasoning..."></textarea></div>
-    <div class="ig"><label>Anesthesia connection (most important)</label><textarea id="jnl-anes" placeholder="Force the connection even if subtle..."></textarea></div>
-    <div class="ig"><label>One win this week &#8212; be specific</label><input type="text" id="jnl-win" placeholder="e.g. Caught K+ trend before rounds..."></div>
-    <button class="save-btn" id="jnl-save-btn" onclick="saveJournal()"> Save to GitHub</button>
-    <div id="jnl-save-status" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-align:center;margin-top:6px;min-height:16px;"></div>
-    <div class="brow" style="justify-content:center;"><button class="btn bs btn-i" onclick="genJnlPrompt()">AI Give me a prompt</button></div>
+    <div class="ig"><label>Physiology -- what happened, what did you miss?</label><textarea id="jnl-physio" placeholder="Write the clinical reasoning. Mechanism, what you would do differently."></textarea></div>
+    <div class="ig"><label>Anesthesia connection (most important field)</label><textarea id="jnl-anes" placeholder="Force the connection even if subtle. This is your PS in raw form."></textarea></div>
+    <div class="ig"><label>One win this week -- be specific</label><input type="text" id="jnl-win" placeholder="e.g. Caught K+ trend before rounds and repleted proactively."></div>
+    <button class="sbtn" id="jnl-sbtn" onclick="saveJnl()">Save to GitHub</button>
+    <div class="smsg" id="jnl-smsg"></div>
+    <div class="brow" style="justify-content:center;"><button class="btn bs bi" onclick="genJnlP()">Give me a prompt</button></div>
     <div id="jnl-ai"></div>
-    <div id="jnl-saved" style="margin-top:14px;"></div>
+    <div id="jnl-hist" style="margin-top:14px;"></div>
   </div>
 </div>
 
-<!-- ===== INTERVIEW ===== -->
+<!-- INTERVIEW -->
 <div id="panel-interview" class="panel">
-  <div class="stitle">Interview <span>prep</span></div>
-  <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6;">Three questions asked at every anesthesia interview. Practice out loud until natural.</div>
-  <div class="qbox">
-    <div class="qbox-q">Q1 &#8212; "Why didn't you match anesthesia the first time?"</div>
-    <div class="qbox-a"><strong>"My application had real strengths &#8212; I interviewed at UCSD, Cedars-Sinai, OHSU, and UC Davis. But I had not yet demonstrated sustained clinical performance in a rigorous environment over time. I chose IM specifically to provide exactly that evidence. My performance in IM is my answer."</strong></div>
-  </div>
-  <div class="qbox">
-    <div class="qbox-q">Q2 &#8212; "Why anesthesia &#8212; and why now?"</div>
-    <div class="qbox-a"><strong>"IM gave me a longitudinal view of how chronic disease evolves. That made me increasingly drawn to the perioperative window &#8212; where chronic trajectories become acutely consequential. Anesthesia requires real-time simultaneous management of interacting organ systems under time pressure. That's the cognitive environment where I feel most engaged."</strong></div>
-  </div>
-  <div class="qbox">
-    <div class="qbox-q">Q3 &#8212; "What do you bring that others don't?"</div>
-    <div class="qbox-a"><strong>"Three things: perioperative AKI research at a research level, IM-trained longitudinal physiologic reasoning most applicants lack, and operational leadership at scale that maps to perioperative systems thinking."</strong></div>
-  </div>
+  <div class="h1">Interview <span>prep</span></div>
+  <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6;">Three questions asked at every anesthesia interview. Practice out loud until natural -- not rehearsed.</div>
+  <div class="qbox"><div class="qbox-q">Q1 -- "Why didn't you match anesthesia the first time?"</div><div class="qbox-a"><strong>"My application had real strengths -- I interviewed at UCSD, Cedars-Sinai, OHSU, and UC Davis. But I had not yet demonstrated sustained clinical performance in a rigorous environment over time. I chose IM specifically to provide exactly that evidence. My performance in IM is my answer to that question."</strong><br><br>Key: honest, forward-looking, names the gap and closes it immediately.</div></div>
+  <div class="qbox"><div class="qbox-q">Q2 -- "Why anesthesia -- and why now?"</div><div class="qbox-a"><strong>"Internal medicine gave me a longitudinal view of how chronic disease evolves. That training made me increasingly drawn to the perioperative window -- where those chronic trajectories become acutely consequential. Anesthesia requires real-time simultaneous management of interacting organ systems under time pressure. That is the cognitive environment where I feel most engaged."</strong><br><br>Key: no vigilance, no advocacy, no last line of defense. Anesthesia as logical destination of IM reasoning.</div></div>
+  <div class="qbox"><div class="qbox-q">Q3 -- "What do you bring that others don't?"</div><div class="qbox-a"><strong>"Three things. First, perioperative AKI research -- I am lead investigator on a study examining surgical AKI risk factors. I understand perioperative physiology at a research level. Second, IM-trained longitudinal physiologic reasoning -- most applicants have not managed the chronic disease progression that creates perioperative risk. I have. Third, operational leadership at scale -- $140K fundraising infrastructure, workflow redesign for 300+ families -- which maps directly to perioperative systems thinking."</strong></div></div>
   <div class="card">
-    <div class="lbl">practice &#8212; AI evaluation</div>
-    <div class="ig"><label>Question</label>
-      <select id="prac-q">
-        <option>Why didn't you match anesthesia the first time?</option>
-        <option>Why anesthesia &#8212; and why now?</option>
-        <option>What do you bring that others don't?</option>
-        <option>What did IM teach you?</option>
-        <option>Tell me about a clinical challenge.</option>
-        <option>Where do you see yourself in 10 years?</option>
-        <option>Walk me through your research.</option>
-      </select>
-    </div>
-    <div class="ig"><label>Your answer</label><textarea id="prac-ans" style="min-height:100px;" placeholder="Write your answer. AI will flag clich&#233;s."></textarea></div>
-    <div class="brow"><button class="btn bp btn-i" onclick="evalAns()">AI Evaluate with AI</button></div>
+    <div class="lbl">practice -- AI evaluation</div>
+    <div class="ig"><label>Question</label><select id="prac-q"><option>Why didn't you match anesthesia the first time?</option><option>Why anesthesia -- and why now?</option><option>What do you bring that others don't?</option><option>What did IM teach you?</option><option>Tell me about a clinical challenge.</option><option>Where do you see yourself in 10 years?</option><option>Walk me through your research.</option></select></div>
+    <div class="ig"><label>Your answer (aim for 90-120 seconds spoken)</label><textarea id="prac-ans" style="min-height:100px;" placeholder="Write your answer. AI will flag cliches and weak phrases."></textarea></div>
+    <div class="brow"><button class="btn bp bi" onclick="evalAns()">Evaluate with AI</button></div>
     <div id="prac-out"></div>
   </div>
 </div>
 
-<!-- ===== APPLICATION ===== -->
+<!-- APPLICATION -->
 <div id="panel-application" class="panel">
-  <div class="stitle">Application <span>tracker</span></div>
+  <div class="h1">Application <span>tracker</span></div>
   <div class="g2">
     <div class="card">
       <div class="lbl">letters of recommendation</div>
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">IM Program Director</div><div style="font-size:11px;color:var(--t3);">Kaiser SF &middot; Ask months 9&#8211;10</div></div><span class="badge bo">BUILDING</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">Anesthesia faculty</div><div style="font-size:11px;color:var(--t3);">After elective &middot; Email every 6&#8211;8 wks</div></div><span class="badge br">NOT STARTED</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">ICU / senior IM attending</div><div style="font-size:11px;color:var(--t3);">After MICU or CCU block</div></div><span class="badge bgr">PENDING</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;"><div><div style="font-size:13px;color:var(--t);font-weight:500;">Additional (optional)</div><div style="font-size:11px;color:var(--t3);">Only if relationship is strong</div></div><span class="badge bgr">OPTIONAL</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">IM Program Director</div><div style="font-size:11px;color:var(--t3);">Kaiser SF -- Ask months 9-10 -- Most important</div></div><span class="bdg o">BUILDING</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">Anesthesia faculty</div><div style="font-size:11px;color:var(--t3);">After elective -- Email every 6-8 wks</div></div><span class="bdg r">NOT STARTED</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:13px;color:var(--t);font-weight:500;">ICU / senior IM attending</div><div style="font-size:11px;color:var(--t3);">After MICU or CCU block</div></div><span class="bdg gr">PENDING</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;"><div><div style="font-size:13px;color:var(--t);font-weight:500;">Additional (optional)</div></div><span class="bdg gr">OPTIONAL</span></div>
       </div>
-      <div style="margin-top:10px;padding:10px;background:rgba(255,183,77,.06);border:1px solid rgba(255,183,77,.15);border-radius:var(--r);font-size:12px;color:var(--g3);line-height:1.6;"><strong>Mentor cadence:</strong> Email anesthesia mentor every 6&#8211;8 weeks with a clinical case. Do not go silent.</div>
+      <div style="margin-top:10px;padding:10px;background:rgba(255,183,77,.06);border:1px solid rgba(255,183,77,.15);border-radius:var(--r);font-size:12px;color:var(--g3);line-height:1.6;"><strong>Mentor cadence:</strong> Email anesthesia mentor every 6-8 weeks with a clinical case connecting IM to perioperative thinking. Do not go silent for months.</div>
     </div>
     <div class="card">
       <div class="lbl">personal statement</div>
-      <div class="ci" id="ps0"><input type="checkbox" id="pscb0" onchange="chk('ps0')"><label for="pscb0">Draft 0 &#8212; brainstorm / bullets</label></div>
-      <div class="ci" id="ps1"><input type="checkbox" id="pscb1" onchange="chk('ps1')"><label for="pscb1">Draft 1 &#8212; first prose draft</label></div>
-      <div class="ci" id="ps2"><input type="checkbox" id="pscb2" onchange="chk('ps2')"><label for="pscb2">Draft 2 &#8212; revised with feedback</label></div>
-      <div class="ci" id="ps3"><input type="checkbox" id="pscb3" onchange="chk('ps3')"><label for="pscb3">Draft 3 &#8212; final polish</label></div>
-      <div class="ci" id="psint"><input type="checkbox" id="pscb4" onchange="chk('psint')"><label for="pscb4">Interview answers developed</label></div>
+      <div class="ci" id="ps0"><input type="checkbox" id="pscb0" onchange="chk('ps0')"><label for="pscb0">Draft 0 -- brainstorm / bullets</label></div>
+      <div class="ci" id="ps1"><input type="checkbox" id="pscb1" onchange="chk('ps1')"><label for="pscb1">Draft 1 -- first prose draft</label></div>
+      <div class="ci" id="ps2"><input type="checkbox" id="pscb2" onchange="chk('ps2')"><label for="pscb2">Draft 2 -- revised with feedback</label></div>
+      <div class="ci" id="ps3"><input type="checkbox" id="pscb3" onchange="chk('ps3')"><label for="pscb3">Draft 3 -- final polish</label></div>
+      <div class="ci" id="psint"><input type="checkbox" id="pscb4" onchange="chk('psint')"><label for="pscb4">Interview answers developed (begin March 2027)</label></div>
       <div class="dvdr"></div>
       <div class="lbl">anesthesia exposure</div>
       <div class="g2 k2" style="gap:8px;margin-top:8px;margin-bottom:10px;">
         <div class="stat"><div class="sv" id="sh-h">0</div><div class="sl">Shadowing hrs</div></div>
         <div class="stat"><div class="sv b" id="an-c">0</div><div class="sl">Contacts</div></div>
       </div>
-      <div class="ig"><label>Type</label><select id="exp-type"><option>Shadowing (OR)</option><option>Periop elective</option><option>Mentor meeting</option><option>Grand rounds</option><option>Research meeting</option><option>Other</option></select></div>
+      <div class="ig"><label>Type</label><select id="exp-type"><option>Shadowing (OR)</option><option>Periop elective</option><option>Mentor meeting</option><option>Grand rounds</option><option>Research meeting (AKI)</option><option>Other</option></select></div>
       <div class="ig"><label>Notes</label><input type="text" id="exp-note" placeholder="Who, what, what you learned..."></div>
-      <button class="save-btn" id="exp-save-btn" onclick="saveExposure()"> Save to GitHub</button>
-      <div id="exp-save-status" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-align:center;margin-top:6px;min-height:16px;"></div>
+      <button class="sbtn" id="exp-sbtn" onclick="saveExp()">Save to GitHub</button>
+      <div class="smsg" id="exp-smsg"></div>
     </div>
   </div>
 </div>
 
-<!-- ===== MILESTONES ===== -->
+<!-- MILESTONES -->
 <div id="panel-milestones" class="panel">
-  <div class="stitle">Timeline &amp; <span>milestones</span></div>
+  <div class="h1">Timeline &amp; <span>milestones</span></div>
   <div class="g2">
     <div class="card">
       <div class="lbl">timeline</div>
       <div class="tl">
-        <div class="tli done"><div class="tli-date">MAY 2026</div><div class="tli-title">Matched Kaiser SF IM</div></div>
-        <div class="tli now"><div class="tli-date">NOW</div><div class="tli-title">Pre-residency transition</div><div class="tli-detail">Build habits. Email AKI PI. Establish UWorld routine.</div></div>
-        <div class="tli"><div class="tli-date">JUNE 15</div><div class="tli-title">Orientation</div><div class="tli-detail">Ask about anesthesia faculty. Confirm elective options.</div></div>
-        <div class="tli"><div class="tli-date">JULY 1</div><div class="tli-title">Intern year begins</div><div class="tli-detail">Every attending = LOR in progress from day one.</div></div>
-        <div class="tli"><div class="tli-date">OCT 2026</div><div class="tli-title">Anesthesia mentor named</div><div class="tli-detail">Begin 6&#8211;8 week email cadence.</div></div>
-        <div class="tli"><div class="tli-date">JAN&#8211;FEB 2027</div><div class="tli-title">Step 3 &#8212; target 240+</div></div>
-        <div class="tli"><div class="tli-date">APR 2027</div><div class="tli-title">PS Draft 0</div></div>
-        <div class="tli"><div class="tli-date">SEP 2027</div><div class="tli-title">ERAS submitted</div></div>
-        <div class="tli"><div class="tli-date">MAR 2028</div><div class="tli-title">Match Day &#8212; Anesthesiology</div></div>
+        <div class="tli done"><div class="tli-d">MAY 2026</div><div class="tli-t">Matched Kaiser SF IM</div></div>
+        <div class="tli now"><div class="tli-d">NOW</div><div class="tli-t">Pre-residency transition</div><div class="tli-s">Build habits. Email AKI PI. Establish UWorld routine.</div></div>
+        <div class="tli"><div class="tli-d">JUNE 15</div><div class="tli-t">Orientation</div><div class="tli-s">Ask about anesthesia faculty. Confirm elective options.</div></div>
+        <div class="tli"><div class="tli-d">JULY 1</div><div class="tli-t">Intern year begins</div><div class="tli-s">Every attending = LOR in progress from day one.</div></div>
+        <div class="tli"><div class="tli-d">OCT 2026</div><div class="tli-t">Anesthesia mentor named</div><div class="tli-s">Begin 6-8 week email cadence with clinical updates.</div></div>
+        <div class="tli"><div class="tli-d">JAN-FEB 2027</div><div class="tli-t">Step 3 -- target 240+</div></div>
+        <div class="tli"><div class="tli-d">APR 2027</div><div class="tli-t">Personal statement Draft 0</div></div>
+        <div class="tli"><div class="tli-d">JUN 2027</div><div class="tli-t">LOR requests sent</div></div>
+        <div class="tli"><div class="tli-d">SEP 2027</div><div class="tli-t">ERAS submitted</div></div>
+        <div class="tli"><div class="tli-d">MAR 2028</div><div class="tli-t">Match Day -- Anesthesiology</div></div>
       </div>
     </div>
     <div>
       <div class="card" style="margin-bottom:12px;">
         <div class="lbl">open tasks</div>
-        <div class="ci" id="hw1"><input type="checkbox" id="hwcb1" onchange="chk('hw1')"><label for="hwcb1">Email Temple AKI PI &#8212; confirm project status</label></div>
-        <div class="ci" id="hw2"><input type="checkbox" id="hwcb2" onchange="chk('hw2')"><label for="hwcb2">Write first narrative reflection</label></div>
+        <div class="ci" id="hw1"><input type="checkbox" id="hwcb1" onchange="chk('hw1')"><label for="hwcb1">Email Temple AKI PI -- confirm project status</label></div>
+        <div class="ci" id="hw2"><input type="checkbox" id="hwcb2" onchange="chk('hw2')"><label for="hwcb2">Write first narrative reflection (10 min)</label></div>
         <div class="ci" id="hw3"><input type="checkbox" id="hwcb3" onchange="chk('hw3')"><label for="hwcb3">Ask chief residents about anesthesia faculty at orientation</label></div>
-        <div class="ci" id="hw4"><input type="checkbox" id="hwcb4" onchange="chk('hw4')"><label for="hwcb4">Confirm if IM residents can rotate on anesthesia</label></div>
+        <div class="ci" id="hw4"><input type="checkbox" id="hwcb4" onchange="chk('hw4')"><label for="hwcb4">Confirm if IM residents can rotate on anesthesia elective</label></div>
         <div class="ci" id="hw5"><input type="checkbox" id="hwcb5" onchange="chk('hw5')"><label for="hwcb5">Identify ICU attendings at Kaiser SF</label></div>
-        <div class="ci" id="hw6"><input type="checkbox" id="hwcb6" onchange="chk('hw6')"><label for="hwcb6">Name one anesthesia mentor target by Oct 2026</label></div>
-        <div class="ci" id="hw7"><input type="checkbox" id="hwcb7" onchange="chk('hw7')"><label for="hwcb7">Identify 2&#8211;3 IM target attending writers by month 3</label></div>
+        <div class="ci" id="hw6"><input type="checkbox" id="hwcb6" onchange="chk('hw6')"><label for="hwcb6">Name one anesthesia mentor target by October 2026</label></div>
       </div>
       <div class="card">
         <div class="lbl">step 3 phases</div>
         <div style="font-size:12px;color:var(--t2);line-height:1.8;">
-          <div style="padding:8px 0;border-bottom:1px solid var(--b);"><span class="badge bg" style="margin-right:6px;">PHASE 1</span><strong style="color:var(--t);">Jun&#8211;Dec 2026</strong> &#8212; 15&#8211;20 Qs/day, never skip 2+ days</div>
-          <div style="padding:8px 0;border-bottom:1px solid var(--b);"><span class="badge bb" style="margin-right:6px;">PHASE 2</span><strong style="color:var(--t);">Jan&#8211;Jun 2027</strong> &#8212; all systems, daily CCS</div>
-          <div style="padding:8px 0;"><span class="badge bo" style="margin-right:6px;">PHASE 3</span><strong style="color:var(--t);">Jul&#8211;Sep 2027</strong> &#8212; 30 Qs/day, target 240+</div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--b);"><span class="bdg g" style="margin-right:6px;">PHASE 1</span><strong style="color:var(--t);">Jun-Dec 2026</strong> -- 15-20 Qs/day, never skip 2+ days</div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--b);"><span class="bdg b" style="margin-right:6px;">PHASE 2</span><strong style="color:var(--t);">Jan-Jun 2027</strong> -- all systems, daily CCS</div>
+          <div style="padding:8px 0;"><span class="bdg o" style="margin-right:6px;">PHASE 3</span><strong style="color:var(--t);">Jul-Sep 2027</strong> -- 30 Qs/day, target 240+</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== SETTINGS ===== -->
+<!-- SETTINGS -->
 <div id="panel-settings" class="panel">
-  <div class="stitle">Settings &amp; <span>GitHub sync</span></div>
+  <div class="h1">Settings &amp; <span>sync</span></div>
   <div class="g2">
     <div class="card">
-      <div class="api-info">
+      <div class="abox">
         <div class="lbl" style="color:var(--g);">github personal access token</div>
-        <p>This token lets the Save buttons push your data directly to GitHub. It's stored only in your browser &#8212; never sent anywhere except GitHub's API.</p>
-        <p><strong>To get a token:</strong> github.com -&gt; Profile -&gt; Settings -&gt; Developer settings -&gt; Personal access tokens -&gt; Tokens (classic) -&gt; Generate new token -&gt; check <strong>repo</strong> -&gt; no expiration -&gt; Generate -&gt; copy it.</p>
-        <p style="color:var(--g3);">Once set, every Save button pushes to GitHub automatically. No Claude Code needed for logging.</p>
+        <p>All Save buttons write only to <strong>data.json</strong>. The UI file (index.html) is never touched during saves. You can redesign, recolor, or add tabs to index.html at any time without losing a single data entry.</p>
+        <p><strong>To get a token:</strong> github.com -- Profile -- Settings -- Developer settings -- Personal access tokens -- Tokens (classic) -- Generate new token -- check repo -- no expiration -- copy it (starts with ghp_).</p>
+        <p style="color:var(--g3);">Stored only in your browser locally. Never sent anywhere except GitHub's API.</p>
       </div>
-      <div class="ig"><label>GitHub Personal Access Token</label><input type="password" id="gh-token" placeholder="ghp_..."></div>
-      <div class="ig"><label>GitHub Username</label><input type="text" id="gh-user" placeholder="javiermontelongo-md" value="javiermontelongo-md"></div>
-      <div class="ig"><label>Repository Name</label><input type="text" id="gh-repo" placeholder="academic-OS" value="academic-OS"></div>
+      <div class="ig"><label>GitHub Token (ghp_...)</label><input type="password" id="gh-tok" placeholder="ghp_..."></div>
+      <div class="ig"><label>GitHub Username</label><input type="text" id="gh-usr" value="javiermontelongo-md"></div>
+      <div class="ig"><label>Repository Name</label><input type="text" id="gh-repo" value="academic-OS"></div>
+      <div class="ig"><label>Data filename</label><input type="text" id="gh-file" value="data.json"></div>
       <div class="brow">
-        <button class="btn bp btn-i" onclick="saveGHSettings()">Save GitHub settings</button>
-        <button class="btn bs btn-i" onclick="testGHConnection()">Test connection</button>
+        <button class="btn bp bi" onclick="saveCFG()">Save settings</button>
+        <button class="btn bs bi" onclick="testCon()">Test connection</button>
+        <button class="btn bs bi" onclick="fetchData()">Reload data</button>
       </div>
-      <div id="gh-status" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:var(--mono);min-height:16px;"></div>
+      <div id="gh-st" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:var(--mono);min-height:16px;"></div>
     </div>
     <div class="card">
-      <div class="api-info">
-        <div class="lbl" style="color:var(--g2);">anthropic api key (ai features)</div>
-        <p>Powers the AI buttons &#8212; daily plans, UWorld recommendations, reading lists, interview evaluation. Optional &#8212; dashboard works without it.</p>
-        <p><strong>To get a key:</strong> console.anthropic.com -&gt; API Keys -&gt; Create Key -&gt; copy it. Cost: ~$0.003 per button press.</p>
-        <p style="color:var(--g3);">Do NOT paste API keys into Claude chat.</p>
+      <div class="abox">
+        <div class="lbl" style="color:var(--g2);">anthropic api key</div>
+        <p>Powers all AI coaching buttons. Optional -- dashboard works fully without it.</p>
+        <p><strong>To get:</strong> console.anthropic.com -- API Keys -- Create Key. ~$0.003 per press. Do NOT paste in Claude chat.</p>
       </div>
-      <div class="ig"><label>Anthropic API Key</label><input type="password" id="api-input" placeholder="sk-ant-api03-..."></div>
-      <div class="brow">
-        <button class="btn bp btn-i" onclick="saveApiKey()">Save API key</button>
-        <button class="btn bd btn-i" onclick="clearApiKey()">Clear</button>
+      <div class="ig"><label>Anthropic API Key (sk-ant-...)</label><input type="password" id="api-key" placeholder="sk-ant-api03-..."></div>
+      <div class="brow"><button class="btn bp bi" onclick="saveAPI()">Save key</button><button class="btn bd bi" onclick="clearAPI()">Clear</button></div>
+      <div id="api-st" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:var(--mono);min-height:16px;"></div>
+      <div class="dvdr"></div>
+      <div class="lbl">field migration tool</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6;">If you rename a data field, use this to move your data to the new field name. Safe -- will not overwrite existing data.</div>
+      <div class="g2 k2" style="gap:8px;margin-bottom:8px;">
+        <div class="ig"><label>Old field name</label><input type="text" id="mig-old" placeholder="e.g. uworldSessions"></div>
+        <div class="ig"><label>New field name</label><input type="text" id="mig-new" placeholder="e.g. qbankSessions"></div>
       </div>
-      <div id="api-status" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:var(--mono);min-height:16px;"></div>
+      <button class="btn bs bi" onclick="runMigration()">Run migration</button>
+      <div id="mig-st" style="margin-top:8px;font-size:11px;color:var(--t3);font-family:var(--mono);min-height:16px;"></div>
       <div class="dvdr"></div>
       <div class="lbl">data</div>
-      <div class="brow">
-        <button class="btn bs btn-i" onclick="exportData()">Export JSON</button>
-        <button class="btn bd btn-i" onclick="clearData()">Clear local data</button>
-      </div>
+      <div class="brow"><button class="btn bs bi" onclick="exportData()">Export data.json</button><button class="btn bd bi" onclick="clrCFG()">Clear local settings</button></div>
+      <div style="margin-top:10px;padding:10px;background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.1);border-radius:var(--r);font-size:11px;color:var(--t3);line-height:1.6;">Your data lives in <strong style="color:var(--t);">data.json</strong> on GitHub -- separate from this UI file. Update index.html freely: add tabs, change colors, add fields. Your logged data is always safe.</div>
     </div>
   </div>
 </div>
 
 </div><!-- end main -->
 
-<!-- BOTTOM NAV (mobile) -->
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="goMobile('today',this)"><span class="nav-icon">TODAY</span><span class="nav-label">TODAY</span></button>
-  <button class="nav-item" onclick="goMobile('week',this)"><span class="nav-icon">WEEK</span><span class="nav-label">WEEK</span></button>
-  <button class="nav-item" onclick="goMobile('uworld',this)"><span class="nav-icon">[UW]</span><span class="nav-label">UWORLD</span></button>
-  <button class="nav-item" onclick="goMobile('reading',this)"><span class="nav-icon">READ</span><span class="nav-label">READING</span></button>
-  <button class="nav-item" onclick="goMobile('rotations',this)"><span class="nav-icon">ROTS</span><span class="nav-label">ROTATIONS</span></button>
-  <button class="nav-item" onclick="goMobile('narrative',this)"><span class="nav-icon">NOTE</span><span class="nav-label">NARRATIVE</span></button>
-  <button class="nav-item" onclick="goMobile('interview',this)"><span class="nav-icon">INTV</span><span class="nav-label">INTERVIEW</span></button>
-  <button class="nav-item" onclick="goMobile('milestones',this)"><span class="nav-icon">GOALS</span><span class="nav-label">GOALS</span></button>
-  <button class="nav-item" onclick="goMobile('settings',this)"><span class="nav-icon">SET</span><span class="nav-label">SETTINGS</span></button>
+<nav class="bnav">
+  <button class="ni on" onclick="gM('today',this)"><span class="nicon">T</span><span class="nlbl">TODAY</span></button>
+  <button class="ni" onclick="gM('week',this)"><span class="nicon">W</span><span class="nlbl">WEEK</span></button>
+  <button class="ni" onclick="gM('uworld',this)"><span class="nicon">Q</span><span class="nlbl">UWORLD</span></button>
+  <button class="ni" onclick="gM('reading',this)"><span class="nicon">R</span><span class="nlbl">READ</span></button>
+  <button class="ni" onclick="gM('rotations',this)"><span class="nicon">Rx</span><span class="nlbl">ROTS</span></button>
+  <button class="ni" onclick="gM('narrative',this)"><span class="nicon">N</span><span class="nlbl">NARR</span></button>
+  <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
+  <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
+  <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
-</div>
+</div><!-- end app -->
 
 <script>
 // ============================================================
-// CANONICAL DATA STORE
-// All logged data lives here and gets pushed to GitHub on save
+// STATE -- no data here. All data lives in data.json on GitHub.
 // ============================================================
-const CANONICAL = {
-  lastUpdated: "2026-05-16",
-  uworldSessions: [],
-  journalEntries: [],
-  exposureLog: [],
-  checks: {},
-  restDays: ["Sat"],
-  rotation: "pre",
-  shadowingHours: 0,
-  anesthesiaContacts: 0,
-  lorStatus: { pd: "not started", anesthesia: "not started", icu: "not started" },
-  profile: {
-    step2: 237,
-    step3Target: "Jan-Feb 2027",
-    currentRotation: "Pre-residency",
-    program: "Kaiser Permanente SF &#8212; IM Categorical",
-    matchGoal: "Anesthesiology 2027-2028",
-    orientation: "June 15 2026",
-    firstRotation: "July 1 2026"
-  }
-};
-// ============================================================
-// END CANONICAL DATA STORE
-// ============================================================
+let D = null;
+let CFG = { tok:'', usr:'javiermontelongo-md', repo:'academic-OS', file:'data.json', api:'' };
+
+function lCFG(){ try{ const d=localStorage.getItem('acad_v3'); if(d) Object.assign(CFG,JSON.parse(d)); }catch(e){} }
+function sCFG(){ try{ localStorage.setItem('acad_v3',JSON.stringify(CFG)); }catch(e){} }
+lCFG();
 
 // ============================================================
-// LOCAL SETTINGS (never pushed to GitHub &#8212; device only)
+// GITHUB -- reads/writes data.json ONLY
 // ============================================================
-let SETTINGS = { ghToken: '', ghUser: 'javiermontelongo-md', ghRepo: 'academic-OS', apiKey: '' };
-
-function loadSettings(){
-  try{ const d=localStorage.getItem('academic_os_settings'); if(d) Object.assign(SETTINGS,JSON.parse(d)); }catch(e){}
-}
-function saveSettings(){
-  try{ localStorage.setItem('academic_os_settings',JSON.stringify(SETTINGS)); }catch(e){}
-}
-loadSettings();
-
-// ============================================================
-// GITHUB API &#8212; push CANONICAL to index.html
-// ============================================================
-async function pushToGitHub(triggerEl, statusEl){
-  if(!SETTINGS.ghToken){ setSaveStatus(statusEl,'&#9888; Add GitHub token in Settings first'); return false; }
-  if(triggerEl){ triggerEl.classList.add('saving'); triggerEl.textContent='Saving&#8230;'; }
-  setSyncIndicator('saving','Saving&#8230;');
+async function fetchData(){
+  if(!CFG.tok){ hOv(); sync('err','No token -- go to Settings'); return; }
+  sync('saving','Loading...');
   try{
-    // 1. Get current file SHA
-    const infoRes = await fetch(
-      `https://api.github.com/repos/${SETTINGS.ghUser}/${SETTINGS.ghRepo}/contents/index.html`,
-      { headers:{ Authorization:`token ${SETTINGS.ghToken}`, Accept:'application/vnd.github.v3+json' } }
-    );
-    if(!infoRes.ok) throw new Error('Could not read file from GitHub. Check token and repo name.');
-    const info = await infoRes.json();
-    const sha = info.sha;
+    const r=await fetch(`https://api.github.com/repos/${CFG.usr}/${CFG.repo}/contents/${CFG.file}`,{headers:{Authorization:`token ${CFG.tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(!r.ok) throw new Error('Cannot read '+CFG.file+' -- check token and repo name in Settings');
+    const info=await r.json();
+    const bytes=Uint8Array.from(atob(info.content.replace(/\n/g,'')),c=>c.charCodeAt(0));
+    D=JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    sync('ok','Synced'); hOv(); onLoad();
+  }catch(e){
+    sync('err',e.message); hOv();
+    D=defD(); onLoad();
+  }
+}
 
-    // 2. Get current file content and update CANONICAL block
-    const rawBytes = Uint8Array.from(atob(info.content.replace(/\n/g,'')), c => c.charCodeAt(0));
-    const currentContent = new TextDecoder('utf-8').decode(rawBytes);
-    CANONICAL.lastUpdated = new Date().toISOString().split('T')[0];
-    const canonicalStr = JSON.stringify(CANONICAL, null, 2);
-    const updated = currentContent.replace(
-      /const CANONICAL = \{[\s\S]*?\};\n\/\/ ={10,}\n\/\/ END CANONICAL DATA STORE/,
-      `const CANONICAL = ${canonicalStr};\n// ============================================================\n// END CANONICAL DATA STORE`
-    );
-
-    // 3. Push updated file
-    const pushRes = await fetch(
-      `https://api.github.com/repos/${SETTINGS.ghUser}/${SETTINGS.ghRepo}/contents/index.html`,
-      {
-        method:'PUT',
-        headers:{ Authorization:`token ${SETTINGS.ghToken}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' },
-        body: JSON.stringify({
-          message: `Update data &#8212; ${new Date().toLocaleDateString()}`,
-          content: btoa(String.fromCharCode(...new TextEncoder().encode(updated))),
-          sha
-        })
-      }
-    );
-    if(!pushRes.ok) throw new Error('GitHub push failed. Check token permissions.');
-    setSaveStatus(statusEl, '&check; Saved to GitHub &#8212; ' + new Date().toLocaleTimeString());
-    setSyncIndicator('ok','Synced');
-    if(triggerEl){ triggerEl.classList.remove('saving'); triggerEl.textContent=' Save to GitHub'; }
+async function push(btnId,msgId){
+  if(!CFG.tok){ msg(msgId,'Add GitHub token in Settings first'); return false; }
+  const btn=document.getElementById(btnId);
+  if(btn){ btn.classList.add('saving'); btn.textContent='Saving...'; }
+  sync('saving','Saving...');
+  try{
+    const ir=await fetch(`https://api.github.com/repos/${CFG.usr}/${CFG.repo}/contents/${CFG.file}`,{headers:{Authorization:`token ${CFG.tok}`,Accept:'application/vnd.github.v3+json'}});
+    if(!ir.ok) throw new Error('Cannot read '+CFG.file+' -- check token and repo in Settings');
+    const info=await ir.json();
+    D.lastUpdated=new Date().toISOString().split('T')[0];
+    const enc=btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(D,null,2))));
+    const pr=await fetch(`https://api.github.com/repos/${CFG.usr}/${CFG.repo}/contents/${CFG.file}`,{method:'PUT',headers:{Authorization:`token ${CFG.tok}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:'Data update',content:enc,sha:info.sha})});
+    if(!pr.ok) throw new Error('Push failed -- check token has repo write permissions');
+    msg(msgId,'Saved -- '+new Date().toLocaleTimeString());
+    sync('ok','Synced');
+    if(btn){ btn.classList.remove('saving'); btn.textContent='Save to GitHub'; }
     return true;
   }catch(e){
-    setSaveStatus(statusEl, '&#9888; ' + e.message);
-    setSyncIndicator('error','Sync error');
-    if(triggerEl){ triggerEl.classList.remove('saving'); triggerEl.textContent=' Save to GitHub'; }
+    msg(msgId,'Error: '+e.message); sync('err','Save failed');
+    if(btn){ btn.classList.remove('saving'); btn.textContent='Save to GitHub'; }
     return false;
   }
 }
 
-function setSaveStatus(id, msg){ const el=document.getElementById(id); if(el) el.textContent=msg; }
-function setSyncIndicator(state, label){
-  const dot=document.getElementById('sync-dot');
-  const lbl=document.getElementById('sync-label');
-  const mtag=document.getElementById('m-sync-tag');
-  if(dot){ dot.className='sync-dot '+state; }
-  if(lbl) lbl.textContent=label;
-  if(mtag) mtag.textContent=label.toUpperCase();
-}
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028'}}; }
 
 // ============================================================
 // INIT
 // ============================================================
-const now = new Date();
-const dateStr = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-if(document.getElementById('d-date')) document.getElementById('d-date').textContent=dateStr;
-if(document.getElementById('m-date')) document.getElementById('m-date').textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const now=new Date();
+if(document.getElementById('dd')) document.getElementById('dd').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+if(document.getElementById('md')) document.getElementById('md').textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 const di=document.getElementById('uw-date'); if(di) di.value=now.toISOString().split('T')[0];
-if(SETTINGS.ghToken){ document.getElementById('gh-token').value=SETTINGS.ghToken; document.getElementById('gh-status').textContent='&check; Token loaded'; }
-if(SETTINGS.ghUser) document.getElementById('gh-user').value=SETTINGS.ghUser;
-if(SETTINGS.ghRepo) document.getElementById('gh-repo').value=SETTINGS.ghRepo;
-if(SETTINGS.apiKey){ document.getElementById('api-input').value=SETTINGS.apiKey; document.getElementById('api-status').textContent='&check; Key loaded'; }
-try{ restoreChecks(); }catch(e){}
-try{ renderUWorldStats(); }catch(e){}
-try{ renderUWorldHist(); }catch(e){}
-try{ buildWeek(); }catch(e){}
-try{ showRot(null,'micu'); }catch(e){}
-try{ buildReadingList(); }catch(e){}
-try{ renderExposureLog(); }catch(e){}
-try{ renderJournalHistory(); }catch(e){}
+if(CFG.tok) document.getElementById('gh-tok').value=CFG.tok;
+document.getElementById('gh-usr').value=CFG.usr;
+document.getElementById('gh-repo').value=CFG.repo;
+document.getElementById('gh-file').value=CFG.file;
+if(CFG.api){ document.getElementById('api-key').value=CFG.api; document.getElementById('api-st').textContent='Key loaded'; }
+fetchData();
+buildRdList();
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-function goTab(name,el){
-  try{
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    const p=document.getElementById('panel-'+name); if(p) p.classList.add('active');
-    if(el) el.classList.add('active');
-  }catch(e){}
-}
-function goMobile(name,el){
-  try{
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    const p=document.getElementById('panel-'+name); if(p){ p.classList.add('active'); p.scrollTop=0; }
-    if(el) el.classList.add('active');
-  }catch(e){}
+function hOv(){ const e=document.getElementById('ov'); if(e){ e.style.opacity='0'; e.style.transition='opacity .4s'; setTimeout(()=>e.remove(),400); } }
+
+function onLoad(){
+  if(D.checks) restChk();
+  if(D.restDays){
+    document.querySelectorAll('#rchips .chip').forEach(c=>{
+      if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
+    });
+  }
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats();
 }
 
 // ============================================================
-// BURNOUT
+// NAV
+// ============================================================
+function gT(n,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const p=document.getElementById('panel-'+n); if(p) p.classList.add('on');
+  if(el) el.classList.add('on');
+}
+function gM(n,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  const p=document.getElementById('panel-'+n); if(p){ p.classList.add('on'); p.scrollTop=0; }
+  if(el) el.classList.add('on');
+}
+
+// ============================================================
+// SYNC INDICATOR
+// ============================================================
+function sync(state,label){
+  const sd=document.getElementById('sd'),sl=document.getElementById('sl2'),ms=document.getElementById('ms');
+  if(sd) sd.className='sdot '+state;
+  if(sl) sl.textContent=label;
+  if(ms) ms.textContent=label;
+}
+function msg(id,html){ const e=document.getElementById(id); if(e) e.innerHTML=html; }
+
+// ============================================================
+// BURNOUT METER
 // ============================================================
 function upB(){
-  const e=+document.getElementById('sl-e').value;
-  const s=+document.getElementById('sl-s').value;
-  const m=+document.getElementById('sl-m').value;
-  document.getElementById('v-e').textContent=e+'/10';
-  document.getElementById('v-s').textContent=s+'h';
-  document.getElementById('v-m').textContent=m+'/10';
-  const risk=Math.max(0,Math.min(100,Math.round((10-((e+(s/9*10)+m)/3))*10)));
-  document.getElementById('b-fill').style.width=risk+'%';
-  const c=risk<25?'var(--g)':risk<50?'var(--g3)':risk<75?'var(--g4)':'var(--red)';
-  const l=risk<25?'LOW':risk<50?'MODERATE':risk<75?'HIGH':'CRITICAL';
-  document.getElementById('b-fill').style.background=c;
-  document.getElementById('b-lbl').textContent=l;
-  document.getElementById('b-lbl').style.color=c;
+  const e=+document.getElementById('sle').value,s=+document.getElementById('sls').value,m=+document.getElementById('slm').value;
+  document.getElementById('ve').textContent=e+'/10';
+  document.getElementById('vs').textContent=s+'h';
+  document.getElementById('vm').textContent=m+'/10';
+  const r=Math.max(0,Math.min(100,Math.round((10-((e+(s/9*10)+m)/3))*10)));
+  document.getElementById('bfill').style.width=r+'%';
+  const c=r<25?'var(--g)':r<50?'var(--g3)':r<75?'var(--g4)':'var(--red)';
+  const l=r<25?'LOW':r<50?'MODERATE':r<75?'HIGH':'CRITICAL';
+  document.getElementById('bfill').style.background=c;
+  document.getElementById('blbl').textContent=l;
+  document.getElementById('blbl').style.color=c;
 }
 
-// ============================================================
-// MODE
-// ============================================================
-function modeChange(){
+function modeChg(){
   const m=document.getElementById('mode-sel').value;
-  const msgs={
-    normal:'<p><strong>Normal:</strong> Full session &#8212; 15&#8211;20 UWorld timed, Anki, reading, reflection.</p>',
-    call:'<p><strong>Call day:</strong> 10 UWorld minimum. No reading required. Evaluations are your application.</p>',
-    postcall:'<p><strong>Post-call:</strong> Zero required. Sleep before studying, always.</p>',
-    recovery:'<p><strong>Recovery:</strong> Podcast only. Bad weeks are data, not failure.</p>',
-    rest:'<p><strong>Rest (Sunday protected):</strong> No UWorld. No AMBOSS. Social recharge.</p>'
-  };
-  document.getElementById('today-out').innerHTML='<div class="air"><div class="albl">* MODE</div>'+msgs[m]+'</div>';
+  const t={normal:'<p><strong>Normal:</strong> Full session -- 15-20 UWorld timed, Anki, reading, reflection.</p>',call:'<p><strong>Call day:</strong> 10 UWorld minimum. Evaluations are your application.</p>',postcall:'<p><strong>Post-call:</strong> Zero required. Sleep before studying, always.</p>',recovery:'<p><strong>Recovery:</strong> Podcast only. Bad weeks are data, not failure.</p>',rest:'<p><strong>Rest day (Sunday protected):</strong> No UWorld. Social recharge.</p>'};
+  document.getElementById('today-out').innerHTML='<div class="air"><div class="al">MODE</div>'+t[m]+'</div>';
 }
-function selMode(el,v){
-  el.closest('div').querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');
-}
+function selMd(el,v){ el.closest('div').querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); }
 
 // ============================================================
-// CHECKBOXES &#8212; saved locally, not to GitHub (UI state only)
+// CHECKBOXES
 // ============================================================
 function chk(id){
-  const el=document.getElementById(id); if(!el) return;
+  const el=document.getElementById(id); if(!el||!D) return;
   const cb=el.querySelector('input[type=checkbox]');
-  if(cb.checked) el.classList.add('checked'); else el.classList.remove('checked');
-  CANONICAL.checks[id]=cb.checked;
+  if(cb.checked) el.classList.add('done'); else el.classList.remove('done');
+  if(!D.checks) D.checks={};
+  D.checks[id]=cb.checked;
 }
-function restoreChecks(){
-  for(const [id,val] of Object.entries(CANONICAL.checks)){
+function restChk(){
+  if(!D||!D.checks) return;
+  for(const [id,val] of Object.entries(D.checks)){
     const el=document.getElementById(id); if(!el) continue;
     const cb=el.querySelector('input[type=checkbox]'); if(!cb) continue;
-    cb.checked=val; if(val) el.classList.add('checked'); else el.classList.remove('checked');
+    cb.checked=val; if(val) el.classList.add('done'); else el.classList.remove('done');
   }
 }
 
 // ============================================================
-// UWORLD &#8212; save to GitHub
+// UWORLD
 // ============================================================
-async function saveUWorld(){
-  const date=document.getElementById('uw-date').value;
-  const q=+document.getElementById('uw-q').value||0;
-  const score=+document.getElementById('uw-s').value||null;
-  const topic=document.getElementById('uw-topic').value;
-  const notes=document.getElementById('uw-notes').value;
-  const mode=document.querySelector('#panel-uworld .chip.sel')?.textContent||'timed';
-  if(!date||!q||!topic){ setSaveStatus('uw-save-status','&#9888; Fill in date, questions, and topic'); return; }
-  CANONICAL.uworldSessions.push({ date, questions:q, score, topic, mode, notes, ts:Date.now() });
-  const btn=document.getElementById('uw-save-btn');
-  const ok=await pushToGitHub(btn,'uw-save-status');
-  if(ok){
-    renderUWorldStats();
-    renderUWorldHist();
-    document.getElementById('uw-q').value='15';
-    document.getElementById('uw-s').value='';
-    document.getElementById('uw-notes').value='';
-  } else {
-    CANONICAL.uworldSessions.pop(); // rollback if push failed
-  }
+async function saveUW(){
+  if(!D){ msg('uw-smsg','Data not loaded yet'); return; }
+  const date=document.getElementById('uw-date').value,q=+document.getElementById('uw-q').value||0,score=+document.getElementById('uw-s').value||null,topic=document.getElementById('uw-topic').value,notes=document.getElementById('uw-notes').value;
+  const mode=document.querySelector('#panel-uworld .chip.on')?.textContent||'timed';
+  if(!date||!q||!topic){ msg('uw-smsg','Fill in date, questions, and topic'); return; }
+  if(!D.uworldSessions) D.uworldSessions=[];
+  D.uworldSessions.push({date,questions:q,score,topic,mode,notes,ts:Date.now()});
+  const ok=await push('uw-sbtn','uw-smsg');
+  if(ok){ renderUWstats(); renderUWhist(); document.getElementById('uw-q').value='15'; document.getElementById('uw-s').value=''; document.getElementById('uw-notes').value=''; }
+  else D.uworldSessions.pop();
 }
-function renderUWorldStats(){
-  const ss=CANONICAL.uworldSessions;
-  const total=ss.reduce((a,s)=>a+s.questions,0);
-  const scores=ss.filter(s=>s.score).map(s=>s.score);
-  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):null;
-  const pct=Math.min(100,Math.round(total/3500*100));
-  document.getElementById('st-total').textContent=total;
-  document.getElementById('st-avg').textContent=avg?avg+'%':'&#8212;';
+function renderUWstats(){
+  if(!D||!D.uworldSessions) return;
+  const ss=D.uworldSessions,total=ss.reduce((a,s)=>a+s.questions,0),scores=ss.filter(s=>s.score).map(s=>s.score),avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):null,pct=Math.min(100,Math.round(total/3500*100));
+  document.getElementById('st-tot').textContent=total;
+  document.getElementById('st-avg').textContent=avg?avg+'%':'--';
   document.getElementById('st-pct').textContent=pct+'%';
-  let streak=0;
-  if(ss.length){
-    const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();
-    let cur=new Date();
-    for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
-  }
-  document.getElementById('st-streak').textContent=streak;
-  // Domain breakdown
-  const el=document.getElementById('domain-bd'); const dm={};
+  let streak=0;const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();let cur=new Date();
+  for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
+  document.getElementById('st-str').textContent=streak;
+  const el=document.getElementById('dom-bd'),dm={};
   ss.forEach(s=>{ if(!dm[s.topic])dm[s.topic]={q:0,scores:[]}; dm[s.topic].q+=s.questions; if(s.score)dm[s.topic].scores.push(s.score); });
   if(!Object.keys(dm).length){ el.innerHTML='<div style="font-size:12px;color:var(--t3);font-style:italic;">Log sessions to see breakdown.</div>'; return; }
-  el.innerHTML=Object.entries(dm).map(([t,d])=>{
-    const avg=d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length):null;
-    const pct=avg||50;
-    return`<div class="pbw"><div class="pbl"><span>${t}</span><span>${d.q}q${avg?' &middot; '+avg+'%':''}</span></div><div class="pbb"><div class="pbf" style="width:${pct}%;background:${pct>=70?'var(--g)':pct>=55?'var(--g3)':'var(--g4)'};"></div></div></div>`;
-  }).join('');
+  el.innerHTML=Object.entries(dm).map(([t,d])=>{const av=d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length):null,p=av||50;return`<div class="pbw"><div class="pbl"><span>${t}</span><span>${d.q}q${av?' - '+av+'%':''}</span></div><div class="pbb"><div class="pbf" style="width:${p}%;background:${p>=70?'var(--g)':p>=55?'var(--g3)':'var(--g4)'};"></div></div></div>`;}).join('');
 }
-function renderUWorldHist(){
+function renderUWhist(){
   const el=document.getElementById('uw-hist');
-  const ss=[...CANONICAL.uworldSessions].reverse().slice(0,15);
-  if(!ss.length){ el.innerHTML='<div style="font-size:12px;color:var(--t3);font-style:italic;">No sessions yet.</div>'; return; }
-  el.innerHTML=ss.map(s=>`<div class="le"><div class="ld">${s.date}</div><div class="lc"><div class="lt">${s.questions}q &middot; ${s.topic} &middot; ${s.mode}${s.score?` &middot; <span style="color:var(--g);">${s.score}%</span>`:''}</div>${s.notes?`<div class="ldt">${s.notes}</div>`:''}</div></div>`).join('');
+  if(!D||!D.uworldSessions||!D.uworldSessions.length){el.innerHTML='<div style="font-size:12px;color:var(--t3);font-style:italic;">No sessions yet.</div>';return;}
+  el.innerHTML=[...D.uworldSessions].reverse().slice(0,15).map(s=>`<div class="le"><div class="ld">${s.date}</div><div class="lc"><div class="lt">${s.questions}q - ${s.topic} - ${s.mode}${s.score?' - <span style="color:var(--g);">'+s.score+'%</span>':''}</div>${s.notes?'<div class="ldt">'+s.notes+'</div>':''}</div></div>`).join('');
 }
 
 // ============================================================
-// JOURNAL &#8212; save to GitHub
+// JOURNAL
 // ============================================================
-async function saveJournal(){
-  const month=document.getElementById('jnl-month').value;
-  const caseText=document.getElementById('jnl-case').value;
-  const physio=document.getElementById('jnl-physio').value;
-  const anes=document.getElementById('jnl-anes').value;
-  const win=document.getElementById('jnl-win').value;
-  if(!physio){ setSaveStatus('jnl-save-status','&#9888; Write something in the physiology field'); return; }
-  CANONICAL.journalEntries.push({ month, case:caseText, physio, anes, win, ts:Date.now() });
-  const btn=document.getElementById('jnl-save-btn');
-  const ok=await pushToGitHub(btn,'jnl-save-status');
-  if(ok){
-    ['jnl-physio','jnl-anes','jnl-case','jnl-win'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    renderJournalHistory();
-  } else { CANONICAL.journalEntries.pop(); }
+async function saveJnl(){
+  if(!D){ msg('jnl-smsg','Data not loaded yet'); return; }
+  const month=document.getElementById('jnl-mo').value,caseT=document.getElementById('jnl-case').value,physio=document.getElementById('jnl-physio').value,anes=document.getElementById('jnl-anes').value,win=document.getElementById('jnl-win').value;
+  if(!physio){ msg('jnl-smsg','Write something in the physiology field'); return; }
+  if(!D.journalEntries) D.journalEntries=[];
+  D.journalEntries.push({month,case:caseT,physio,anes,win,ts:Date.now()});
+  const ok=await push('jnl-sbtn','jnl-smsg');
+  if(ok){['jnl-physio','jnl-anes','jnl-case','jnl-win'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});renderJhist();}
+  else D.journalEntries.pop();
 }
-function renderJournalHistory(){
-  const el=document.getElementById('jnl-saved');
-  if(!el) return;
-  const entries=[...CANONICAL.journalEntries].reverse().slice(0,3);
-  if(!entries.length){ el.innerHTML=''; return; }
-  el.innerHTML='<div class="lbl" style="margin-top:12px;">recent entries</div>'+entries.map(j=>`<div class="le"><div class="ld">${j.month}</div><div class="lc"><div class="lt">${j.case||'No case'}</div><div class="ldt">${j.physio.substring(0,100)}&#8230;</div></div></div>`).join('');
+function renderJhist(){
+  const el=document.getElementById('jnl-hist'); if(!el||!D||!D.journalEntries||!D.journalEntries.length){if(el)el.innerHTML='';return;}
+  el.innerHTML='<div class="lbl" style="margin-top:12px;">recent entries</div>'+[...D.journalEntries].reverse().slice(0,3).map(j=>`<div class="le"><div class="ld">${j.month}</div><div class="lc"><div class="lt">${j.case||'No case noted'}</div><div class="ldt">${j.physio.substring(0,100)}...</div></div></div>`).join('');
 }
 
 // ============================================================
-// EXPOSURE LOG &#8212; save to GitHub
+// EXPOSURE
 // ============================================================
-async function saveExposure(){
-  const type=document.getElementById('exp-type').value;
-  const note=document.getElementById('exp-note').value;
-  const date=new Date().toISOString().split('T')[0];
-  CANONICAL.exposureLog.push({ type, note, date, ts:Date.now() });
-  if(type.includes('Shadow')||type.includes('OR')) CANONICAL.shadowingHours++;
-  if(type.includes('Mentor')||type.includes('meeting')) CANONICAL.anesthesiaContacts++;
-  document.getElementById('sh-h').textContent=CANONICAL.shadowingHours;
-  document.getElementById('an-c').textContent=CANONICAL.anesthesiaContacts;
-  const btn=document.getElementById('exp-save-btn');
-  const ok=await pushToGitHub(btn,'exp-save-status');
-  if(ok){ document.getElementById('exp-note').value=''; renderExposureLog(); }
-  else { CANONICAL.exposureLog.pop(); }
+async function saveExp(){
+  if(!D){ msg('exp-smsg','Data not loaded yet'); return; }
+  const type=document.getElementById('exp-type').value,note=document.getElementById('exp-note').value,date=new Date().toISOString().split('T')[0];
+  if(!D.exposureLog) D.exposureLog=[];
+  D.exposureLog.push({type,note,date,ts:Date.now()});
+  if(type.includes('Shadow')||type.includes('OR')) D.shadowingHours=(D.shadowingHours||0)+1;
+  if(type.includes('Mentor')) D.anesthesiaContacts=(D.anesthesiaContacts||0)+1;
+  const ok=await push('exp-sbtn','exp-smsg');
+  if(ok){document.getElementById('exp-note').value='';renderExpStats();}
+  else D.exposureLog.pop();
 }
-function renderExposureLog(){
-  // Could add a history display here in future
-}
+function renderExpStats(){ if(!D) return; const s=document.getElementById('sh-h');if(s)s.textContent=D.shadowingHours||0;const a=document.getElementById('an-c');if(a)a.textContent=D.anesthesiaContacts||0; }
 
 // ============================================================
 // WEEK GRID
 // ============================================================
 const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const rotData={
-  pre:{uw:'Cardiology -&gt; Pulm -&gt; Nephrology',rd:'Foundation: hemodynamics, vents, acid-base'},
-  gen:{uw:'IM core: Cardiology, Nephrology, GI',rd:'Clinical reasoning & management'},
-  micu:{uw:'Pulm + Nephrology + Shock physiology',rd:'Critical care: vents, vasopressors'},
-  ccu:{uw:'Cardiology heavy &#8212; HF, ACS, arrhythmias',rd:'Hemodynamics, echo, cardiac physiology'},
-  cards:{uw:'Cardiology all blocks',rd:'Landmark cardiac trials'},
-  neph:{uw:'Nephrology + acid-base (your research)',rd:'AKI, CKD, periop renal protection'},
-  pulm:{uw:'Pulm + critical care &#8212; ARDS, PE',rd:'Lung-protective ventilation'},
-  gi:{uw:'GI + hepatology',rd:'GI bleeding, coagulopathy'},
-  id:{uw:'ID + sepsis + antimicrobials',rd:'Sepsis management, source control'},
-  periop:{uw:'Surgery / Anesthesia / Periop',rd:'Periop medicine &#8212; anesthesia bridge'},
-  clinic:{uw:'Mixed &#8212; outpatient, preventive',rd:'Chronic disease + periop risk'}
-};
-function buildWeek(){
-  const rot=document.getElementById('wk-rot').value;
-  const rd=rotData[rot]||rotData.gen;
-  const today=new Date(),dow=today.getDay();
-  const grid=document.getElementById('wk-grid'); grid.innerHTML='';
+const RM={pre:{uw:'Cardiology -> Pulm -> Nephrology',rd:'Foundation: hemodynamics, vents, acid-base'},gen:{uw:'IM core: Cardiology, Nephrology, GI',rd:'Clinical reasoning and management'},micu:{uw:'Pulm + Nephrology + Shock physiology',rd:'Critical care: vents, vasopressors'},ccu:{uw:'Cardiology: HF, ACS, arrhythmias',rd:'Hemodynamics, echo, cardiac physiology'},cards:{uw:'Cardiology all blocks',rd:'Landmark cardiac trials'},neph:{uw:'Nephrology + acid-base (your research)',rd:'AKI, CKD, periop renal protection'},pulm:{uw:'Pulm + critical care: ARDS, PE',rd:'Lung-protective ventilation'},periop:{uw:'Surgery / Anesthesia / Periop',rd:'Periop medicine: anesthesia bridge'},clinic:{uw:'Mixed: outpatient, preventive',rd:'Chronic disease + periop risk'}};
+function buildWk(){
+  const rot=document.getElementById('wk-rot').value,rd=RM[rot]||RM.gen,today=new Date(),dow=today.getDay(),grid=document.getElementById('wk-grid'),restDays=D?D.restDays:['Sat'];
+  grid.innerHTML='';
   for(let i=0;i<7;i++){
-    const d=new Date(today); d.setDate(today.getDate()-dow+i);
-    const dn=DAYS[i],isToday=i===dow,isRest=CANONICAL.restDays.includes(dn);
-    const col=document.createElement('div');
-    col.className='dc'+(isToday?' today':'')+(isRest?' rest':'');
-    let html=`<div class="dn">${dn.toUpperCase()}</div><div class="dd">${d.getDate()}</div>`;
-    if(isRest){ html+=`<div class="dtask rt">REST</div>`; }
-    else{ html+=`<div class="dtask uw">${rd.uw.split('-&gt;')[0].trim().substring(0,18)}</div><div class="dtask rd">${rd.rd.substring(0,18)}&#8230;</div>`; }
-    col.innerHTML=html; grid.appendChild(col);
+    const d=new Date(today);d.setDate(today.getDate()-dow+i);
+    const dn=DAYS[i],isT=i===dow,isR=restDays.includes(dn);
+    const col=document.createElement('div');col.className='dc'+(isT?' today':'')+(isR?' rest':'');
+    let h=`<div class="dn">${dn.toUpperCase()}</div><div class="dd">${d.getDate()}</div>`;
+    if(isR) h+=`<div class="dt rt">REST</div>`;
+    else h+=`<div class="dt uw">${rd.uw.split('->')[0].trim().substring(0,16)}</div><div class="dt rd">${rd.rd.substring(0,16)}...</div>`;
+    col.innerHTML=h; grid.appendChild(col);
   }
-  const el=document.getElementById('wk-guid');
-  el.innerHTML=`<div class="albl">* ROTATION &#8212; ${rot.toUpperCase()}</div><p><strong>UWorld:</strong> ${rd.uw}.</p><p><strong>Reading:</strong> ${rd.rd}. One article per clinical day. Saturday protected.</p><p><strong>Anesthesia bridge:</strong> How does what I'm learning today affect a patient going to the OR?</p>`;
+  document.getElementById('wk-guid').innerHTML=`<div class="al">ROTATION -- ${rot.toUpperCase()}</div><p><strong>UWorld:</strong> ${rd.uw}.</p><p><strong>Reading:</strong> ${rd.rd}. One article per clinical day. Saturday protected.</p><p><strong>Anesthesia bridge:</strong> How does today's learning affect a patient going to the OR?</p>`;
 }
-function toggleRest(el,day){
-  el.classList.toggle('sel');
-  if(CANONICAL.restDays.includes(day)) CANONICAL.restDays=CANONICAL.restDays.filter(d=>d!==day);
-  else CANONICAL.restDays.push(day);
-  buildWeek();
+function togRest(el,day){
+  el.classList.toggle('on');if(!D) return;if(!D.restDays)D.restDays=[];
+  if(D.restDays.includes(day))D.restDays=D.restDays.filter(d=>d!==day);else D.restDays.push(day);
+  buildWk();
 }
-function upWeekBars(){
-  const q=+document.getElementById('inp-wq').value||0,a=+document.getElementById('inp-wa').value||0;
-  document.getElementById('wq-v').textContent=q+' / 105';
-  document.getElementById('wq-b').style.width=Math.min(100,Math.round(q/105*100))+'%';
-  document.getElementById('wa-v').textContent=a+' / 5';
-  document.getElementById('wa-b').style.width=Math.min(100,Math.round(a/5*100))+'%';
+function upWkB(){
+  const q=+document.getElementById('iwq').value||0,a=+document.getElementById('iwa').value||0;
+  document.getElementById('wqv').textContent=q+' / 105';document.getElementById('wqb').style.width=Math.min(100,Math.round(q/105*100))+'%';
+  document.getElementById('wav').textContent=a+' / 5';document.getElementById('wab').style.width=Math.min(100,Math.round(a/5*100))+'%';
 }
 
 // ============================================================
 // ROTATIONS
 // ============================================================
-const rotInfo={
-  micu:{title:'MICU / ICU',tag:'Highest priority',items:['Ventilator modes, PEEP, driving pressure &#8212; know cold','Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi','Shock: MAP targets, fluid responsiveness, ScvO2, lactate','Sedation: RASS, propofol, dexmedetomidine &#8212; anesthesia overlap','For every case: "how would periop risk look going to the OR?"','Ask to observe intubations, lines, bronchoscopy']},
-  ccu:{title:'CCU / Cardiology',tag:'Cardiac anesthesia foundation',items:['Read every EKG yourself before the attending. Build speed.','HFrEF vs HFpEF: congestion vs perfusion, GDMT cold','ACS: STEMI vs NSTEMI, antiplatelet risk perioperatively','Valvular disease: which lesions carry highest periop risk','Echo: interpret reports, ask to observe TTE/TEE']},
-  neph:{title:'Nephrology',tag:'Your research area',items:['AKI: prerenal vs intrinsic vs postrenal &#8212; mechanistically','Periop AKI &#8212; your publication makes you the room expert','Electrolytes: K+, Na+, Ca2+, Mg2+ &#8212; all OR emergencies','Acid-base: 5-step approach, mixed disorders cold','Connect every AKI case to surgical risk in your notes']},
-  pulm:{title:'Pulmonology',tag:'Ventilator mastery',items:['ARDS: Berlin criteria, prone positioning, lung protection','COPD/asthma: NIV vs intubation thresholds','Interpret every ABG before the attending','PFTs: obstructive vs restrictive with clinical context','PE: risk stratify, anticoag vs thrombolytics']},
-  gen:{title:'General medicine',tag:'Evaluation foundation',items:['Pre-round before everyone. Know everything first.','One-liner + assessment + plan every time.','Anticipate: "K+ low &#8212; I already ordered a recheck."','Make sure every attending knows your name by week 2.','Ask specific feedback at rotation end.']},
-  clinic:{title:'Outpatient',tag:'Longitudinal thinking',items:['DM, HTN, HLD: how chronic disease accumulates periop risk','Preop clearance: what does surgery need from IM?','Preventive medicine screening &#8212; Step 3 high-yield','Lighter days = deeper UWorld + AMBOSS reading.']}
-};
+const RI={micu:{title:'MICU / ICU',tag:'Highest priority',items:['Ventilator modes, PEEP, driving pressure -- know cold','Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi','Shock: MAP targets, fluid responsiveness, ScvO2, lactate','For every case: how would periop risk look going to the OR?','Ask to observe intubations, central lines, bronchoscopy']},ccu:{title:'CCU / Cardiology',tag:'Cardiac anesthesia foundation',items:['Read every EKG yourself before the attending. Build speed.','HFrEF vs HFpEF: congestion vs perfusion, GDMT cold','ACS: STEMI vs NSTEMI, antiplatelet risk perioperatively','Valvular disease: which lesions carry highest periop risk','Echo: learn to interpret reports, ask to observe TTE/TEE']},neph:{title:'Nephrology',tag:'Your research area',items:['AKI: prerenal vs intrinsic vs postrenal -- mechanistically','Periop AKI -- your publication makes you the room expert','Electrolytes: K+, Na+, Ca2+, Mg2+ -- all OR emergencies','Acid-base: 5-step approach, mixed disorders cold','Connect every AKI case to surgical risk in your notes']},pulm:{title:'Pulmonology',tag:'Ventilator mastery',items:['ARDS: Berlin criteria, prone positioning, lung protection','COPD/asthma: NIV vs intubation thresholds','Interpret every ABG before the attending','PFTs: obstructive vs restrictive with clinical context','PE: risk stratify, anticoag vs thrombolytics']},gen:{title:'General medicine',tag:'Evaluation foundation',items:['Pre-round before everyone. Know everything first.','One-liner + assessment + plan every time -- not data dump.','Anticipate: K+ low -- I already ordered a recheck.','Make sure every attending knows your name by week 2.','Ask specific feedback at rotation end.']},clinic:{title:'Outpatient',tag:'Longitudinal thinking',items:['DM, HTN, HLD: how chronic disease accumulates periop risk','Preop clearance: what does surgery need from IM?','Preventive medicine screening -- Step 3 high-yield','Lighter days = deeper UWorld + reading.']}};
 function showRot(el,key){
-  if(el){ document.querySelectorAll('#rot-chips .chip').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
-  const d=rotInfo[key]; if(!d) return;
-  document.getElementById('rot-content').innerHTML=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="badge bg">${d.tag}</span><div style="font-size:15px;font-weight:500;color:var(--t);">${d.title}</div></div><ul style="padding-left:16px;">${d.items.map(i=>`<li style="font-size:12px;color:var(--t2);margin-bottom:5px;line-height:1.5;">${i}</li>`).join('')}</ul></div>`;
+  if(el){document.querySelectorAll('#rot-chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+  const d=RI[key];if(!d)return;
+  document.getElementById('rot-content').innerHTML=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="bdg g">${d.tag}</span><div style="font-size:15px;font-weight:500;color:var(--t);">${d.title}</div></div><ul style="padding-left:16px;">${d.items.map(i=>`<li style="font-size:12px;color:var(--t2);margin-bottom:5px;line-height:1.5;">${i}</li>`).join('')}</ul></div>`;
 }
 
 // ============================================================
 // READING LIST
 // ============================================================
-const preReadingList=[
-  {title:'Perioperative Acute Kidney Injury &#8212; Risk Factors, Mechanisms, Prevention',journal:'NEJM Review',day:'MON',why:'Your AKI research makes this essential. Builds the longitudinal disease -&gt; acute instability narrative.',query:'perioperative acute kidney injury prevention 2024'},
-  {title:'Hemodynamic Monitoring in Critically Ill Patients &#8212; Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility &#8212; the spine of ICU and anesthesia both.',query:'hemodynamic monitoring critically ill framework 2023'},
-  {title:'Lung-Protective Ventilation &#8212; Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',query:'lung protective ventilation ARDS driving pressure 2023'},
-  {title:'Acid-Base Interpretation &#8212; A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',query:'acid base systematic approach mixed disorders 2022'},
-  {title:'Vasopressors and Inotropes in Shock &#8212; Mechanism, Selection, Dosing',journal:'Critical Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine &#8212; used on every ICU rotation and intraoperatively by anesthesiologists.',query:'vasopressors inotropes shock mechanism selection 2023'}
-];
-function buildReadingList(){
-  const el=document.getElementById('reading-list-inner'); if(!el) return;
-  el.innerHTML=preReadingList.map(a=>`
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:5px;">
-        <div style="font-size:13px;font-weight:500;color:var(--t);">${a.title}</div>
-        <div style="display:flex;gap:5px;"><span class="badge bb">${a.journal}</span><span class="badge bg">${a.day}</span></div>
-      </div>
-      <div style="font-size:12px;color:var(--t2);line-height:1.5;border-left:2px solid var(--g);padding-left:10px;margin-bottom:10px;">${a.why}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn bs btn-i" style="font-size:10px;padding:5px 10px;" onclick="this.textContent='&check; Read';this.disabled=true;this.closest('div[style]').style.opacity='.4';">Mark read</button>
-        <button class="btn bs btn-i" style="font-size:10px;padding:5px 10px;" onclick="window.open('https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent('${a.query}'),'_blank')">PubMed &nearr;</button>
-      </div>
-    </div>`).join('')+'<div style="font-size:11px;color:var(--t3);margin-top:8px;">SAT &#8212; protected. SUN &#8212; full rest. Podcast optional (Core IM, Clinical Problem Solvers).</div>';
+const RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, Prevention',journal:'NEJM',day:'MON',why:'Your AKI research makes this essential. Builds the longitudinal disease to acute instability narrative.',q:'perioperative acute kidney injury prevention 2024'},{title:'Hemodynamic Monitoring in Critically Ill Patients -- Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility -- the spine of ICU and anesthesia both.',q:'hemodynamic monitoring critically ill framework 2023'},{title:'Lung-Protective Ventilation -- Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',q:'lung protective ventilation ARDS driving pressure 2023'},{title:'Acid-Base Interpretation -- A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',q:'acid base systematic approach mixed disorders 2022'},{title:'Vasopressors and Inotropes in Shock -- Mechanism, Selection, Dosing',journal:'Crit Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine -- used on every ICU rotation and intraoperatively by anesthesiologists.',q:'vasopressors inotropes shock mechanism selection 2023'}];
+function buildRdList(){
+  const el=document.getElementById('rdlist');if(!el)return;
+  el.innerHTML=RDL.map(a=>`<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:5px;"><div style="font-size:13px;font-weight:500;color:var(--t);">${a.title}</div><div style="display:flex;gap:5px;"><span class="bdg b">${a.journal}</span><span class="bdg g">${a.day}</span></div></div><div style="font-size:12px;color:var(--t2);line-height:1.5;border-left:2px solid var(--g);padding-left:10px;margin-bottom:10px;">${a.why}</div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn bs bi" style="font-size:10px;padding:5px 10px;" onclick="this.textContent='Read';this.disabled=true;this.closest('div[style]').style.opacity='.4';">Mark read</button><button class="btn bs bi" style="font-size:10px;padding:5px 10px;" onclick="window.open('https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent('${a.q}'),'_blank')">PubMed</button></div></div>`).join('')+'<div style="font-size:11px;color:var(--t3);margin-top:8px;">SAT -- protected. SUN -- full rest. Podcast optional (Core IM, Clinical Problem Solvers).</div>';
 }
 
 // ============================================================
 // SETTINGS
 // ============================================================
-function saveGHSettings(){
-  SETTINGS.ghToken=document.getElementById('gh-token').value.trim();
-  SETTINGS.ghUser=document.getElementById('gh-user').value.trim();
-  SETTINGS.ghRepo=document.getElementById('gh-repo').value.trim();
-  saveSettings();
-  document.getElementById('gh-status').textContent='&check; Settings saved';
+function saveCFG(){
+  CFG.tok=document.getElementById('gh-tok').value.trim();
+  CFG.usr=document.getElementById('gh-usr').value.trim();
+  CFG.repo=document.getElementById('gh-repo').value.trim();
+  CFG.file=document.getElementById('gh-file').value.trim();
+  sCFG(); document.getElementById('gh-st').textContent='Settings saved -- click Reload data to fetch';
 }
-async function testGHConnection(){
-  if(!SETTINGS.ghToken){ document.getElementById('gh-status').textContent='&#9888; Enter token first'; return; }
-  document.getElementById('gh-status').textContent='Testing&#8230;';
+async function testCon(){
+  if(!CFG.tok){msg('gh-st','Enter token first');return;}
+  msg('gh-st','Testing...');
   try{
-    const r=await fetch(`https://api.github.com/repos/${SETTINGS.ghUser}/${SETTINGS.ghRepo}/contents/index.html`,{headers:{Authorization:`token ${SETTINGS.ghToken}`}});
-    document.getElementById('gh-status').textContent=r.ok?'&check; Connected successfully &#8212; ready to save':'&#9888; Connection failed &#8212; check token and repo name';
-  }catch(e){ document.getElementById('gh-status').textContent='&#9888; Network error'; }
+    const r=await fetch(`https://api.github.com/repos/${CFG.usr}/${CFG.repo}/contents/${CFG.file}`,{headers:{Authorization:`token ${CFG.tok}`}});
+    msg('gh-st',r.ok?'Connected -- '+CFG.file+' found and readable':'Failed -- check token and repo. Make sure '+CFG.file+' exists in the repo root.');
+  }catch(e){msg('gh-st','Network error');}
 }
-function saveApiKey(){
-  SETTINGS.apiKey=document.getElementById('api-input').value.trim();
-  saveSettings();
-  document.getElementById('api-status').textContent=SETTINGS.apiKey?'&check; Key saved':'No key entered';
-}
-function clearApiKey(){ SETTINGS.apiKey=''; document.getElementById('api-input').value=''; document.getElementById('api-status').textContent='Cleared'; saveSettings(); }
-function exportData(){ const b=new Blob([JSON.stringify(CANONICAL,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='academic_os_data.json'; a.click(); }
-function clearData(){ if(confirm('Clear local settings? GitHub data is safe.')){ localStorage.removeItem('academic_os_settings'); location.reload(); } }
+function saveAPI(){CFG.api=document.getElementById('api-key').value.trim();sCFG();document.getElementById('api-st').textContent=CFG.api?'Key saved':'No key entered';}
+function clearAPI(){CFG.api='';document.getElementById('api-key').value='';document.getElementById('api-st').textContent='Cleared';sCFG();}
 
 // ============================================================
-// AI FEATURES
+// FIELD MIGRATION TOOL
 // ============================================================
-function loading(id){ document.getElementById(id).innerHTML='<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Generating&#8230;</span></div>'; }
-async function claude(prompt){
-  if(!SETTINGS.apiKey) return null;
+async function runMigration(){
+  const oldKey=document.getElementById('mig-old').value.trim();
+  const newKey=document.getElementById('mig-new').value.trim();
+  if(!oldKey||!newKey){msg('mig-st','Enter both old and new field names');return;}
+  if(!D){msg('mig-st','Data not loaded yet');return;}
+  if(!(oldKey in D)){msg('mig-st','Field "'+oldKey+'" not found in data.json -- nothing to migrate');return;}
+  if(newKey in D && Array.isArray(D[newKey]) && D[newKey].length>0){msg('mig-st','Field "'+newKey+'" already has data -- migration skipped to prevent overwrite');return;}
+  const confirmed=confirm('Migrate "'+oldKey+'" to "'+newKey+'"?\n\nOld data will be copied to the new field. Old field will be removed.\nThis will be pushed to GitHub immediately.');
+  if(!confirmed)return;
+  D[newKey]=D[oldKey];
+  delete D[oldKey];
+  const ok=await push(null,'mig-st');
+  if(ok) msg('mig-st','Migration complete -- "'+oldKey+'" moved to "'+newKey+'"');
+}
+
+// ============================================================
+// DATA EXPORT
+// ============================================================
+function exportData(){if(!D){alert('Data not loaded yet');return;}const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=CFG.file;a.click();}
+function clrCFG(){if(confirm('Clear local settings (token, API key)? Your data on GitHub is safe.')){localStorage.removeItem('acad_v3');location.reload();}}
+
+// ============================================================
+// AI COACHING
+// ============================================================
+function spin(id){document.getElementById(id).innerHTML='<div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Generating...</span></div>';}
+async function ai(prompt){
+  if(!CFG.api)return null;
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:800,
-        system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const d=await r.json(); return d.content?.[0]?.text||null;
-  }catch(e){ return null; }
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();return d.content?.[0]?.text||null;
+  }catch(e){return null;}
 }
-function fmt(t,id){ document.getElementById(id).innerHTML=t?`<div class="air"><div class="albl">* AI COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:`<div class="air"><div class="albl">* ERROR</div><p>Add API key in Settings to enable AI features.</p></div>`; }
-async function genToday(){
-  const mode=document.getElementById('mode-sel').value,e=document.getElementById('sl-e').value,s=document.getElementById('sl-s').value;
-  if(!SETTINGS.apiKey){fmt(null,'today-out');return;}
-  loading('today-out');
-  fmt(await claude(`Daily plan. Mode: ${mode}. Energy: ${e}/10. Sleep: ${s}h. Rotation: ${CANONICAL.rotation}. Give UWorld topic recommendation with anesthesia rationale, whether to read today, one non-study priority.`),'today-out');
-}
-async function genRotG(){
-  const rot=document.getElementById('wk-rot').value;
-  if(!SETTINGS.apiKey) return; loading('wk-guid');
-  const t=await claude(`Weekly guidance for ${rot} rotation. UWorld topic order, clinical focus for evaluations and LOR, hidden curriculum priority, how this builds the anesthesia narrative.`);
-  document.getElementById('wk-guid').innerHTML=t?`<div class="albl">* ROTATION COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';
-}
-async function getUWRec(){
-  const dm={};
-  CANONICAL.uworldSessions.forEach(s=>{ if(!dm[s.topic])dm[s.topic]={q:0,scores:[]}; dm[s.topic].q+=s.questions; if(s.score)dm[s.topic].scores.push(s.score); });
-  const sum=Object.entries(dm).map(([t,d])=>`${t}: ${d.q}q avg ${d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length)+'%':'no score'}`).join('; ')||'No sessions';
-  if(!SETTINGS.apiKey){fmt(null,'uw-rec');return;}
-  loading('uw-rec'); fmt(await claude(`UWorld history: ${sum}. Rotation: ${CANONICAL.rotation}. Recommend next topic, mode, and why for Step 3 AND anesthesia reapplication.`),'uw-rec');
-}
-async function genReading(){
-  const rot=document.getElementById('rd-rot').value,focus=document.getElementById('rd-focus').value;
-  if(!SETTINGS.apiKey){document.getElementById('rd-ai-out').innerHTML='<div class="air"><div class="albl">* NOTE</div><p>Add API key in Settings.</p></div>';return;}
-  loading('rd-ai-out');
-  const t=await claude(`5-article reading list for rotation: ${rot}, focus: ${focus}. For each: real article title and journal, why it matters for IM, why it bridges to anesthesia. Numbered list.`);
-  document.getElementById('rd-ai-out').innerHTML=t?`<div class="card" style="margin-top:12px;"><div class="lbl">ai-generated &#8212; ${rot}</div><div class="air"><div class="albl">* READING LIST</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`:'';
-}
-async function genJnlPrompt(){
-  if(!SETTINGS.apiKey){document.getElementById('jnl-ai').innerHTML='<div class="air"><div class="albl">* PROMPT</div><p>Describe a moment this month when you recognized a physiologic pattern before your team. What did you notice? How does this connect to perioperative thinking?</p></div>';return;}
-  loading('jnl-ai'); fmt(await claude(`Give Javier a specific narrative reflection prompt for rotation: ${CANONICAL.rotation}. Help surface a clinical moment connecting to predictive physiologic reasoning or longitudinal disease to acute instability.`),'jnl-ai');
-}
-async function evalAns(){
-  const q=document.getElementById('prac-q').value,a=document.getElementById('prac-ans').value;
-  if(!a){alert('Write your answer first.');return;}
-  if(!SETTINGS.apiKey){fmt(null,'prac-out');return;}
-  loading('prac-out'); fmt(await claude(`Evaluate this anesthesia reapplication interview answer. Q: "${q}". A: "${a}". Give: what works, what to remove (flag clich&#233;s like vigilance/last line), one specific rewrite. Be direct.`),'prac-out');
-}
+function fai(t,id){document.getElementById(id).innerHTML=t?`<div class="air"><div class="al">AI COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:`<div class="air"><div class="al">NOTE</div><p>Add your Anthropic API key in Settings to enable AI coaching.</p></div>`;}
+
+async function genToday(){if(!CFG.api){fai(null,'today-out');return;}const rot=D?D.rotation:'pre';spin('today-out');fai(await ai(`Daily plan. Mode: ${document.getElementById('mode-sel').value}. Energy: ${document.getElementById('sle').value}/10. Sleep: ${document.getElementById('sls').value}h. Rotation: ${rot}. Give UWorld topic recommendation with anesthesia rationale, whether to read today, one non-study priority.`),'today-out');}
+async function genRotG(){if(!CFG.api)return;spin('wk-guid');const t=await ai(`Weekly guidance for ${document.getElementById('wk-rot').value} rotation. UWorld topic order, clinical focus for evaluations and LOR potential, hidden curriculum priority, how this rotation builds the anesthesia reapplication narrative.`);document.getElementById('wk-guid').innerHTML=t?`<div class="al">ROTATION COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';}
+async function getUWRec(){if(!CFG.api){fai(null,'uw-rec');return;}const dm={};if(D&&D.uworldSessions)D.uworldSessions.forEach(s=>{if(!dm[s.topic])dm[s.topic]={q:0,scores:[]};dm[s.topic].q+=s.questions;if(s.score)dm[s.topic].scores.push(s.score);});const sum=Object.entries(dm).map(([t,d])=>`${t}: ${d.q}q avg ${d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length)+'%':'no score'}`).join('; ')||'No sessions logged';spin('uw-rec');fai(await ai(`UWorld history: ${sum}. Recommend next topic, mode (timed vs tutor), and why it matters for Step 3 AND anesthesia reapplication.`),'uw-rec');}
+async function genRd(){if(!CFG.api){document.getElementById('rd-ai').innerHTML='<div class="air"><div class="al">NOTE</div><p>Add API key in Settings.</p></div>';return;}spin('rd-ai');const t=await ai(`5-article reading list for rotation: ${document.getElementById('rd-rot').value}, focus: ${document.getElementById('rd-focus').value}. For each: real article title and journal, why it matters for IM, why it bridges to anesthesia/perioperative medicine. Numbered list.`);document.getElementById('rd-ai').innerHTML=t?`<div class="card" style="margin-top:12px;"><div class="lbl">AI reading list</div><div class="air"><div class="al">READING LIST</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`:'';}
+async function genJnlP(){if(!CFG.api){document.getElementById('jnl-ai').innerHTML='<div class="air"><div class="al">PROMPT</div><p>Describe a moment this month when you recognized a physiologic pattern before your team. What did you notice? What did you do? How does this connect to what an anesthesiologist would need to anticipate before the OR?</p></div>';return;}spin('jnl-ai');fai(await ai(`Give Javier a specific narrative reflection prompt for rotation: ${D?D.rotation:'pre'}. Help him surface a clinical moment connecting to predictive physiologic reasoning or longitudinal disease to acute instability.`),'jnl-ai');}
+async function evalAns(){const q=document.getElementById('prac-q').value,a=document.getElementById('prac-ans').value;if(!a){alert('Write your answer first.');return;}if(!CFG.api){fai(null,'prac-out');return;}spin('prac-out');fai(await ai(`Evaluate this anesthesia reapplication interview answer. Q: "${q}". A: "${a}". Give: what works and why, what to strengthen or remove (flag cliches like vigilance/last line of defense), one specific rewrite of the weakest sentence. Be direct.`),'prac-out');}
 </script>
 </body>
 </html>
