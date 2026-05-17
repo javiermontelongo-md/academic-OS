@@ -865,7 +865,7 @@ async function ai(prompt){
   if(!apiKey){ console.error('AI: no API key found'); return null; }
   console.log('AI: calling with key prefix', apiKey.substring(0,12));
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-sonnet-20241022',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
     console.log('AI: response status', r.status);
     const d=await r.json();
     console.log('AI: response', JSON.stringify(d).substring(0,200));
