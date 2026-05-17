@@ -1,11 +1,23 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-05-16",
-  "uworldSessions": [],
+  "lastUpdated": "2026-05-17",
+  "uworldSessions": [
+    {
+      "date": "2026-05-10",
+      "questions": 15,
+      "score": 53,
+      "topic": "Mixed / Random",
+      "mode": "TIMED",
+      "notes": "",
+      "ts": 1779028233083
+    }
+  ],
   "journalEntries": [],
   "exposureLog": [],
   "checks": {},
-  "restDays": ["Sat"],
+  "restDays": [
+    "Sat"
+  ],
   "rotation": "pre",
   "shadowingHours": 0,
   "anesthesiaContacts": 0,
