@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -190,7 +190,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <div class="main">
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-today" class="panel on">
   <div class="h1">Today's <span>plan</span></div>
   <div class="rbanner">
@@ -242,7 +242,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-week" class="panel">
   <div class="h1">This <span>week</span></div>
   <div class="g2">
@@ -273,7 +273,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="card"><div class="lbl">rotation guidance</div><div id="wk-guid" class="air"><div class="al">COACH</div><p>Select rotation above.</p></div><div class="brow"><button class="btn bs bi" onclick="genRotG()">AI guidance</button></div></div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-uworld" class="panel">
   <div class="h1">UWorld <span>log</span></div>
   <div class="g4 k2" style="margin-bottom:14px;">
@@ -311,7 +311,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="card"><div class="lbl">session history</div><div id="uw-hist"><div style="font-size:12px;color:var(--t3);font-style:italic;">No sessions yet.</div></div></div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-reading" class="panel">
   <div class="h1">Daily <span>reading</span></div>
   <div class="card" style="margin-bottom:14px;">
@@ -326,7 +326,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div id="rd-ai"></div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-rotations" class="panel">
   <div class="h1">Rotation <span>priorities</span></div>
   <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;" id="rot-chips">
@@ -340,7 +340,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-narrative" class="panel">
   <div class="h1">Narrative <span>builder</span></div>
   <div class="g2" style="margin-bottom:14px;">
@@ -376,7 +376,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-interview" class="panel">
   <div class="h1">Interview <span>prep</span></div>
   <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6;">Three questions asked at every anesthesia interview. Practice out loud until natural -- not rehearsed.</div>
@@ -392,7 +392,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-application" class="panel">
   <div class="h1">Application <span>tracker</span></div>
   <div class="g2">
@@ -427,7 +427,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-milestones" class="panel">
   <div class="h1">Timeline &amp; <span>milestones</span></div>
   <div class="g2">
@@ -468,7 +468,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- v2026-05-17 19:02:23 -->
+<!-- v2026-05-17 19:22:43 -->
 <div id="panel-settings" class="panel">
   <div class="h1">Settings &amp; <span>sync</span></div>
   <div class="g2">
@@ -516,7 +516,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-</div><!-- v2026-05-17 19:02:23 -->
+</div><!-- v2026-05-17 19:22:43 -->
 
 <nav class="bnav">
   <button class="ni on" onclick="gM('today',this)"><span class="nicon">T</span><span class="nlbl">TODAY</span></button>
@@ -529,7 +529,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
-</div><!-- v2026-05-17 19:02:23 -->
+</div><!-- v2026-05-17 19:22:43 -->
 
 <script>
 var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -865,7 +865,7 @@ async function ai(prompt){
   if(!apiKey){ console.error('AI: no API key found'); return null; }
   console.log('AI: calling with key prefix', apiKey.substring(0,12));
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
     console.log('AI: response status', r.status);
     const d=await r.json();
     console.log('AI: response', JSON.stringify(d).substring(0,200));
