@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-05-17",
+  "lastUpdated": "2026-05-18",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -10,6 +10,15 @@
       "mode": "TIMED",
       "notes": "",
       "ts": 1779028233083
+    },
+    {
+      "date": "2026-05-09",
+      "questions": 15,
+      "score": 53,
+      "topic": "Mixed / Random",
+      "mode": "TIMED",
+      "notes": "",
+      "ts": 1779078099588
     }
   ],
   "journalEntries": [],
