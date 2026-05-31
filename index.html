@@ -526,6 +526,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('rotations',this)"><span class="nicon">Rx</span><span class="nlbl">ROTS</span></button>
   <button class="ni" onclick="gM('narrative',this)"><span class="nicon">N</span><span class="nlbl">NARR</span></button>
   <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
+  <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
@@ -681,6 +682,7 @@ function chk(id){
   if(cb.checked) el.classList.add('done'); else el.classList.remove('done');
   if(!D.checks) D.checks={};
   D.checks[id]=cb.checked;
+  push(null,'smsg-chk');
 }
 function restChk(){
   if(!D||!D.checks) return;
@@ -711,8 +713,11 @@ function renderUWstats(){
   document.getElementById('st-tot').textContent=total;
   document.getElementById('st-avg').textContent=avg?avg+'%':'--';
   document.getElementById('st-pct').textContent=pct+'%';
-  let streak=0;const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();let cur=new Date();
-  for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
+  let streak=0;const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();
+  if(dates.length){
+    let cur=new Date(dates[0]+'T12:00:00');
+    for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
+  }
   document.getElementById('st-str').textContent=streak;
   const el=document.getElementById('dom-bd'),dm={};
   ss.forEach(s=>{ if(!dm[s.topic])dm[s.topic]={q:0,scores:[]}; dm[s.topic].q+=s.questions; if(s.score)dm[s.topic].scores.push(s.score); });
@@ -779,12 +784,17 @@ function buildWk(){
 function togRest(el,day){
   el.classList.toggle('on');if(!D) return;if(!D.restDays)D.restDays=[];
   if(D.restDays.includes(day))D.restDays=D.restDays.filter(d=>d!==day);else D.restDays.push(day);
-  buildWk();
+  buildWk(); push(null,'smsg-chk');
 }
 function upWkB(){
   const q=+document.getElementById('iwq').value||0,a=+document.getElementById('iwa').value||0;
   document.getElementById('wqv').textContent=q+' / 105';document.getElementById('wqb').style.width=Math.min(100,Math.round(q/105*100))+'%';
   document.getElementById('wav').textContent=a+' / 5';document.getElementById('wab').style.width=Math.min(100,Math.round(a/5*100))+'%';
+  if(!D) return;
+  if(!D.weekProgress) D.weekProgress={};
+  const wk=new Date().toISOString().split('T')[0].substring(0,7);
+  D.weekProgress[wk]={qs:q,articles:a};
+  push(null,'smsg-chk');
 }
 
 // ============================================================
@@ -865,7 +875,7 @@ async function ai(prompt){
   if(!apiKey){ console.error('AI: no API key found'); return null; }
   console.log('AI: calling with key prefix', apiKey.substring(0,12));
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
     console.log('AI: response status', r.status);
     const d=await r.json();
     console.log('AI: response', JSON.stringify(d).substring(0,200));
