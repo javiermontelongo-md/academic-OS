@@ -594,7 +594,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -649,6 +649,7 @@ function sync(state,label){
   if(ms) ms.textContent=label;
 }
 function msg(id,html){ const e=document.getElementById(id); if(e) e.innerHTML=html; }
+function escHtml(s){ const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML; }
 
 // ============================================================
 // BURNOUT METER
@@ -660,7 +661,7 @@ function upB(){
   document.getElementById('vm').textContent=m+'/10';
   const r=Math.max(0,Math.min(100,Math.round((10-((e+(s/9*10)+m)/3))*10)));
   document.getElementById('bfill').style.width=r+'%';
-  const c=r<25?'var(--g)':r<50?'var(--g3)':r<75?'var(--g4)':'var(--red)';
+  const c=r<25?'#7fff6e':r<50?'#ffb74d':r<75?'#ef9a9a':'#ef5350';
   const l=r<25?'LOW':r<50?'MODERATE':r<75?'HIGH':'CRITICAL';
   document.getElementById('bfill').style.background=c;
   document.getElementById('blbl').textContent=l;
@@ -672,7 +673,7 @@ function modeChg(){
   const t={normal:'<p><strong>Normal:</strong> Full session -- 15-20 UWorld timed, Anki, reading, reflection.</p>',call:'<p><strong>Call day:</strong> 10 UWorld minimum. Evaluations are your application.</p>',postcall:'<p><strong>Post-call:</strong> Zero required. Sleep before studying, always.</p>',recovery:'<p><strong>Recovery:</strong> Podcast only. Bad weeks are data, not failure.</p>',rest:'<p><strong>Rest day (Sunday protected):</strong> No UWorld. Social recharge.</p>'};
   document.getElementById('today-out').innerHTML='<div class="air"><div class="al">MODE</div>'+t[m]+'</div>';
 }
-function selMd(el,v){ el.closest('div').querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); }
+function selMd(el,v){ const p=el.closest('div');if(!p)return;p.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');p.dataset.mode=v; }
 
 // ============================================================
 // CHECKBOXES
@@ -699,9 +700,12 @@ function restChk(){
 // ============================================================
 async function saveUW(){
   if(!D){ msg('uw-smsg','Data not loaded yet'); return; }
-  const date=document.getElementById('uw-date').value,q=+document.getElementById('uw-q').value||0,score=+document.getElementById('uw-s').value||null,topic=document.getElementById('uw-topic').value,notes=document.getElementById('uw-notes').value;
-  const mode=document.querySelector('#panel-uworld .chip.on')?.textContent||'timed';
+  const date=document.getElementById('uw-date').value,q=+document.getElementById('uw-q').value||0,topic=document.getElementById('uw-topic').value,notes=document.getElementById('uw-notes').value;
+  const scoreRaw=document.getElementById('uw-s').value.trim();
+  const score=scoreRaw===''?null:+scoreRaw;
+  const mode=(document.querySelector('#panel-uworld .chip.on')?.dataset.mode)||document.querySelector('#panel-uworld .chip.on')?.textContent?.trim()||'TIMED';
   if(!date||!q||!topic){ msg('uw-smsg','Fill in date, questions, and topic'); return; }
+  if(score!==null&&(isNaN(score)||score<1||score>100)){ msg('uw-smsg','Score must be between 1 and 100'); return; }
   if(!D.uworldSessions) D.uworldSessions=[];
   D.uworldSessions.push({date,questions:q,score,topic,mode,notes,ts:Date.now()});
   const ok=await push('uw-sbtn','uw-smsg');
@@ -710,25 +714,29 @@ async function saveUW(){
 }
 function renderUWstats(){
   if(!D||!D.uworldSessions) return;
-  const ss=D.uworldSessions,total=ss.reduce((a,s)=>a+s.questions,0),scores=ss.filter(s=>s.score).map(s=>s.score),avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):null,pct=Math.min(100,Math.round(total/3500*100));
+  const ss=D.uworldSessions,total=ss.reduce((a,s)=>a+(+s.questions||0),0),scores=ss.filter(s=>s.score!=null&&!isNaN(+s.score)&&+s.score>0).map(s=>+s.score),avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):null,pct=Math.min(100,Math.round(total/3500*100));
   document.getElementById('st-tot').textContent=total;
   document.getElementById('st-avg').textContent=avg?avg+'%':'--';
   document.getElementById('st-pct').textContent=pct+'%';
   let streak=0;const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();
   if(dates.length){
-    let cur=new Date(dates[0]+'T12:00:00');
-    for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
+    const todayStr=new Date().toISOString().split('T')[0];
+    const yest=new Date();yest.setDate(yest.getDate()-1);const yestStr=yest.toISOString().split('T')[0];
+    if(dates[0]===todayStr||dates[0]===yestStr){
+      let cur=new Date(dates[0]+'T12:00:00');
+      for(const d of dates){ if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break; }
+    }
   }
   document.getElementById('st-str').textContent=streak;
   const el=document.getElementById('dom-bd'),dm={};
-  ss.forEach(s=>{ if(!dm[s.topic])dm[s.topic]={q:0,scores:[]}; dm[s.topic].q+=s.questions; if(s.score)dm[s.topic].scores.push(s.score); });
+  ss.forEach(s=>{ if(!dm[s.topic])dm[s.topic]={q:0,scores:[]}; dm[s.topic].q+=(+s.questions||0); if(s.score!=null&&!isNaN(+s.score)&&+s.score>0)dm[s.topic].scores.push(+s.score); });
   if(!Object.keys(dm).length){ el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">Log sessions to see breakdown.</div>'; return; }
   el.innerHTML=Object.entries(dm).map(([t,d])=>{const av=d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length):null,p=av||50;return`<div class="pbw"><div class="pbl"><span>${t}</span><span>${d.q}q${av?' - '+av+'%':''}</span></div><div class="pbb"><div class="pbf" style="width:${p}%;background:${p>=70?'var(--g)':p>=55?'var(--g3)':'var(--g4)'};"></div></div></div>`;}).join('');
 }
 function renderUWhist(){
   const el=document.getElementById('uw-hist');
   if(!D||!D.uworldSessions||!D.uworldSessions.length){el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No sessions yet.</div>';return;}
-  el.innerHTML=[...D.uworldSessions].reverse().slice(0,15).map(s=>`<div class="le"><div class="ld">${s.date}</div><div class="lc"><div class="lt">${s.questions}q - ${s.topic} - ${s.mode}${s.score?' - <span style="color:var(--g);">'+s.score+'%</span>':''}</div>${s.notes?'<div class="ldt">'+s.notes+'</div>':''}</div></div>`).join('');
+  el.innerHTML=[...D.uworldSessions].reverse().slice(0,15).map(s=>`<div class="le"><div class="ld">${escHtml(s.date)}</div><div class="lc"><div class="lt">${escHtml(s.questions)}q - ${escHtml(s.topic)} - ${escHtml(s.mode)}${s.score?' - <span style="color:var(--g);">'+escHtml(s.score)+'%</span>':''}</div>${s.notes?'<div class="ldt">'+escHtml(s.notes)+'</div>':''}</div></div>`).join('');
 }
 
 // ============================================================
@@ -746,7 +754,7 @@ async function saveJnl(){
 }
 function renderJhist(){
   const el=document.getElementById('jnl-hist'); if(!el||!D||!D.journalEntries||!D.journalEntries.length){if(el)el.innerHTML='';return;}
-  el.innerHTML='<div class="lbl" style="margin-top:12px;">recent entries</div>'+[...D.journalEntries].reverse().slice(0,3).map(j=>`<div class="le"><div class="ld">${j.month}</div><div class="lc"><div class="lt">${j.case||'No case noted'}</div><div class="ldt">${j.physio.substring(0,100)}...</div></div></div>`).join('');
+  el.innerHTML='<div class="lbl" style="margin-top:12px;">recent entries</div>'+[...D.journalEntries].reverse().slice(0,3).map(j=>`<div class="le"><div class="ld">${escHtml(j.month)}</div><div class="lc"><div class="lt">${escHtml(j.case||'No case noted')}</div><div class="ldt">${escHtml((j.physio||'').substring(0,100))}...</div></div></div>`).join('');
 }
 
 // ============================================================
@@ -788,6 +796,7 @@ function togRest(el,day){
   buildWk(); push(null,'smsg-chk');
 }
 let _wkbTimer=null;
+window.addEventListener('beforeunload',e=>{if(_wkbTimer){e.preventDefault();e.returnValue='';} });
 function upWkB(){
   const q=+document.getElementById('iwq').value||0,a=+document.getElementById('iwa').value||0;
   document.getElementById('wqv').textContent=q+' / 105';document.getElementById('wqb').style.width=Math.min(100,Math.round(q/105*100))+'%';
@@ -889,8 +898,8 @@ async function ai(prompt){
 function fai(t,id){document.getElementById(id).innerHTML=t?`<div class="air"><div class="al">AI COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:`<div class="air"><div class="al">NOTE</div><p>Add your Anthropic API key in Settings -- paste key and click Save key. Or check browser console (F12) for error details.</p></div>`;}
 
 async function genToday(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'today-out');return;}const rot=D?D.rotation:'pre';spin('today-out');fai(await ai(`Daily plan. Mode: ${document.getElementById('mode-sel').value}. Energy: ${document.getElementById('sle').value}/10. Sleep: ${document.getElementById('sls').value}h. Rotation: ${rot}. Give UWorld topic recommendation with anesthesia rationale, whether to read today, one non-study priority.`),'today-out');}
-async function genRotG(){if(!CFG.api)return;spin('wk-guid');const t=await ai(`Weekly guidance for ${document.getElementById('wk-rot').value} rotation. UWorld topic order, clinical focus for evaluations and LOR potential, hidden curriculum priority, how this rotation builds the anesthesia reapplication narrative.`);document.getElementById('wk-guid').innerHTML=t?`<div class="al">ROTATION COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';}
-async function getUWRec(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'uw-rec');return;}const dm={};if(D&&D.uworldSessions)D.uworldSessions.forEach(s=>{if(!dm[s.topic])dm[s.topic]={q:0,scores:[]};dm[s.topic].q+=s.questions;if(s.score)dm[s.topic].scores.push(s.score);});const sum=Object.entries(dm).map(([t,d])=>`${t}: ${d.q}q avg ${d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length)+'%':'no score'}`).join('; ')||'No sessions logged';spin('uw-rec');fai(await ai(`UWorld history: ${sum}. Recommend next topic, mode (timed vs tutor), and why it matters for Step 3 AND anesthesia reapplication.`),'uw-rec');}
+async function genRotG(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('wk-guid').innerHTML='<div class="al">NOTE</div><p>Add API key in Settings.</p>';return;}spin('wk-guid');const t=await ai(`Weekly guidance for ${document.getElementById('wk-rot').value} rotation. UWorld topic order, clinical focus for evaluations and LOR potential, hidden curriculum priority, how this rotation builds the anesthesia reapplication narrative.`);document.getElementById('wk-guid').innerHTML=t?`<div class="al">ROTATION COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';}
+async function getUWRec(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'uw-rec');return;}const dm={};if(D&&D.uworldSessions)D.uworldSessions.forEach(s=>{if(!dm[s.topic])dm[s.topic]={q:0,scores:[]};dm[s.topic].q+=(+s.questions||0);if(s.score!=null&&!isNaN(+s.score)&&+s.score>0)dm[s.topic].scores.push(+s.score);});const sum=Object.entries(dm).map(([t,d])=>`${t}: ${d.q}q avg ${d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length)+'%':'no score'}`).join('; ')||'No sessions logged';spin('uw-rec');fai(await ai(`UWorld history: ${sum}. Recommend next topic, mode (timed vs tutor), and why it matters for Step 3 AND anesthesia reapplication.`),'uw-rec');}
 async function genRd(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('rd-ai').innerHTML='<div class="air"><div class="al">NOTE</div><p>Add API key in Settings.</p></div>';return;}spin('rd-ai');const t=await ai(`5-article reading list for rotation: ${document.getElementById('rd-rot').value}, focus: ${document.getElementById('rd-focus').value}. For each: real article title and journal, why it matters for IM, why it bridges to anesthesia/perioperative medicine. Numbered list.`);document.getElementById('rd-ai').innerHTML=t?`<div class="card" style="margin-top:12px;"><div class="lbl">AI reading list</div><div class="air"><div class="al">READING LIST</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`:'';}
 async function genJnlP(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('jnl-ai').innerHTML='<div class="air"><div class="al">PROMPT</div><p>Describe a moment this month when you recognized a physiologic pattern before your team. What did you notice? What did you do? How does this connect to what an anesthesiologist would need to anticipate before the OR?</p></div>';return;}spin('jnl-ai');fai(await ai(`Give Javier a specific narrative reflection prompt for rotation: ${D?D.rotation:'pre'}. Help him surface a clinical moment connecting to predictive physiologic reasoning or longitudinal disease to acute instability.`),'jnl-ai');}
 async function evalAns(){const q=document.getElementById('prac-q').value,a=document.getElementById('prac-ans').value;if(!a){alert('Write your answer first.');return;}if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'prac-out');return;}spin('prac-out');fai(await ai(`Evaluate this anesthesia reapplication interview answer. Q: "${q}". A: "${a}". Give: what works and why, what to strengthen or remove (flag cliches like vigilance/last line of defense), one specific rewrite of the weakest sentence. Be direct.`),'prac-out');}
