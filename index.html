@@ -786,6 +786,7 @@ function togRest(el,day){
   if(D.restDays.includes(day))D.restDays=D.restDays.filter(d=>d!==day);else D.restDays.push(day);
   buildWk(); push(null,'smsg-chk');
 }
+let _wkbTimer=null;
 function upWkB(){
   const q=+document.getElementById('iwq').value||0,a=+document.getElementById('iwa').value||0;
   document.getElementById('wqv').textContent=q+' / 105';document.getElementById('wqb').style.width=Math.min(100,Math.round(q/105*100))+'%';
@@ -794,7 +795,8 @@ function upWkB(){
   if(!D.weekProgress) D.weekProgress={};
   const wk=new Date().toISOString().split('T')[0].substring(0,7);
   D.weekProgress[wk]={qs:q,articles:a};
-  push(null,'smsg-chk');
+  clearTimeout(_wkbTimer);
+  _wkbTimer=setTimeout(()=>push(null,'smsg-chk'),1000);
 }
 
 // ============================================================
