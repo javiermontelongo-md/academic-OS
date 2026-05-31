@@ -149,19 +149,55 @@ ts:        unix timestamp ms
 --serif: 'Fraunces', serif
 --sans:  'DM Sans', sans-serif
 
-body font-size: 14px
-line-height:    1.6
+body font-size: 26px    (matches workout-OS)
+line-height:    1.7
+
+Font size scale (used throughout HTML + inline styles):
+  Primary text     26px   body, .lt, .tli-t, .qbox-a, .abox p, .air p
+  Secondary text   25px   .sl, .ldt, .ig label, .btn, .sbtn, .tli-s, .lbad, .lgood
+  Mono labels      24px   .lbl, .ptag, .spill, .bdg, .ld, .dn, .dt, .chip, .tli-d, .spin, .air .al, .pbl, .smsg
+  Headings         29px   .h1, .dd, serif rotation titles
+  Stat values      32px   .sv
+  Logo             28px   .logo, .mlogo
+  Tabs             25px   .tab
+  Inputs           23px   input, select, textarea, .ci label
+  Mobile nav icon  20px   .nicon
+  Mobile nav label 11px   .nlbl  (intentionally compact)
 ```
 
 ### Layout
 ```css
 /* Desktop */
-.hdr { padding: 18px 32px 0; position: sticky; top: 0; z-index: 50; }
+.hdr  { padding: 16px 32px 0; position: sticky; top: 0; z-index: 50; }
+.main { flex: 1; padding: 24px 32px; max-width: 80%; width: 100%; margin: 0 auto; }
 
 /* Mobile nav */
---nav:  62px
+--nav:  64px
 --safe: env(safe-area-inset-bottom, 0px)
 ```
+
+### Grid & Card Utilities
+```css
+.g2  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.g3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4  { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.card { border-radius: var(--rl); padding: 18px 20px; margin-bottom: 16px;
+        transition: border-color .2s; }
+.card:hover { border-color: var(--b2); }
+--r:  12px   (standard border-radius)
+--rl: 18px   (large border-radius, cards)
+```
+
+### Panel Animation
+```css
+.panel.on { animation: fadeUp .25s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+```
+
+### Inline Font Size Rule
+**Never hardcode small values in HTML or JS-rendered strings.**
+Forbidden in HTML/JS context: anything below 24px (except `.nlbl` at 11px).
+Always use the font size scale from the Typography section above.
 
 ---
 
