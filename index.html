@@ -186,6 +186,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('interview',this)">INTERVIEW</button>
     <button class="tab" onclick="gT('application',this)">APPLICATION</button>
     <button class="tab" onclick="gT('milestones',this)">MILESTONES</button>
+    <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
@@ -236,6 +237,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="ci" id="ci-wl"><input type="checkbox" id="cb-wl" onchange="chk('ci-wl')"><label for="cb-wl">Wellness -- meal, water, 10 min outside</label></div>
       <div class="ci" id="ci-aki"><input type="checkbox" id="cb-aki" onchange="chk('ci-aki')"><label for="cb-aki">!! Email Temple AKI PI -- HIGH PRIORITY</label></div>
     </div>
+  </div>
+  <div class="card" style="background:linear-gradient(135deg,rgba(127,255,110,.04),rgba(79,195,247,.04));border-color:rgba(127,255,110,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <div class="lbl" style="margin-bottom:0;">weekly momentum score</div>
+      <div style="display:flex;align-items:baseline;gap:6px;"><span id="mom-score" style="font-family:var(--mono);font-size:38px;font-weight:500;color:var(--g);">--</span><span style="font-family:var(--mono);font-size:24px;color:var(--t3);">/ 100</span></div>
+    </div>
+    <div class="bbar"><div class="bfill" id="mom-fill" style="width:0%;background:var(--g);"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;">
+      <div style="font-family:var(--mono);font-size:23px;color:var(--t3);">UWorld <span id="mom-uw" style="color:var(--g);">0/40</span></div>
+      <div style="font-family:var(--mono);font-size:23px;color:var(--t3);">Reading <span id="mom-rd" style="color:var(--g2);">0/30</span></div>
+      <div style="font-family:var(--mono);font-size:23px;color:var(--t3);">Reflection <span id="mom-jn" style="color:var(--g3);">0/20</span></div>
+      <div style="font-family:var(--mono);font-size:23px;color:var(--t3);">Streak <span id="mom-st" style="color:var(--g4);">0/10</span></div>
+    </div>
+    <div id="mom-msg" style="font-size:25px;color:var(--t3);margin-top:8px;line-height:1.5;font-style:italic;"></div>
   </div>
   <div class="card">
     <div class="lbl">ai coach</div>
@@ -473,6 +488,45 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 
 <!-- v2026-05-17 19:25:02 -->
+<div id="panel-curriculum" class="panel">
+  <div class="h1">Hidden <span>curriculum</span></div>
+
+  <div class="card">
+    <div class="lbl">clinical reasoning engine</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Enter a chief complaint. Get the physical exam to perform, differentials to consider, and labs &amp; imaging to order — structured the way attendings think.</div>
+    <div class="ig"><label>Chief Complaint / Presentation</label><input type="text" id="cc-input" placeholder="e.g. 67yo M with acute dyspnea and leg swelling"></div>
+    <div class="brow"><button class="btn bp bi" onclick="genClinReason()">Generate clinical framework</button></div>
+    <div id="cc-out" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">assessment &amp; plan — cms language coach</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Write your raw A&amp;P below. AI rewrites it with proper CMS Medical Decision Making language — the phrasing that makes charts billable and impresses attendings.</div>
+    <div class="ig"><label>Diagnosis / Problem</label><input type="text" id="ap-dx" placeholder="e.g. Acute decompensated heart failure with reduced EF"></div>
+    <div class="ig"><label>Your A&amp;P Draft (raw thoughts fine)</label><textarea id="ap-draft" rows="5" placeholder="e.g. Pt with CHF flare. BNP up. Will give lasix, check echo, hold metoprolol. Cards aware."></textarea></div>
+    <div class="brow"><button class="btn bp bi" onclick="genAPcoach()">Rewrite with CMS language</button></div>
+    <div id="ap-out" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">oral presentation coach</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Write your patient presentation below. Get specific feedback on structure, efficiency, what to lead with, and how to sound like a senior resident on rounds.</div>
+    <div class="ig"><label>Your Presentation</label><textarea id="pres-draft" rows="6" placeholder="e.g. This is a 67-year-old male with PMH of ischemic cardiomyopathy EF 30%, HTN, DM2..."></textarea></div>
+    <div class="brow"><button class="btn bp bi" onclick="genPresCoach()">Coach my presentation</button></div>
+    <div id="pres-out" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">cms documentation rules — internalized</div>
+    <div class="qbox"><div class="qbox-q">What makes MDM "high complexity" for billing?</div><div class="qbox-a">Must hit 2 of 3: <strong>(1)</strong> Multiple chronic conditions OR acute illness threatening life/organ — document "acute on chronic HFrEF with hemodynamic instability." <strong>(2)</strong> Extensive data — review/order labs, imaging, AND independent interpretation of external records or independent historian. <strong>(3)</strong> High risk management — drug requiring intensive monitoring, hospitalization, or decision not to resuscitate.</div></div>
+    <div class="qbox"><div class="qbox-q">How do you document "independent interpretation" of a test?</div><div class="qbox-a">Don't write "CXR read by radiology." Write: <strong>"CXR reviewed independently: bilateral interstitial edema, cardiomegaly, no pleural effusion greater than trace — consistent with acute decompensation."</strong> Your words, your finding, your clinical correlation.</div></div>
+    <div class="qbox"><div class="qbox-q">A&P phrase bank — CMS-safe language</div><div class="qbox-a"><strong>Risk stratification:</strong> "Patient meets high-risk criteria given [X] — warranting inpatient management for monitoring and titration." &nbsp;|&nbsp; <strong>Decision complexity:</strong> "Multiple competing diagnoses considered including [DDx] — clinical picture most consistent with [dx] given [reason]." &nbsp;|&nbsp; <strong>Escalation reasoning:</strong> "Clinical trajectory warrants escalation — patient not responding to initial therapy as evidenced by [objective data]."</div></div>
+    <div class="qbox"><div class="qbox-q">One-liner formula that impresses attendings</div><div class="qbox-a"><strong>[Age][sex] with [key PMH] presenting with [chief complaint] in the context of [precipitant], most likely [leading dx], with [complication/concern] requiring [key action].</strong> Example: "67M with ischemic cardiomyopathy EF 30% presenting with 2-week dyspnea on exertion and 8lb weight gain, most likely acute decompensated HFrEF in the setting of dietary indiscretion and medication non-adherence, now requiring IV diuresis with close hemodynamic monitoring."</div></div>
+    <div class="qbox"><div class="qbox-q">Physical exam — present what's relevant, not what's normal</div><div class="qbox-a">Bad: "Heart RRR, lungs CTA bilaterally." Good: <strong>"Cardiovascular: RRR, 2/6 holosystolic murmur at apex radiating to axilla — unchanged from prior. Pulmonary: bibasilar crackles to mid-lung fields bilaterally, dullness to percussion at bases. Extremities: 2+ pitting edema to knees, no calf tenderness."</strong> Findings anchor your reasoning. Normal findings can support your DDx — say why they matter.</div></div>
+  </div>
+</div>
+
+
 <div id="panel-settings" class="panel">
   <div class="h1">Settings &amp; <span>sync</span></div>
   <div class="g2">
@@ -532,6 +586,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
   <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
+  <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
 </div><!-- v2026-05-17 19:25:02 -->
@@ -628,7 +683,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -926,6 +981,112 @@ async function getUWRec(){if(!(document.getElementById('api-key')?.value?.trim()
 async function genRd(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('rd-ai').innerHTML='<div class="air"><div class="al">NOTE</div><p>Add API key in Settings.</p></div>';return;}spin('rd-ai');const t=await ai(`5-article reading list for rotation: ${document.getElementById('rd-rot').value}, focus: ${document.getElementById('rd-focus').value}. For each: real article title and journal, why it matters for IM, why it bridges to anesthesia/perioperative medicine. Numbered list.`);document.getElementById('rd-ai').innerHTML=t?`<div class="card" style="margin-top:12px;"><div class="lbl">AI reading list</div><div class="air"><div class="al">READING LIST</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`:'';}
 async function genJnlP(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('jnl-ai').innerHTML='<div class="air"><div class="al">PROMPT</div><p>Describe a moment this month when you recognized a physiologic pattern before your team. What did you notice? What did you do? How does this connect to what an anesthesiologist would need to anticipate before the OR?</p></div>';return;}spin('jnl-ai');fai(await ai(`Give Javier a specific narrative reflection prompt for rotation: ${D?D.rotation:'pre'}. Help him surface a clinical moment connecting to predictive physiologic reasoning or longitudinal disease to acute instability.`),'jnl-ai');}
 async function evalAns(){const q=document.getElementById('prac-q').value,a=document.getElementById('prac-ans').value;if(!a){alert('Write your answer first.');return;}if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'prac-out');return;}spin('prac-out');fai(await ai(`Evaluate this anesthesia reapplication interview answer. Q: "${q}". A: "${a}". Give: what works and why, what to strengthen or remove (flag cliches like vigilance/last line of defense), one specific rewrite of the weakest sentence. Be direct.`),'prac-out');}
+
+// ============================================================
+// MOMENTUM SCORE
+// ============================================================
+function calcMomentum(){
+  if(!D) return;
+  const now=new Date();
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());weekStart.setHours(0,0,0,0);
+  const wkStr=weekStart.toISOString().split('T')[0];
+
+  // UWorld this week (40pts): 5 sessions = full score, prorated
+  const uwSessions=(D.uworldSessions||[]).filter(s=>s.date&&s.date>=wkStr);
+  const uwPts=Math.min(40,Math.round(uwSessions.length/5*40));
+
+  // Reading this week (30pts): from weekProgress articles count
+  const wkKey=now.toISOString().split('T')[0].substring(0,7);
+  const articles=(D.weekProgress&&D.weekProgress[wkKey])?+D.weekProgress[wkKey].articles||0:0;
+  const rdPts=Math.min(30,Math.round(articles/5*30));
+
+  // Reflection/Journal this week (20pts)
+  const jnEntries=(D.journalEntries||[]).filter(j=>j.ts&&new Date(j.ts)>=weekStart);
+  const jnPts=Math.min(20,jnEntries.length*10);
+
+  // Streak bonus (10pts)
+  const sessions=(D.uworldSessions||[]);
+  const dates=[...new Set(sessions.map(s=>s.date))].sort().reverse();
+  let streak=0;
+  if(dates.length){
+    const todayStr=now.toISOString().split('T')[0];
+    const yest=new Date();yest.setDate(yest.getDate()-1);const yestStr=yest.toISOString().split('T')[0];
+    if(dates[0]===todayStr||dates[0]===yestStr){
+      let cur=new Date(dates[0]+'T12:00:00');
+      for(const d of dates){if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break;}
+    }
+  }
+  const stPts=Math.min(10,streak*2);
+
+  const total=uwPts+rdPts+jnPts+stPts;
+  const color=total>=80?'var(--g)':total>=55?'var(--g2)':total>=35?'var(--g3)':'var(--g4)';
+  const label=total>=80?'Strong week. Keep the standard.':total>=55?'Good momentum. Push reading.':total>=35?'Building. Log UWorld daily.':'Early week or gap — close it today.';
+
+  const se=document.getElementById('mom-score');if(se){se.textContent=total;se.style.color=color;}
+  const fe=document.getElementById('mom-fill');if(fe){fe.style.width=total+'%';fe.style.background=color;}
+  document.getElementById('mom-uw').textContent=uwPts+'/40';
+  document.getElementById('mom-rd').textContent=rdPts+'/30';
+  document.getElementById('mom-jn').textContent=jnPts+'/20';
+  document.getElementById('mom-st').textContent=stPts+'/10';
+  const me=document.getElementById('mom-msg');if(me)me.textContent=label;
+}
+
+// ============================================================
+// HIDDEN CURRICULUM — AI FUNCTIONS
+// ============================================================
+async function genClinReason(){
+  const cc=document.getElementById('cc-input').value.trim();
+  if(!cc){alert('Enter a chief complaint first.');return;}
+  spin('cc-out');
+  const t=await ai(`You are a senior IM attending teaching a PGY-1. Presentation: "${cc}".
+Return 4 clearly labeled sections:
+PHYSICAL EXAM: List the specific focused exam maneuvers to perform and WHY each is relevant to this presentation. Be specific (e.g. "JVP measurement — elevated in volume overload and right heart failure").
+DIFFERENTIAL DIAGNOSIS: List 5-7 diagnoses ranked by probability. For each: one sentence on the key feature that supports it in this case.
+LABS & IMAGING: List what to order and the clinical rationale for each (not just a list — say what you are looking for).
+CMS DOCUMENTATION NOTE: Write one sentence of CMS-quality language describing the complexity of this presentation for medical decision-making documentation.`);
+  if(!t){fai(null,'cc-out');return;}
+  const sections=t.split(/
+(?=PHYSICAL EXAM:|DIFFERENTIAL DIAGNOSIS:|LABS & IMAGING:|CMS DOCUMENTATION)/);
+  const html=sections.map(s=>{
+    const lines=s.trim().split('
+');
+    const hdr=lines[0];const body=lines.slice(1).join('
+');
+    const color=hdr.includes('PHYSICAL')?'var(--g)':hdr.includes('DIFF')?'var(--g2)':hdr.includes('LABS')?'var(--g3)':'var(--g4)';
+    return`<div class="air" style="border-color:${color}22;margin-bottom:10px;"><div class="al" style="color:${color};">${escHtml(hdr)}</div><p>${escHtml(body).replace(/
+/g,'<br>')}</p></div>`;
+  }).join('');
+  document.getElementById('cc-out').innerHTML=html||`<div class="air"><p>${escHtml(t).replace(/
+/g,'<br>')}</p></div>`;
+}
+
+async function genAPcoach(){
+  const dx=document.getElementById('ap-dx').value.trim();
+  const draft=document.getElementById('ap-draft').value.trim();
+  if(!draft){alert('Write your A&P draft first.');return;}
+  spin('ap-out');
+  const t=await ai(`You are a hospitalist attending reviewing a PGY-1's note. Problem: "${dx||'see draft'}".
+Draft A&P: "${draft}"
+
+Return 3 sections:
+WHAT WORKS: What's clinically sound in this draft.
+REWRITE: A polished, CMS-compliant version of this A&P using proper Medical Decision Making language. Include: complexity statement, data reviewed with independent interpretation, risk stratification, and plan with rationale. Sound like a senior hospitalist, not a student. Use complete sentences.
+COACHING NOTE: One specific tip about note writing or CMS documentation this resident should internalize.`);
+  fai(t,'ap-out');
+}
+
+async function genPresCoach(){
+  const pres=document.getElementById('pres-draft').value.trim();
+  if(!pres){alert('Write your presentation first.');return;}
+  spin('pres-out');
+  const t=await ai(`You are a senior IM attending listening to a PGY-1 present. Presentation: "${pres}"
+
+Return 3 sections:
+WHAT WORKS: What's efficient and clear.
+WHAT TO FIX: Specific problems — wrong order, missing data, burying the lede, too much noise. Be direct.
+REWRITTEN OPENING: Rewrite just the first 3 sentences as a senior resident would say them on rounds. Should be tight, confident, and lead with the clinical problem not the demographics.`);
+  fai(t,'pres-out');
+}
 </script>
 </body>
 </html>
