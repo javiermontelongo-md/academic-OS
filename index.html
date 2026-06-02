@@ -187,6 +187,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('application',this)">APPLICATION</button>
     <button class="tab" onclick="gT('milestones',this)">MILESTONES</button>
     <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
+    <button class="tab" onclick="gT('mind',this)">MIND</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
@@ -574,6 +575,67 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- MIND / BURNOUT SUPPORT PANEL -->
+<div id="panel-mind" class="panel">
+  <div class="h1">Mind &amp; <span>support</span></div>
+  <div style="font-size:26px;color:var(--t2);margin-bottom:18px;line-height:1.7;">This space is private. Write what is actually there. The coach knows your history and responds without judgment. Every entry is saved to your data.json and informs future conversations.</div>
+
+  <!-- Mood check-in -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="lbl">how are you right now</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="mood-chips">
+      <span class="chip" onclick="selMood(this,1)">1 — Rough</span>
+      <span class="chip" onclick="selMood(this,2)">2 — Struggling</span>
+      <span class="chip on" onclick="selMood(this,3)">3 — Okay</span>
+      <span class="chip" onclick="selMood(this,4)">4 — Grounded</span>
+      <span class="chip" onclick="selMood(this,5)">5 — Strong</span>
+    </div>
+    <div id="mood-trend" style="font-family:var(--mono);font-size:24px;color:var(--t3);">Mood trend loads after your first entry.</div>
+  </div>
+
+  <!-- Social leak prevention -->
+  <div class="card" style="border-color:rgba(255,183,77,.25);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g3);">before conversations — leak prevention</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Check these before a family dinner, social event, or any conversation where it might come up. These reset every visit — the act of reviewing them is the point.</div>
+    <div class="ci"><input type="checkbox" id="lk1" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk1">I have one genuine, positive rotation story ready to share</label></div>
+    <div class="ci"><input type="checkbox" id="lk2" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk2">If asked about anesthesia: "I am building exactly what I need this year — on track"</label></div>
+    <div class="ci"><input type="checkbox" id="lk3" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk3">I will ask them something I am genuinely curious about and listen completely</label></div>
+    <div class="ci"><input type="checkbox" id="lk4" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk4">What I feel privately is valid. It does not have to live in this conversation.</label></div>
+    <div class="ci"><input type="checkbox" id="lk5" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk5">I am proud of Kaiser SF. I say it like I mean it — because I do.</label></div>
+  </div>
+
+  <!-- Perspective anchors -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g);">perspective anchors</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Return to these when the narrative starts to spiral. Check only what you genuinely believe today — not what you think you should believe.</div>
+    <div class="ci"><input type="checkbox" id="pa1" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa1">This setback is evidence I can handle adversity — not evidence I cannot reach the goal.</label></div>
+    <div class="ci"><input type="checkbox" id="pa2" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa2">IM is not a consolation prize. It is the clinical evidence I did not have before.</label></div>
+    <div class="ci"><input type="checkbox" id="pa3" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa3">My AKI research makes me a perioperative scientist. Most applicants have nothing like it.</label></div>
+    <div class="ci"><input type="checkbox" id="pa4" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa4">The version of me who matches in 2028 needed this year to exist.</label></div>
+    <div class="ci"><input type="checkbox" id="pa5" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa5">Bitterness felt honestly is not the same as bitterness lived publicly.</label></div>
+    <div class="ci"><input type="checkbox" id="pa6" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa6">Every attending who respects me this year is a future advocate.</label></div>
+    <div class="ci"><input type="checkbox" id="pa7" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="pa7">I chose to fight for this. That is not naive — it is the most honest thing I have done.</label></div>
+  </div>
+
+  <!-- Talk it out -->
+  <div class="card" style="border-color:rgba(127,255,110,.25);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g);">talk it out — saved to your history</div>
+    <div class="ig"><label>What is actually on your mind?</label><textarea id="mind-entry" style="min-height:130px;" placeholder="Write whatever is there — frustration, fear, exhaustion, hope. This is private. The coach responds with psychological support and your entry is saved to data.json so future sessions know your history."></textarea></div>
+    <button class="sbtn" id="mind-sbtn" onclick="genMindResponse()">Talk to coach</button>
+    <div class="smsg" id="mind-smsg"></div>
+    <div id="mind-out" style="margin-top:4px;"></div>
+    <div class="brow" style="justify-content:center;margin-top:14px;">
+      <button class="btn bs bi" onclick="updateMindSummary()">Refresh my summary</button>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <div class="lbl">your journal history</div>
+    <div id="mind-hist"><div style="font-size:26px;color:var(--t3);font-style:italic;">No entries yet. Write something above.</div></div>
+  </div>
+</div>
+
 </div><!-- v2026-05-17 19:25:02 -->
 
 <nav class="bnav">
@@ -587,6 +649,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
   <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
+  <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
 </div><!-- v2026-05-17 19:25:02 -->
@@ -657,7 +720,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -683,7 +746,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderMindHistory(); renderMoodTrend();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1086,6 +1149,82 @@ WHAT WORKS: What's efficient and clear.
 WHAT TO FIX: Specific problems — wrong order, missing data, burying the lede, too much noise. Be direct.
 REWRITTEN OPENING: Rewrite just the first 3 sentences as a senior resident would say them on rounds. Should be tight, confident, and lead with the clinical problem not the demographics.`);
   fai(t,'pres-out');
+}
+
+// ============================================================
+// MIND / BURNOUT SUPPORT
+// ============================================================
+let _currentMood=3;
+function selMood(el,v){
+  document.querySelectorAll('#mood-chips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); _currentMood=v;
+}
+function renderMoodTrend(){
+  const el=document.getElementById('mood-trend'); if(!el||!D||!D.burnoutLog||!D.burnoutLog.length) return;
+  const recent=[...D.burnoutLog].slice(-7);
+  const mc={1:'#ef5350',2:'#ef9a9a',3:'#ffb74d',4:'#4fc3f7',5:'#7fff6e'};
+  const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
+  const dots=recent.map(e=>`<span title="${escHtml(e.date)}: ${ml[e.mood]||e.mood}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${mc[e.mood]||'#5a665a'};margin:0 3px;vertical-align:middle;"></span>`).join('');
+  const avg=(recent.reduce((a,e)=>a+(+e.mood||3),0)/recent.length).toFixed(1);
+  el.innerHTML=`<span>Last ${recent.length} entr${recent.length===1?'y':'ies'}:</span> ${dots} <span style="color:var(--t2);margin-left:6px;">avg ${avg}/5</span>`;
+}
+function renderMindHistory(){
+  const el=document.getElementById('mind-hist');
+  if(!el||!D||!D.burnoutLog||!D.burnoutLog.length){ if(el) el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No entries yet. Write something above.</div>'; return; }
+  const mc={1:'#ef5350',2:'#ef9a9a',3:'#ffb74d',4:'#4fc3f7',5:'#7fff6e'};
+  const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
+  el.innerHTML=[...D.burnoutLog].reverse().slice(0,10).map(e=>`<div class="le" style="flex-direction:column;gap:8px;padding:14px 0;"><div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;"><div class="ld">${escHtml(e.date)}</div><span style="font-family:var(--mono);font-size:24px;color:${mc[e.mood]||'#5a665a'};">${ml[e.mood]||e.mood+'/5'}</span></div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml((e.entry||'').substring(0,250))}${(e.entry||'').length>250?'…':''}</div>${e.response?`<div style="font-size:25px;color:var(--t3);border-left:2px solid var(--g);padding-left:10px;margin-top:6px;line-height:1.5;">${escHtml(e.response.substring(0,300))}${e.response.length>300?'…':''}</div>`:''}</div>`).join('');
+}
+async function genMindResponse(){
+  if(!D){ msg('mind-smsg','Data not loaded yet'); return; }
+  const entry=document.getElementById('mind-entry').value.trim();
+  if(!entry){ msg('mind-smsg','Write something first'); return; }
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!D.burnoutLog) D.burnoutLog=[];
+  const logEntry={date:new Date().toISOString().split('T')[0],ts:Date.now(),mood:_currentMood,entry,response:''};
+  if(!apiKey){
+    D.burnoutLog.push(logEntry);
+    const ok=await push(null,'mind-smsg');
+    if(ok){ document.getElementById('mind-entry').value=''; renderMindHistory(); renderMoodTrend(); }
+    else D.burnoutLog.pop();
+    document.getElementById('mind-out').innerHTML='<div class="air"><div class="al">NOTE</div><p>Entry saved. Add an Anthropic API key in Settings to receive support responses.</p></div>';
+    return;
+  }
+  const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
+  const summary=D.burnoutSummary||'No prior history recorded yet — this is the first session.';
+  const sysPrompt=`You are a psychological support coach for Javier Montelongo, MD. He is a PGY-1 internal medicine resident at Kaiser Permanente San Francisco pursuing anesthesia reapplication 2027-2028. He did not match anesthesia on his first attempt. He carries complex emotions — grief, frustration, and determination — and is concerned that bitterness is leaking into conversations with family and friends. He wants to hold hope for the future without suppressing what is real.\n\nYour role: warm, honest, direct psychological support. Acknowledge what he feels before any reframe. Never minimize. Never use toxic positivity. Help him hold the pain and the goal at the same time. When relevant, gently address the leak concern — the gap between what he feels privately and how he shows up publicly. Reference prior session history when helpful. 200 words max.\n\nPrior session summary:\n${summary}`;
+  const userPrompt=`Mood today: ${_currentMood}/5 (${ml[_currentMood]||''}).\n\n"${entry}"`;
+  document.getElementById('mind-out').innerHTML='<div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Thinking...</span></div>';
+  const btn=document.getElementById('mind-sbtn'); btn.classList.add('saving'); btn.textContent='Thinking...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:sysPrompt,messages:[{role:'user',content:userPrompt}]})});
+    const d=await r.json();
+    const responseText=d.content?.[0]?.text||null;
+    logEntry.response=responseText||'';
+    D.burnoutLog.push(logEntry);
+    const ok=await push(null,'mind-smsg');
+    if(ok){ document.getElementById('mind-entry').value=''; renderMindHistory(); renderMoodTrend(); }
+    else D.burnoutLog.pop();
+    document.getElementById('mind-out').innerHTML=responseText?`<div class="air" style="margin-top:12px;"><div class="al">COACH</div><p>${responseText.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:'<div class="air"><div class="al">NOTE</div><p>Check your API key in Settings.</p></div>';
+  }catch(e){
+    document.getElementById('mind-out').innerHTML=`<div class="air"><div class="al">ERROR</div><p>${escHtml(e.message)}</p></div>`;
+    msg('mind-smsg','');
+  }
+  btn.classList.remove('saving'); btn.textContent='Talk to coach';
+}
+async function updateMindSummary(){
+  if(!D||!D.burnoutLog||!D.burnoutLog.length){ alert('No entries to summarize yet.'); return; }
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){ alert('Add API key in Settings first.'); return; }
+  msg('mind-smsg','Updating your summary...');
+  const entries=D.burnoutLog.slice(-20).map(e=>`[${e.date}, mood ${e.mood}/5]: ${e.entry}`).join('\n\n');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:'You compress psychological support journal entries into a brief summary for future context.',messages:[{role:'user',content:`Summarize these support journal entries in 150 words max. Write in second person ("You have been..."). Capture: recurring emotional themes, mood trend direction, what seems to be helping, what concerns persist, any progress visible. Be honest and specific — this will be used to give better support in future sessions.\n\nEntries:\n${entries}`}]})});
+    const d=await r.json();
+    const summary=d.content?.[0]?.text||'';
+    if(summary){ D.burnoutSummary=summary; await push(null,'mind-smsg'); msg('mind-smsg','Summary updated — future sessions will reference this'); }
+    else msg('mind-smsg','Summary generation failed — check API key');
+  }catch(e){ msg('mind-smsg','Error: '+escHtml(e.message)); }
 }
 </script>
 </body>
