@@ -705,6 +705,7 @@ function restChk(){
 // UWORLD
 // ============================================================
 async function saveUW(){
+  try{
   if(!D){ msg('uw-smsg','Data not loaded yet'); return; }
   const date=document.getElementById('uw-date').value,q=+document.getElementById('uw-q').value||0,topic=document.getElementById('uw-topic').value,notes=document.getElementById('uw-notes').value;
   const scoreRaw=document.getElementById('uw-s').value.trim();
@@ -717,6 +718,7 @@ async function saveUW(){
   const ok=await push('uw-sbtn','uw-smsg');
   if(ok){ renderUWstats(); renderUWhist(); document.getElementById('uw-q').value='15'; document.getElementById('uw-s').value=''; document.getElementById('uw-notes').value=''; }
   else D.uworldSessions.pop();
+  }catch(e){ msg('uw-smsg','Error: '+e.message); }
 }
 function renderUWstats(){
   if(!D||!D.uworldSessions) return;
@@ -749,6 +751,7 @@ function renderUWhist(){
 // JOURNAL
 // ============================================================
 async function saveJnl(){
+  try{
   if(!D){ msg('jnl-smsg','Data not loaded yet'); return; }
   const month=document.getElementById('jnl-mo').value,caseT=document.getElementById('jnl-case').value,physio=document.getElementById('jnl-physio').value,anes=document.getElementById('jnl-anes').value,win=document.getElementById('jnl-win').value;
   if(!physio){ msg('jnl-smsg','Write something in the physiology field'); return; }
@@ -757,6 +760,7 @@ async function saveJnl(){
   const ok=await push('jnl-sbtn','jnl-smsg');
   if(ok){['jnl-physio','jnl-anes','jnl-case','jnl-win'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});renderJhist();}
   else D.journalEntries.pop();
+  }catch(e){ msg('jnl-smsg','Error: '+e.message); }
 }
 function renderJhist(){
   const el=document.getElementById('jnl-hist'); if(!el||!D||!D.journalEntries||!D.journalEntries.length){if(el)el.innerHTML='';return;}
@@ -767,6 +771,7 @@ function renderJhist(){
 // EXPOSURE
 // ============================================================
 async function saveExp(){
+  try{
   if(!D){ msg('exp-smsg','Data not loaded yet'); return; }
   const type=document.getElementById('exp-type').value,note=document.getElementById('exp-note').value,date=new Date().toISOString().split('T')[0];
   if(!D.exposureLog) D.exposureLog=[];
@@ -775,7 +780,8 @@ async function saveExp(){
   if(type.includes('Mentor')) D.anesthesiaContacts=(D.anesthesiaContacts||0)+1;
   const ok=await push('exp-sbtn','exp-smsg');
   if(ok){document.getElementById('exp-note').value='';renderExpStats();}
-  else D.exposureLog.pop();
+  else{ D.exposureLog.pop(); if(type.includes('Shadow')||type.includes('OR'))D.shadowingHours=Math.max(0,(D.shadowingHours||0)-1); if(type.includes('Mentor'))D.anesthesiaContacts=Math.max(0,(D.anesthesiaContacts||0)-1); }
+  }catch(e){ msg('exp-smsg','Error: '+e.message); }
 }
 function renderExpStats(){ if(!D) return; const s=document.getElementById('sh-h');if(s)s.textContent=D.shadowingHours||0;const a=document.getElementById('an-c');if(a)a.textContent=D.anesthesiaContacts||0; }
 
@@ -890,16 +896,13 @@ function clrCFG(){if(confirm('Clear local settings (token, API key)? Your data o
 function spin(id){document.getElementById(id).innerHTML='<div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Generating...</span></div>';}
 async function ai(prompt){
   const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
-  if(!apiKey){ console.error('AI: no API key found'); return null; }
-  console.log('AI: calling with key prefix', apiKey.substring(0,12));
+  if(!apiKey){ return null; }
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
-    console.log('AI: response status', r.status);
     const d=await r.json();
-    console.log('AI: response', JSON.stringify(d).substring(0,200));
-    if(d.error){ console.error('AI error:', d.error); return 'Error: '+d.error.message; }
+    if(d.error){ return 'Error: '+d.error.message; }
     return d.content?.[0]?.text||null;
-  }catch(e){ console.error('AI fetch error:', e.message); return 'Fetch error: '+e.message; }
+  }catch(e){ return 'Fetch error: '+e.message; }
 }
 function fai(t,id){document.getElementById(id).innerHTML=t?`<div class="air"><div class="al">AI COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:`<div class="air"><div class="al">NOTE</div><p>Add your Anthropic API key in Settings -- paste key and click Save key. Or check browser console (F12) for error details.</p></div>`;}
 
