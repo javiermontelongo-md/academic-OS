@@ -1108,19 +1108,14 @@ DIFFERENTIAL DIAGNOSIS: List 5-7 diagnoses ranked by probability. For each: one 
 LABS & IMAGING: List what to order and the clinical rationale for each (not just a list — say what you are looking for).
 CMS DOCUMENTATION NOTE: Write one sentence of CMS-quality language describing the complexity of this presentation for medical decision-making documentation.`);
   if(!t){fai(null,'cc-out');return;}
-  const sections=t.split(/
-(?=PHYSICAL EXAM:|DIFFERENTIAL DIAGNOSIS:|LABS & IMAGING:|CMS DOCUMENTATION)/);
+  const sections=t.split(/\n(?=PHYSICAL EXAM:|DIFFERENTIAL DIAGNOSIS:|LABS & IMAGING:|CMS DOCUMENTATION)/);
   const html=sections.map(s=>{
-    const lines=s.trim().split('
-');
-    const hdr=lines[0];const body=lines.slice(1).join('
-');
+    const lines=s.trim().split('\n');
+    const hdr=lines[0];const body=lines.slice(1).join('\n');
     const color=hdr.includes('PHYSICAL')?'var(--g)':hdr.includes('DIFF')?'var(--g2)':hdr.includes('LABS')?'var(--g3)':'var(--g4)';
-    return`<div class="air" style="border-color:${color}22;margin-bottom:10px;"><div class="al" style="color:${color};">${escHtml(hdr)}</div><p>${escHtml(body).replace(/
-/g,'<br>')}</p></div>`;
+    return`<div class="air" style="border-color:${color}22;margin-bottom:10px;"><div class="al" style="color:${color};">${escHtml(hdr)}</div><p>${escHtml(body).replace(/\n/g,'<br>')}</p></div>`;
   }).join('');
-  document.getElementById('cc-out').innerHTML=html||`<div class="air"><p>${escHtml(t).replace(/
-/g,'<br>')}</p></div>`;
+  document.getElementById('cc-out').innerHTML=html||`<div class="air"><p>${escHtml(t).replace(/\n/g,'<br>')}</p></div>`;
 }
 
 async function genAPcoach(){
