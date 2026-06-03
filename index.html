@@ -186,6 +186,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('interview',this)">INTERVIEW</button>
     <button class="tab" onclick="gT('application',this)">APPLICATION</button>
     <button class="tab" onclick="gT('milestones',this)">MILESTONES</button>
+    <button class="tab" onclick="gT('anki',this)">ANKI</button>
     <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
     <button class="tab" onclick="gT('mind',this)">MIND</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
@@ -528,6 +529,124 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 
 
+<div id="panel-anki" class="panel">
+  <div class="h1">Anki <span>engine</span></div>
+
+  <!-- ── SETTINGS DIAGNOSIS ── -->
+  <div class="card" style="border-color:rgba(255,183,77,.25);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <div class="lbl" style="margin-bottom:0;color:var(--g3);">your settings — diagnosis &amp; fix</div>
+      <span class="bdg o">FSRS 0.90</span><span class="bdg r">⚠ LEECH = 1</span><span class="bdg g">FSRS ON</span>
+    </div>
+    <div class="qbox" style="border-color:rgba(239,83,80,.25);">
+      <div class="qbox-q" style="color:var(--g4);">🚨 Critical fix: Leech threshold = 1 → Change to 8</div>
+      <div class="qbox-a">A leech threshold of 1 means <strong>any card you miss once gets tagged as a leech</strong>. Everything becomes a leech. Anki's default is 8 (wrong 4 times = leech). Set yours to 8 — it flags genuinely hard cards, not normal learning difficulty. This is your most urgent settings fix.</div>
+    </div>
+    <div class="qbox" style="border-color:rgba(255,183,77,.25);">
+      <div class="qbox-q" style="color:var(--g3);">⚠ Auto Advance: 4s question timer → Disable or set 20s+</div>
+      <div class="qbox-a">For Step 3 and anesthesia boards, clinical vignettes need 30–90 seconds of real thinking. A 4-second auto-advance is training your brain to guess reflexively, not reason. <strong>Disable Speed Focus Mode during active study.</strong> Use it only for quick review runs on cards you know cold.</div>
+    </div>
+    <div class="qbox" style="border-color:rgba(255,183,77,.25);">
+      <div class="qbox-q" style="color:var(--g3);">⚠ Learning steps: 1m 25m → Change to 1m 10m 1440m</div>
+      <div class="qbox-a">Adding a 1-day step (1440m) forces the card into the next day before it graduates. This dramatically improves consolidation — you test recall after a sleep cycle, not just 25 minutes later. This one change measurably improves long-term retention with minimal extra reviews.</div>
+    </div>
+    <div class="qbox" style="border-color:rgba(127,255,110,.15);">
+      <div class="qbox-q" style="color:var(--g);">✓ What you have right: FSRS at 0.90</div>
+      <div class="qbox-a">FSRS at 90% desired retention is the correct long-term target for boards prep. Your parameters look well-optimized (they come from your actual review history). <strong>Do not change the FSRS parameters manually</strong> — let Anki recompute them every 1–2 months as you accumulate more data. Historical retention 0.90 matches your target — you're on track.</div>
+    </div>
+    <div class="dvdr"></div>
+    <div class="lbl">recommended settings — copy these</div>
+    <div style="background:var(--s3);border-radius:var(--r);padding:12px 14px;font-family:var(--mono);font-size:23px;color:var(--t2);line-height:2;">
+      Learning steps: <strong style="color:var(--g);">1m 10m 1440m</strong><br>
+      Relearning steps: <strong style="color:var(--g);">10m 1440m</strong><br>
+      Leech threshold: <strong style="color:var(--g);">8</strong><br>
+      Leech action: <strong style="color:var(--g);">Tag Only</strong><br>
+      Desired retention: <strong style="color:var(--g);">0.90</strong> (keep)<br>
+      Max interval: <strong style="color:var(--g);">36500</strong> (keep)<br>
+      New cards/day: <strong style="color:var(--g);">see daily targets below</strong><br>
+      Auto Advance: <strong style="color:var(--g4);">DISABLE during study — enable only for speed drills</strong>
+    </div>
+  </div>
+
+  <!-- ── DAILY TARGETS ── -->
+  <div class="card">
+    <div class="lbl">daily anki targets — by rotation phase</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Based on your FSRS 0.90 setup and PGY-1 schedule. <strong style="color:var(--t);">Reviews always before new cards.</strong> Never skip reviews — they compound. New cards are optional when time is short.</div>
+    <div class="g2">
+      <div class="stat" style="border-color:rgba(127,255,110,.2);">
+        <div class="sv g">20–30</div><div class="sl">new cards/day</div>
+        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Pre-residency now. You have the time. Build the foundation before July 1. Focus: IM core deck + UWorld missed Qs.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(79,195,247,.2);">
+        <div class="sv b">10–15</div><div class="sl">new cards/day on rotation</div>
+        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Normal clinical day. Reviews first — always. New cards in the morning before rounds or after dinner. Never post-call.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(255,183,77,.2);">
+        <div class="sv o">0</div><div class="sl">new cards on call/post-call</div>
+        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Reviews only on call days — 10-minute pass if you get a break. Post-call: skip entirely. Sleep encodes memory better than Anki does.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(239,154,154,.2);">
+        <div class="sv r">~150–200</div><div class="sl">reviews/day at steady state</div>
+        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">With 10-15 new cards/day and FSRS 0.90, expect this at 6 months. Budget 30–45 min/day. This is normal — not a sign something is wrong.</div>
+      </div>
+    </div>
+    <div class="air" style="margin-top:12px;">
+      <div class="al">THE RULE THAT SAVES YOUR DECK</div>
+      <p><strong>Never add new cards if your review count is above 200.</strong> Clear the backlog first. A missed review compounds — it comes back harder, sooner. A missed new card costs nothing. Protect your review streak above everything.</p>
+    </div>
+  </div>
+
+  <!-- ── CARD GENERATOR ── -->
+  <div class="card">
+    <div class="lbl">anki card generator</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Paste a UWorld question, a patient presentation, or any clinical scenario. Get 3–5 ready-to-add Anki cards optimized for FSRS — minimal on front, complete on back, cloze-ready.</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="card-type-chips">
+      <div class="chip on" data-type="uworld" onclick="selChip(this,'card-type-chips')">UWorld Q</div>
+      <div class="chip" data-type="presentation" onclick="selChip(this,'card-type-chips')">Patient Presentation</div>
+      <div class="chip" data-type="concept" onclick="selChip(this,'card-type-chips')">Concept / Fact</div>
+      <div class="chip" data-type="pharm" onclick="selChip(this,'card-type-chips')">Pharm / Drug</div>
+    </div>
+    <div class="ig"><label>Paste content here</label><textarea id="card-input" rows="8" placeholder="Paste a UWorld question, patient case, or concept you want to learn..."></textarea></div>
+    <div class="ig"><label>Topic tag (optional)</label><input type="text" id="card-topic" placeholder="e.g. Cardiology, AKI, Vasopressors"></div>
+    <div class="brow"><button class="btn bp bi" onclick="genAnkiCards()">Generate cards</button></div>
+    <div id="cards-out" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ── REVIEW STATS INPUT ── -->
+  <div class="card">
+    <div class="lbl">personalized advice — enter your stats</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Enter your current Anki numbers and get specific advice for your situation.</div>
+    <div class="g2 k2">
+      <div class="ig"><label>Total cards in deck</label><input type="number" id="ak-total" placeholder="e.g. 3500"></div>
+      <div class="ig"><label>Mature cards (learned)</label><input type="number" id="ak-mature" placeholder="e.g. 800"></div>
+      <div class="ig"><label>Today's review count</label><input type="number" id="ak-rev" placeholder="e.g. 120"></div>
+      <div class="ig"><label>Current streak (days)</label><input type="number" id="ak-streak" placeholder="e.g. 14"></div>
+      <div class="ig"><label>Avg retention % (last 30d)</label><input type="number" id="ak-ret" placeholder="e.g. 87"></div>
+      <div class="ig"><label>New cards added this week</label><input type="number" id="ak-new" placeholder="e.g. 45"></div>
+    </div>
+    <div class="brow"><button class="btn bp bi" onclick="genAnkiAdvice()">Analyze my stats</button></div>
+    <div id="advice-out" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- ── LONG GAME ── -->
+  <div class="card">
+    <div class="lbl">the long game — step 3 → anesthesia boards</div>
+    <div class="qbox">
+      <div class="qbox-q">Deck structure for the full journey</div>
+      <div class="qbox-a"><strong>One master IM deck</strong> — Anking/AnkingOverhaul. Tag by organ system. Unsuspend by UWorld block (cardio block → unsuspend cardio cards). Don't make new cards for things already in Anking.<br><br><strong>One "Javier's misses" deck</strong> — only YOUR UWorld wrong answers and YOUR clinical pearls from rounds. This is your highest-yield deck. Generated with this tool.<br><br><strong>One anesthesia deck</strong> — build starting year 2 of IM. Basic sciences first (pharmacology, hemodynamics, airway anatomy). Add after Anking is mature.</div>
+    </div>
+    <div class="qbox">
+      <div class="qbox-q">When to reoptimize FSRS parameters</div>
+      <div class="qbox-a">Every 2–3 months: open Anki → your deck → Options → FSRS → Optimize. Let it recalculate from your actual review history. Do this after any major change in study intensity (starting residency, coming off a hard rotation). Your parameters will drift as you build more data — optimizing keeps your intervals accurate.</div>
+    </div>
+    <div class="qbox">
+      <div class="qbox-q">Six months before Step 3: change retention to 0.92</div>
+      <div class="qbox-a">Bump desired retention from 0.90 to 0.92 approximately 6 months before your Step 3 date. This tightens review intervals and increases daily burden by ~20%, but you will retain more. Do this gradually — 0.90 → 0.91 → 0.92 over 2 months so Anki can reschedule without flooding you.</div>
+    </div>
+  </div>
+</div>
+
+
 <div id="panel-settings" class="panel">
   <div class="h1">Settings &amp; <span>sync</span></div>
   <div class="g2">
@@ -648,6 +767,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
   <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
+  <button class="ni" onclick="gM('anki',this)"><span class="nicon">A↓</span><span class="nlbl">ANKI</span></button>
   <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
   <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
@@ -1220,6 +1340,100 @@ async function updateMindSummary(){
     if(summary){ D.burnoutSummary=summary; await push(null,'mind-smsg'); msg('mind-smsg','Summary updated — future sessions will reference this'); }
     else msg('mind-smsg','Summary generation failed — check API key');
   }catch(e){ msg('mind-smsg','Error: '+escHtml(e.message)); }
+}
+
+// ============================================================
+// ANKI — HELPER
+// ============================================================
+function selChip(el,groupId){
+  const p=document.getElementById(groupId)||el.closest('div[id]');
+  if(p) p.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+async function genAnkiCards(){
+  const input=document.getElementById('card-input').value.trim();
+  if(!input){alert('Paste content to generate cards from.');return;}
+  const typeEl=document.querySelector('#card-type-chips .chip.on');
+  const type=typeEl?typeEl.dataset.type:'uworld';
+  const topic=document.getElementById('card-topic').value.trim()||'General';
+  const typeLabels={uworld:'UWorld question',presentation:'patient presentation',concept:'concept or fact',pharm:'pharmacology'};
+  spin('cards-out');
+  const t=await ai(`You are a medical education expert building Anki cards for Javier Montelongo, a PGY-1 IM resident preparing for Step 3 and anesthesia reapplication. He uses FSRS at 0.90 retention.
+
+Input type: ${typeLabels[type]||type}
+Topic: ${topic}
+Content: """${input}"""
+
+Generate 4-6 high-quality Anki cards. Rules:
+- Front: ONE specific, testable question. Minimal words. No answer hints.
+- Back: Complete answer. Include: key mechanism OR why (not just what), one clinical pearl, one common mistake to avoid. Under 80 words.
+- Card type: label each as [BASIC] or [CLOZE]. For cloze, write the full sentence with {{c1::answer}} format.
+- Tag each card: ${topic}::Step3, ${topic}::Anesthesia if relevant
+- For UWorld: extract the PRIMARY teaching point and the distractor traps as separate cards
+- For presentations: make one card per diagnosis criterion, one card for the key exam finding, one for first-line management
+
+Format each card as:
+CARD [N]
+Type: BASIC or CLOZE
+Front: [front text]
+Back: [back text]
+Tags: [tags]
+---`);
+  if(!t){fai(null,'cards-out');return;}
+  // Parse and render cards
+  const cards=t.split(/CARD \d+/).filter(c=>c.trim());
+  const rendered=cards.map((c,i)=>{
+    const lines=c.trim().split('
+');
+    let type2='',front='',back='',tags='';
+    lines.forEach(l=>{
+      if(l.startsWith('Type:'))type2=l.replace('Type:','').trim();
+      else if(l.startsWith('Front:'))front=l.replace('Front:','').trim();
+      else if(l.startsWith('Back:'))back=l.replace('Back:','').trim();
+      else if(l.startsWith('Tags:'))tags=l.replace('Tags:','').trim();
+    });
+    if(!front)return'';
+    const tc=type2==='CLOZE'?'var(--g2)':'var(--g)';
+    return`<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:14px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+        <span style="font-family:var(--mono);font-size:23px;color:var(--t3);">CARD ${i+1}</span>
+        <span class="bdg" style="background:rgba(127,255,110,.08);color:${tc};border-color:${tc}33;">${escHtml(type2||'BASIC')}</span>
+        ${tags?`<span style="font-family:var(--mono);font-size:22px;color:var(--t3);">${escHtml(tags)}</span>`:''}
+      </div>
+      <div style="font-size:26px;color:var(--t);font-weight:500;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--b);">${escHtml(front)}</div>
+      <div style="font-size:26px;color:var(--t2);line-height:1.65;">${escHtml(back)}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  document.getElementById('cards-out').innerHTML=`<div class="lbl" style="margin-bottom:8px;">generated cards — copy each into anki</div>${rendered}<div style="font-size:24px;color:var(--t3);margin-top:8px;font-family:var(--mono);">Copy Front/Back text into Anki. For CLOZE cards, use the Cloze note type.</div>`;
+}
+
+async function genAnkiAdvice(){
+  const total=document.getElementById('ak-total').value||'unknown';
+  const mature=document.getElementById('ak-mature').value||'unknown';
+  const rev=document.getElementById('ak-rev').value||'unknown';
+  const streak=document.getElementById('ak-streak').value||'unknown';
+  const ret=document.getElementById('ak-ret').value||'unknown';
+  const newW=document.getElementById('ak-new').value||'unknown';
+  spin('advice-out');
+  const t=await ai(`Anki advisor for Javier Montelongo, PGY-1 IM at Kaiser SF, anesthesia reapplication goal, FSRS at 0.90 desired retention.
+
+Current stats:
+- Total cards: ${total}
+- Mature cards: ${mature}
+- Today's reviews: ${rev}
+- Study streak: ${streak} days
+- Avg retention last 30d: ${ret}%
+- New cards added this week: ${newW}
+
+Give SPECIFIC, numerical advice:
+1. Is his review burden sustainable for a PGY-1? What's the target?
+2. Is his retention rate on track for Step 3? What should it be?
+3. How many new cards/day should he add right now given these numbers?
+4. One specific thing to change or protect based on these exact numbers.
+5. What to do differently on call days vs normal days vs pre-call.
+Be direct. Physician-level. Under 200 words.`);
+  fai(t,'advice-out');
 }
 </script>
 </body>
