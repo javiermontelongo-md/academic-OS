@@ -186,9 +186,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('interview',this)">INTERVIEW</button>
     <button class="tab" onclick="gT('application',this)">APPLICATION</button>
     <button class="tab" onclick="gT('milestones',this)">MILESTONES</button>
+    <button class="tab" onclick="gT('roadmap',this)">ROADMAP</button>
     <button class="tab" onclick="gT('anki',this)">ANKI</button>
     <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
-    <button class="tab" onclick="gT('intern',this)">INTERN</button>
     <button class="tab" onclick="gT('mind',this)">MIND</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
@@ -530,6 +530,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 
 
+<div id="panel-roadmap" class="panel">
+  <div class="h1">Roadmap <span>to match</span></div>
+  <div class="card" style="background:linear-gradient(135deg,rgba(127,255,110,.04),rgba(79,195,247,.03));border-color:rgba(127,255,110,.2);margin-bottom:18px;">
+    <div class="lbl">overall progress</div>
+    <div id="roadmap-overall" style="margin-bottom:4px;">Loading...</div>
+    <div style="font-size:25px;color:var(--t3);line-height:1.6;">Sequential milestones — cross off each item and the next phase unlocks. Every checkbox saves to GitHub automatically.</div>
+  </div>
+  <div id="roadmap-phases"></div>
+</div>
+
+
 <div id="panel-anki" class="panel">
   <div class="h1">Anki <span>engine</span></div>
 
@@ -644,98 +655,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="qbox-q">Six months before Step 3: change retention to 0.92</div>
       <div class="qbox-a">Bump desired retention from 0.90 to 0.92 approximately 6 months before your Step 3 date. This tightens review intervals and increases daily burden by ~20%, but you will retain more. Do this gradually — 0.90 → 0.91 → 0.92 over 2 months so Anki can reschedule without flooding you.</div>
     </div>
-  </div>
-</div>
-
-
-<div id="panel-intern" class="panel">
-  <div class="h1">Intern <span>hidden curriculum</span></div>
-  <div style="font-size:26px;color:var(--t2);margin-bottom:20px;line-height:1.7;">These are the rules no one puts in the syllabus. They determine your evaluations, your letters, and your reputation — starting day one.</div>
-
-  <!-- Rotation-aware tip -->
-  <div class="card" style="border-color:rgba(127,255,110,.3);margin-bottom:14px;" id="intern-rot-card">
-    <div class="lbl" style="color:var(--g);">hidden curriculum — your current rotation</div>
-    <div id="intern-rot-tips" style="font-size:26px;color:var(--t2);line-height:1.7;">Load your rotation in the ROTATIONS tab to see rotation-specific tips.</div>
-  </div>
-
-  <!-- How you're actually graded -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl" style="color:var(--g);">how attendings actually grade you</div>
-    <div class="qbox"><div class="qbox-q">What they write about vs. what they grade on</div><div class="qbox-a">They write about your knowledge. They grade on: <strong>reliability, intellectual engagement, communication, and whether you made their job easier.</strong> Those are the four axes. Knowledge is table stakes — it keeps you off the bottom but doesn't put you at the top. The top is earned by the other four.</div></div>
-    <div class="qbox"><div class="qbox-q">The grade is mostly decided in the first 3 days</div><div class="qbox-a">You are establishing a prior. Every interaction after that either confirms or contradicts it. A strong first impression creates a halo — attendings interpret ambiguous moments charitably. A weak start requires active reversal, which is much harder. <strong>Come in day one like you have something to prove.</strong></div></div>
-    <div class="qbox"><div class="qbox-q">The single question they are always asking</div><div class="qbox-a">"Would I want this person on my team again?" Not "Do they know a lot?" — <strong>"Do they make things better or worse when they're here?"</strong> Answer that question affirmatively every single day.</div></div>
-    <div class="qbox"><div class="qbox-q">One bad moment can anchor an entire evaluation</div><div class="qbox-a">Being caught unprepared on your own patient. Being defensive after an error. Disappearing when the team needs you. These moments have asymmetric weight — they stick. One of these can override two weeks of solid work in an attending's memory.</div></div>
-  </div>
-
-  <!-- Presentations & rounds -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl" style="color:var(--g2);">rounds — what separates good from great</div>
-    <div class="qbox"><div class="qbox-q">Lead with the problem, not the timeline</div><div class="qbox-a">Bad: "Mr. X is a 67-year-old who was admitted two days ago and yesterday his creatinine went from 1.2 to 2.4 and we checked a urine..." Good: <strong>"Mr. X's acute kidney injury is worsening — creatinine 2.4 from 1.2 yesterday, FENa 0.4%, picture consistent with pre-renal — I'm holding his Lasix and pushing fluids."</strong> Bottom line first. Every time.</div></div>
-    <div class="qbox"><div class="qbox-q">Know the numbers cold before the attending asks</div><div class="qbox-a">Vitals, I/Os, trending labs — without hesitation, without looking at your phone. If you have to look it up while the attending waits, you lose ground. <strong>Pre-round specifically to memorize the numbers that will be asked.</strong> Write them on your pre-rounding sheet in the order they will be asked.</div></div>
-    <div class="qbox"><div class="qbox-q">Anticipate the next question</div><div class="qbox-a">The attending's next question is almost always about your plan rationale or the one thing you haven't addressed. Build your presentation to answer it before they ask. When they don't have a question, that is the highest compliment.</div></div>
-    <div class="qbox"><div class="qbox-q">Never say "I'm not sure" without a follow</div><div class="qbox-a">Always: <strong>"I'm not certain, but based on [mechanism/principle], I'd expect [X] — is that right?"</strong> You demonstrate reasoning even when you don't know the answer. That is what they are actually testing.</div></div>
-  </div>
-
-  <!-- Intellectual image -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl" style="color:var(--g3);">building your intellectual image</div>
-    <div class="qbox"><div class="qbox-q">Read one thing about your patient every night</div><div class="qbox-a">Five minutes. One paper, one UpToDate section, one mechanism. Then say it on rounds: <strong>"I was reading about this last night — the data on [X] actually suggests [Y]."</strong> Attendings notice this every single time. It signals that you think about patients after you leave the hospital.</div></div>
-    <div class="qbox"><div class="qbox-q">Ask questions that show you're thinking above your level</div><div class="qbox-a">Don't ask "what dose of Lasix?" Ask: <strong>"In a patient with low albumin like this, does the free drug concentration change our expected diuretic response?"</strong> Ask questions that reveal you've already thought about the next level. That is what makes attendings remember you.</div></div>
-    <div class="qbox"><div class="qbox-q">Write it down when they teach you</div><div class="qbox-a">Literally pull out a notebook or your phone and write. Every attending notices when a learner writes something down. It signals respect, engagement, and that you will retain it. It costs nothing and pays heavily.</div></div>
-    <div class="qbox"><div class="qbox-q">Connect to your anesthesia track explicitly — once per rotation</div><div class="qbox-a">Find one natural moment per rotation to say: <strong>"This is exactly the kind of physiology I want to understand deeply — it maps directly onto perioperative management."</strong> Once. Not every day. Once is memorable. Every day is annoying.</div></div>
-  </div>
-
-  <!-- Nursing & team -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl" style="color:var(--g4);">nursing &amp; team — the invisible grade</div>
-    <div class="qbox"><div class="qbox-q">Learn nurses' names on day one. Use them.</div><div class="qbox-a">Not "the nurse" — Maria, James, whoever. This costs nothing and builds trust that pays dividends all month. Nurses give informal feedback to attendings. They will advocate for you if they like working with you — and quietly undermine you if they don't.</div></div>
-    <div class="qbox"><div class="qbox-q">When a nurse says a patient "doesn't look right"</div><div class="qbox-a"><strong>This is a clinical finding. Write it in your note.</strong> "Nursing reports patient appears more lethargic than baseline." Go see the patient. The nurses who have been on that floor for 10 years have better clinical intuition than most interns. Treat their observations as data.</div></div>
-    <div class="qbox"><div class="qbox-q">End of the day check-in</div><div class="qbox-a">Before you leave, walk to the nursing station and say: <strong>"I'm heading out — is there anything you need on any of my patients before I go?"</strong> This takes two minutes. It prevents night calls. It builds your reputation as someone who completes the loop.</div></div>
-    <div class="qbox"><div class="qbox-q">Help your co-interns when you're caught up</div><div class="qbox-a">Senior residents and attendings see this. Being a team player is a graded competency under ACGME milestones — it literally shows up in your evaluation under "interpersonal skills." Offer to help write a note, see a consult, cover admissions. This is not optional goodwill — it is a performance metric.</div></div>
-  </div>
-
-  <!-- LOR strategy -->
-  <div class="card" style="border-color:rgba(79,195,247,.25);margin-bottom:14px;">
-    <div class="lbl" style="color:var(--g2);">the LOR play — anesthesia reapplication track</div>
-    <div class="qbox"><div class="qbox-q">The letter is written in your first week</div><div class="qbox-a">Everything after confirms or contradicts that first impression. <strong>The attending begins composing the letter in their head on day 3.</strong> You are not building toward a letter — you are maintaining one that is already being written. Behave accordingly from day one.</div></div>
-    <div class="qbox"><div class="qbox-q">What makes a letter strong vs. generic</div><div class="qbox-a">Strong letters contain a specific clinical story: "I watched Dr. Montelongo independently recognize X in a patient with Y and immediately respond with Z — this level of reasoning is unusual for an intern." Generic letters say "hardworking, team player, would make a good anesthesiologist." You cannot write the specific story for them — <strong>you have to create the moment</strong>.</div></div>
-    <div class="qbox"><div class="qbox-q">Ask in week 2, not at the end</div><div class="qbox-a"><strong>"Would you be willing to write me a strong letter? I want to give you enough time to write something meaningful rather than asking at the last minute."</strong> Early asks signal professionalism. Late asks get form letters. The word "strong" signals you know the difference between a strong and a mediocre letter — and you're only asking if they can write the former.</div></div>
-    <div class="qbox"><div class="qbox-q">Tier-1 targets — anesthesia reapplication</div><div class="qbox-a">In order of value: <strong>(1)</strong> Any attending who trained in or practices anesthesia. <strong>(2)</strong> MICU/CCU attendings — they write for anesthesia applicants regularly and understand what programs want. <strong>(3)</strong> Any attending who has mentored prior anesthesia reapplicants. <strong>(4)</strong> Chiefs and program directors who can speak to your overall trajectory. Know who these people are before your rotation starts.</div></div>
-    <div class="qbox"><div class="qbox-q">After the rotation — the follow-up</div><div class="qbox-a">Two weeks after the rotation ends, send a one-paragraph email: what you took away clinically, one specific thing they taught you that stuck, and a brief update on your anesthesia reapplication progress. <strong>Attendings who write letters like being reminded that the letter matters.</strong> This email keeps you top of mind and transforms a generic letter into a personalized one.</div></div>
-  </div>
-
-  <!-- Mistakes & errors -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl">handling mistakes — what actually gets graded</div>
-    <div class="qbox"><div class="qbox-q">Own it immediately, to the attending first</div><div class="qbox-a"><strong>"I should have caught this — I missed [X]. Here's what I've done to address it and what I'll do differently."</strong> Say this before they ask. The mistake happened. What they are now grading is your response. Defensiveness is the worst possible response. Ownership is the best.</div></div>
-    <div class="qbox"><div class="qbox-q">Follow up explicitly</div><div class="qbox-a">After a near-miss or error, go back to the attending 24–48 hours later: <strong>"I wanted to close the loop — [patient] is doing better after [adjustment]. I also wanted to share what I changed about my workflow so this doesn't happen again."</strong> Most interns disappear after an error. You returning to close the loop is remembered.</div></div>
-    <div class="qbox"><div class="qbox-q">The mistake does not define you. The response does.</div><div class="qbox-a">Attendings have seen hundreds of interns make hundreds of mistakes. What they remember is not the error — it is whether the intern grew from it, was honest about it, and demonstrated that patient safety is their primary value. <strong>Your character under pressure is what they are writing about.</strong></div></div>
-  </div>
-
-  <!-- Efficiency -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl">efficiency — being seen as capable</div>
-    <div class="qbox"><div class="qbox-q">Notes done before noon whenever possible</div><div class="qbox-a">An attending who cannot find your note by 2pm assumes you're behind or disorganized. Notes visible by noon signal that you are running your service, not being run by it. This is a reputation signal more than a documentation requirement.</div></div>
-    <div class="qbox"><div class="qbox-q">Discharge patients before lunch when clinically appropriate</div><div class="qbox-a">Early discharges free beds, reduce afternoon chaos, and make your whole team's afternoon easier. Attendings notice who is driving discharges proactively vs. waiting to be told. Being proactive about discharge is a visible marker of ownership.</div></div>
-    <div class="qbox"><div class="qbox-q">Have a system — never look disorganized</div><div class="qbox-a">Pre-rounding order, note template, sign-out template. <strong>Looking organized communicates competence even before you demonstrate it.</strong> An intern who fumbles through their list, can't find their notes, or misses a patient's lab from the night before triggers attending anxiety about patient safety. A tidy workflow is a trust signal.</div></div>
-    <div class="qbox"><div class="qbox-q">Reading the room on rounds</div><div class="qbox-a">When an attending is teaching: stop writing, make eye contact, nod. They remember who was present and engaged. When rounds are running long: tighten your presentations without being asked — be the intern who adjusts, not the one who needs to be managed. When the attending is stressed: this is not the moment to ask about your schedule, your LOR, or your time off.</div></div>
-  </div>
-
-  <!-- Signout -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="lbl">signout — the invisible reputation builder</div>
-    <div class="qbox"><div class="qbox-q">The best signouts are specific and anticipatory</div><div class="qbox-a">Don't say "watch Mr. X." Say: <strong>"Mr. X may spike overnight — if temp greater than 38.5, get blood cultures x2, UA with culture, CXR, and call me. If under 38.5, watch and notify me at 6am. He has a PICC line so threshold for culture is low."</strong> You are writing the decision tree for the person covering you. That is good medicine and it is memorable.</div></div>
-    <div class="qbox"><div class="qbox-q">Never use "stable" without a metric</div><div class="qbox-a"><strong>"Stable — BP 110–130 all day, mentating well, ambulated to the hall, no new complaints, overnight plan is to continue current management."</strong> "Stable" alone is not a signout — it is an invitation for a callback at 2am asking what stable means.</div></div>
-    <div class="qbox"><div class="qbox-q">Cross-cover remembers who gives good signouts</div><div class="qbox-a">The overnight team talks. Your signout quality is known within two weeks of starting residency. The intern who gives thorough, anticipatory signouts is trusted. The one who gives vague ones gets called all night and quietly develops a reputation for leaving problems behind.</div></div>
-  </div>
-
-  <!-- AI situation coach -->
-  <div class="card" style="border-color:rgba(127,255,110,.25);">
-    <div class="lbl" style="color:var(--g);">situation coach — what's the hidden curriculum move?</div>
-    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Describe a situation you're navigating — an attending dynamic, a team moment, a mistake, a LOR ask. Get specific advice on the unwritten rules that apply.</div>
-    <div class="ig"><label>What's the situation?</label><textarea id="intern-sit" style="min-height:110px;" placeholder="e.g. I made an error on a patient and my attending found out before I told them. How do I handle this now?"></textarea></div>
-    <div class="brow"><button class="btn bp bi" id="intern-coach-btn" onclick="genInternCoach()">What's the right move?</button></div>
-    <div id="intern-coach-out" style="margin-top:8px;"></div>
   </div>
 </div>
 
@@ -860,9 +779,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
   <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
   <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
+  <button class="ni" onclick="gM('roadmap',this)"><span class="nicon">★</span><span class="nlbl">ROAD</span></button>
   <button class="ni" onclick="gM('anki',this)"><span class="nicon">A↓</span><span class="nlbl">ANKI</span></button>
   <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
-  <button class="ni" onclick="gM('intern',this)"><span class="nicon">★</span><span class="nlbl">INTERN</span></button>
   <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
@@ -960,7 +879,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderMindHistory(); renderMoodTrend(); renderInternTips();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1478,7 +1397,8 @@ Tags: [tags]
   // Parse and render cards
   const cards=t.split(/CARD \d+/).filter(c=>c.trim());
   const rendered=cards.map((c,i)=>{
-    const lines=c.trim().split('\n');
+    const lines=c.trim().split('
+');
     let type2='',front='',back='',tags='';
     lines.forEach(l=>{
       if(l.startsWith('Type:'))type2=l.replace('Type:','').trim();
@@ -1530,38 +1450,175 @@ Be direct. Physician-level. Under 200 words.`);
 }
 
 // ============================================================
-// INTERN HIDDEN CURRICULUM
+// ROADMAP — phase definitions (edit here to add/change items)
 // ============================================================
-const INTERN_ROT_TIPS = {
-  pre: 'Before residency starts: memorize your pre-rounding template, learn one nurse\'s name on day one of every rotation, and establish a signout template you will use every single day. The habits you build in week one persist for years.',
-  micu: 'MICU hidden curriculum: Attendings here evaluate on your ability to hold the physiology of a critically ill patient in your head and update it in real time. Know your vent settings, pressors, and fluid balance cold before rounds — not from your phone, from memory. The MICU fellow is your most important relationship on this rotation. They write informal assessments. Treat every interaction with them like an attending interaction. LOR opportunity: MICU attendings write for anesthesia applicants regularly — they understand what programs want.',
-  ccu: 'CCU hidden curriculum: Show that you understand the hemodynamic story of every patient — not just the numbers, but what they mean together. Cardiologists grade on your ability to synthesize: EF, filling pressures, output, perfusion. Know the Swan numbers if applicable. The hidden curriculum move: read the cath report before rounds and have an independent interpretation ready. LOR opportunity: CCU attendings often collaborate with anesthesia on high-risk cardiac cases — explicitly mention your anesthesia track.',
-  nephrology: 'Nephrology hidden curriculum: Attendings grade you on acid-base and fluids — the two things most interns get wrong. Be able to defend your fluid management choice with a mechanism, not a habit. The hidden curriculum move: when presenting AKI, always have a FENa, urine osmolality, and a pre-renal vs. intrinsic argument ready before they ask. Nephrology attendings remember the intern who understood tubular physiology.',
-  pulm: 'Pulmonary hidden curriculum: Vent management and ABGs are your intellectual showcase here. Know the driving pressure and plateau pressure for every vented patient. Know why you are choosing that FiO2 and PEEP. The hidden curriculum move: when you present a respiratory patient, include the A-a gradient in your one-liner. Attendings notice when interns think beyond the pulse ox. LOR opportunity: pulmonary/critical care attendings are ideal for anesthesia reapplication — they see the same physiology.',
-  general: 'General IM hidden curriculum: This rotation grades your breadth and your efficiency. The hidden curriculum move: be the intern who drives discharges. Know the discharge criteria for your patients and be proactively working toward them from admission day one. Attendings who do general medicine value system and throughput. Show you can manage a large panel and not miss anything. LOR opportunity: identify any attending who did a fellowship in anesthesia, critical care, or procedural medicine.',
-  outpatient: 'Outpatient hidden curriculum: Attendings here grade differently — they watch your patient communication and your chronic disease management reasoning. The hidden curriculum move: when you present a chronic disease patient, lead with trajectory ("her A1c has gone from 9.2 to 7.8 over 18 months") rather than just the current number. Show that you understand where the patient is going, not just where they are. Use this rotation to build one strong longitudinal relationship with an attending.'
-};
+var ROADMAP=[
+  {
+    id:'p0', label:'PHASE 0', title:'Anki Setup', tag:'Do this week',
+    color:'var(--g)',
+    items:[
+      {id:'r0_0', text:'Open Anki → Options → change Leech threshold from 1 → 8'},
+      {id:'r0_1', text:'Change Learning steps to: 1m 10m 1440m'},
+      {id:'r0_2', text:'Change Relearning steps to: 10m 1440m'},
+      {id:'r0_3', text:'Disable Auto Advance (Speed Focus Mode) during active study sessions'},
+      {id:'r0_4', text:'Download AnkingOverhaul v12 deck from ankingmed.com if not already installed'},
+      {id:'r0_5', text:'Create a sub-deck called "Javier Misses" inside your main deck for UWorld wrong answers'},
+      {id:'r0_6', text:'Unsuspend Cardiology cards in AnkingOverhaul (start with cardio — your MICU/CCU bridge)'},
+      {id:'r0_7', text:'Run FSRS Optimize: Anki → your deck → Options → FSRS → Optimize'},
+      {id:'r0_8', text:'Set daily new cards to 25 (you have time pre-residency — build before July 1)'},
+    ]
+  },
+  {
+    id:'p1', label:'PHASE 1', title:'Pre-Residency (Now → July 1)', tag:'High priority',
+    color:'var(--g)',
+    items:[
+      {id:'r1_0', text:'Email Temple AKI PI — introduce yourself, reference your research contribution, ask about authorship timeline'},
+      {id:'r1_1', text:'Log your first UWorld session in Academic OS → UWorld tab'},
+      {id:'r1_2', text:'Confirm orientation logistics for June 15 (location, what to bring, parking)'},
+      {id:'r1_3', text:'Email Kaiser anesthesia department — ask about resident shadowing opportunities starting July'},
+      {id:'r1_4', text:'Identify 3 future LOR writers: PD (IM), ICU attending (meet on MICU), anesthesiologist (from shadowing)'},
+      {id:'r1_5', text:'Read: Perioperative AKI — NEJM 2024. Take notes in Reading tab. Connect to your research narrative.'},
+      {id:'r1_6', text:'Write your first journal entry in Academic OS — what is your "why anesthesia" in 3 sentences right now'},
+      {id:'r1_7', text:'Add 500+ Anki cards before July 1 to avoid starting residency with a cold deck'},
+      {id:'r1_8', text:'Register for Step 3 — target window Jan–Feb 2027 (gives you 18 months of IM exposure)'},
+    ]
+  },
+  {
+    id:'p2', label:'PHASE 2', title:'PGY-1 First 90 Days (July–Sept)', tag:'Evaluations = your application',
+    color:'var(--g2)',
+    items:[
+      {id:'r2_0', text:'Introduce yourself to your PD by name and story in week 1 — not week 4'},
+      {id:'r2_1', text:'Ask PD for LOR by end of month 1. Exact words: "I plan to apply for anesthesiology. You are my first choice for a PD LOR. Would you be willing?"'},
+      {id:'r2_2', text:'Hit 100 UWorld questions completed (track in UWorld tab)'},
+      {id:'r2_3', text:'Hit 200 mature Anki cards — foundation is locked in'},
+      {id:'r2_4', text:'Log first OR shadowing session in Academic OS → Rotations tab'},
+      {id:'r2_5', text:'On MICU: ask to observe every intubation, central line, and arterial line — log each one'},
+      {id:'r2_6', text:'Write rotation debrief in journal after first major rotation — what did you see that maps to anesthesia?'},
+      {id:'r2_7', text:'Make contact with 1 anesthesia attending at Kaiser — coffee, email, or post-shadowing follow-up'},
+      {id:'r2_8', text:'Unsuspend Nephrology + Pulm cards in AnkingOverhaul for MICU block'},
+    ]
+  },
+  {
+    id:'p3', label:'PHASE 3', title:'Building the File (Oct–Dec 2026)', tag:'LORs + narrative',
+    color:'var(--g2)',
+    items:[
+      {id:'r3_0', text:'Complete 500 UWorld questions total — track in app'},
+      {id:'r3_1', text:'Reach 500 mature Anki cards — your retention baseline is real now'},
+      {id:'r3_2', text:'Ask ICU attending for LOR during or immediately after MICU/CCU rotation'},
+      {id:'r3_3', text:'Ask your anesthesia shadowing contact for LOR — give them a draft of your narrative'},
+      {id:'r3_4', text:'Log 20+ OR/anesthesia shadowing hours in Academic OS'},
+      {id:'r3_5', text:'Write personal statement first draft — use narrative tab in this app. Lead with the AKI → periop instability theme.'},
+      {id:'r3_6', text:'Research 15 anesthesia programs: program size, community vs academic, research opportunities, IMG friendliness'},
+      {id:'r3_7', text:'Contact 1 anesthesia resident at a target program — LinkedIn or through your attending contact'},
+      {id:'r3_8', text:'Re-optimize FSRS parameters (2nd optimization since July)'},
+    ]
+  },
+  {
+    id:'p4', label:'PHASE 4', title:'Step 3 + App Prep (Jan–June 2027)', tag:'The grind',
+    color:'var(--g3)',
+    items:[
+      {id:'r4_0', text:'Complete Step 3 by Feb 2027 — score 230+ target'},
+      {id:'r4_1', text:'Complete 1500+ UWorld questions before ERAS opens'},
+      {id:'r4_2', text:'Reach 1000 mature Anki cards — Step 3 material locked in'},
+      {id:'r4_3', text:'Personal statement finalized — reviewed by an anesthesiology attending'},
+      {id:'r4_4', text:'Confirm all 3 LORs are committed and have your finalized CV + personal statement'},
+      {id:'r4_5', text:'Create ERAS account and begin entering application data'},
+      {id:'r4_6', text:'Finalize program list: 25–35 programs, mix of academic + community, geographic spread'},
+      {id:'r4_7', text:'Have your AKI research publication status confirmed — update CV accordingly'},
+      {id:'r4_8', text:'Bump Anki desired retention to 0.91 (gradual increase toward boards prep)'},
+    ]
+  },
+  {
+    id:'p5', label:'PHASE 5', title:'Application Season (July–Nov 2027)', tag:'Execute',
+    color:'var(--g3)',
+    items:[
+      {id:'r5_0', text:'Submit ERAS application on opening day (typically early Sept)'},
+      {id:'r5_1', text:'Track all interview invitations in application tab'},
+      {id:'r5_2', text:'Send thank-you email within 24h after every interview — specific, not generic'},
+      {id:'r5_3', text:'Prepare 5 "signal" programs with specific reasons you chose them'},
+      {id:'r5_4', text:'Complete rank list strategy: rank programs you would genuinely attend, not prestige'},
+      {id:'r5_5', text:'Certify rank list by deadline (typically mid-Feb 2028)'},
+      {id:'r5_6', text:'Continue Anki reviews through match — do not stop'},
+      {id:'r5_7', text:'Match Day: March 2028 — inshallah 🤲'},
+    ]
+  }
+];
 
-function renderInternTips(){
-  const el=document.getElementById('intern-rot-tips');
-  if(!el) return;
-  const rot=D&&D.rotation?D.rotation.toLowerCase():'pre';
-  let key='general';
-  if(rot.includes('micu')||rot.includes('icu')) key='micu';
-  else if(rot.includes('ccu')||rot.includes('cardiac')) key='ccu';
-  else if(rot.includes('neph')) key='nephrology';
-  else if(rot.includes('pulm')) key='pulm';
-  else if(rot.includes('outpatient')||rot.includes('clinic')) key='outpatient';
-  else if(rot.includes('pre')) key='pre';
-  el.textContent=INTERN_ROT_TIPS[key]||INTERN_ROT_TIPS['general'];
+// ============================================================
+// ROADMAP — render + persist
+// ============================================================
+function renderRoadmap(){
+  if(!D) return;
+  if(!D.roadmapChecks) D.roadmapChecks={};
+  const el=document.getElementById('roadmap-phases'); if(!el) return;
+
+  // Determine current phase — first phase with incomplete items
+  let currentPhaseIdx=ROADMAP.length-1;
+  for(let i=0;i<ROADMAP.length;i++){
+    const ph=ROADMAP[i];
+    const allDone=ph.items.every(it=>D.roadmapChecks[it.id]);
+    if(!allDone){currentPhaseIdx=i;break;}
+  }
+
+  el.innerHTML=ROADMAP.map((ph,pi)=>{
+    const checks=ph.items.map(it=>!!D.roadmapChecks[it.id]);
+    const done=checks.filter(Boolean).length;
+    const total=ph.items.length;
+    const allDone=done===total;
+    const isCurrent=pi===currentPhaseIdx;
+    const isFuture=pi>currentPhaseIdx;
+    const pct=Math.round(done/total*100);
+
+    const borderStyle=allDone?'rgba(127,255,110,.25)':isCurrent?ph.color+'44':'var(--b)';
+    const opacity=isFuture?'0.55':'1';
+    const headerColor=allDone?'var(--g)':isCurrent?ph.color:'var(--t3)';
+
+    const itemsHtml=ph.items.map(it=>{
+      const checked=!!D.roadmapChecks[it.id];
+      return`<div class="ci ${checked?'done':''}" id="rci-${it.id}" style="padding:10px 0;">
+        <input type="checkbox" id="rcb-${it.id}" ${checked?'checked':''} onchange="chkRoadmap('${it.id}','${ph.id}',this)">
+        <label for="rcb-${it.id}" style="font-size:25px;">${escHtml(it.text)}</label>
+      </div>`;
+    }).join('');
+
+    const statusBadge=allDone
+      ?`<span class="bdg g">COMPLETE ✓</span>`
+      :isCurrent
+        ?`<span class="bdg g" style="animation:blink 2s infinite;">ACTIVE</span>`
+        :`<span class="bdg gr">${done}/${total} done</span>`;
+
+    return`<div style="background:var(--s1);border:1px solid ${borderStyle};border-radius:var(--rl);padding:18px 20px;margin-bottom:14px;opacity:${opacity};transition:opacity .3s;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:${allDone?'0':'12px'};">
+        <span style="font-family:var(--mono);font-size:24px;color:${headerColor};">${escHtml(ph.label)}</span>
+        <span style="font-size:27px;font-weight:500;color:var(--t);">${escHtml(ph.title)}</span>
+        <span class="bdg gr" style="font-size:23px;">${escHtml(ph.tag)}</span>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">${statusBadge}</div>
+      </div>
+      ${allDone?'':
+        `<div style="height:4px;background:var(--s3);border-radius:2px;margin-bottom:12px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${ph.color};border-radius:2px;transition:width .4s;"></div>
+        </div>
+        <div>${itemsHtml}</div>`
+      }
+    </div>`;
+  }).join('');
+
+  // Summary stats
+  const totalItems=ROADMAP.reduce((a,p)=>a+p.items.length,0);
+  const totalDone=ROADMAP.reduce((a,p)=>a+p.items.filter(it=>D.roadmapChecks[it.id]).length,0);
+  const overall=Math.round(totalDone/totalItems*100);
+  const se=document.getElementById('roadmap-overall');
+  if(se) se.innerHTML=`<span style="font-family:var(--mono);font-size:32px;color:var(--g);">${overall}%</span> <span style="font-size:25px;color:var(--t3);">overall — ${totalDone} of ${totalItems} milestones complete</span>`;
 }
 
-async function genInternCoach(){
-  const situation=document.getElementById('intern-sit').value.trim();
-  if(!situation){ document.getElementById('intern-coach-out').innerHTML='<div class="smsg">Describe the situation first.</div>'; return; }
-  spin('intern-coach-out');
-  const t=await ai(`You are a senior resident mentor advising Javier Montelongo, a PGY-1 internal medicine intern at Kaiser Permanente SF pursuing anesthesia reapplication for the 2027-2028 match cycle. He has asked: "${situation}". Answer using the hidden curriculum — the unwritten rules of residency that determine evaluations, letter quality, and reputation. Be specific, practical, and direct. No platitudes. Under 180 words.`);
-  fai(t,'intern-coach-out');
+async function chkRoadmap(itemId, phaseId, cb){
+  if(!D) return;
+  if(!D.roadmapChecks) D.roadmapChecks={};
+  D.roadmapChecks[itemId]=cb.checked;
+  const el=document.getElementById('rci-'+itemId);
+  if(el){if(cb.checked)el.classList.add('done');else el.classList.remove('done');}
+  await push(null,'smsg-chk');
+  renderRoadmap();
 }
 </script>
 </body>
