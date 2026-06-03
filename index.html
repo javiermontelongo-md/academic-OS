@@ -191,6 +191,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
     <button class="tab" onclick="gT('mind',this)">MIND</button>
     <button class="tab" onclick="gT('tasks',this)">TASKS</button>
+    <button class="tab" onclick="gT('espanol',this)">ESPAÑOL</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
@@ -813,6 +814,93 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- ESPAÑOL PANEL -->
+<div id="panel-espanol" class="panel">
+  <div class="h1">Spanish <span>fluency</span></div>
+  <div style="font-size:26px;color:var(--t2);margin-bottom:18px;line-height:1.7;">B2 → C1 → native fluency in medical Spanish. Translate real clinical phrases, get graded on naturalness not just accuracy, see exactly how a native speaker says it, track your error patterns, and export personalized Anki cards from your mistakes.</div>
+
+  <div class="g3 k2" style="margin-bottom:14px;">
+    <div class="stat"><div class="sv g" id="sp-sessions">0</div><div class="sl">Sessions</div></div>
+    <div class="stat"><div class="sv b" id="sp-avg">--</div><div class="sl">Avg score</div></div>
+    <div class="stat"><div class="sv o" id="sp-streak">0</div><div class="sl">Day streak</div></div>
+  </div>
+
+  <div class="card" style="border-color:rgba(79,195,247,.25);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g2);">translation practice</div>
+    <div style="margin-bottom:12px;">
+      <div class="lbl" style="margin-bottom:8px;">clinical topic</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;" id="sp-topic-chips">
+        <span class="chip on" onclick="selSpTopic(this,'mixed')">MIXED</span>
+        <span class="chip" onclick="selSpTopic(this,'intake')">PATIENT INTAKE</span>
+        <span class="chip" onclick="selSpTopic(this,'exam')">PHYSICAL EXAM</span>
+        <span class="chip" onclick="selSpTopic(this,'hpi')">HPI / HISTORY</span>
+        <span class="chip" onclick="selSpTopic(this,'icu')">ICU / CRITICAL</span>
+        <span class="chip" onclick="selSpTopic(this,'meds')">MEDICATIONS</span>
+        <span class="chip" onclick="selSpTopic(this,'discharge')">DISCHARGE</span>
+        <span class="chip" onclick="selSpTopic(this,'consult')">CONSULT</span>
+      </div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:16px;margin-bottom:14px;">
+      <div style="font-family:var(--mono);font-size:24px;color:var(--g2);margin-bottom:8px;">TRANSLATE TO SPANISH</div>
+      <div id="sp-prompt" style="font-size:29px;color:var(--t);font-family:var(--serif);font-weight:300;line-height:1.6;">Press "New phrase" to begin.</div>
+      <div id="sp-context" style="font-size:24px;color:var(--t3);font-family:var(--mono);margin-top:8px;"></div>
+    </div>
+    <div class="ig"><label>Your Spanish translation</label><textarea id="sp-answer" style="min-height:80px;" placeholder="Escribe tu traducción aquí..."></textarea></div>
+    <div class="brow">
+      <button class="btn bp bi" onclick="gradeTranslation()">Grade my answer</button>
+      <button class="btn bs bi" onclick="genSpPrompt()">New phrase</button>
+    </div>
+    <div class="smsg" id="sp-smsg"></div>
+    <div id="sp-result" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="lbl">your error patterns</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Tracked across all sessions. AI uses these to target weak areas in future phrases.</div>
+    <div id="sp-mistakes"><div style="font-size:26px;color:var(--t3);font-style:italic;">Patterns emerge after a few graded sessions.</div></div>
+  </div>
+
+  <div class="card" style="border-color:rgba(255,183,77,.2);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g3);">anki card generator</div>
+    <div style="font-size:26px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Generate cards from your error patterns, a clinical topic, or a custom focus. Download as a .txt file and import directly into Anki (File → Import → Basic note type → comma separator).</div>
+    <div class="g2 k2" style="margin-bottom:10px;">
+      <div class="ig"><label>Source</label>
+        <select id="sp-card-src" onchange="spCardSrcChg()">
+          <option value="mistakes">From my error patterns</option>
+          <option value="topic">By clinical topic</option>
+          <option value="custom">Custom focus</option>
+        </select>
+      </div>
+      <div class="ig"><label>Topic / focus</label><input type="text" id="sp-card-topic" placeholder="e.g. ICU family conversations" value="Medical Spanish B2-C1"></div>
+    </div>
+    <div class="ig" style="margin-bottom:14px;"><label>Number of cards</label>
+      <select id="sp-card-n"><option value="10">10 cards</option><option value="20" selected>20 cards</option><option value="30">30 cards</option><option value="50">50 cards</option></select>
+    </div>
+    <div class="brow">
+      <button class="btn bp bi" onclick="genSpCards()">Generate cards</button>
+      <button class="btn bs bi" id="sp-dl-btn" onclick="dlSpCards()" style="display:none;">Download for Anki</button>
+    </div>
+    <div class="smsg" id="sp-card-smsg"></div>
+    <div id="sp-card-preview" style="margin-top:10px;"></div>
+    <div style="margin-top:14px;padding:12px;background:rgba(255,183,77,.06);border:1px solid rgba(255,183,77,.15);border-radius:var(--r);font-size:24px;color:var(--g3);line-height:1.8;"><strong style="color:var(--t);">Importing into Anki:</strong> File → Import → select .txt file → Note type: Basic → Fields separated by: Comma → Import. Then sync to AnkiMobile.</div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="lbl">recommended external decks</div>
+    <div style="font-size:26px;color:var(--t2);line-height:1.8;">
+      <div style="padding:9px 0;border-bottom:1px solid var(--b);"><strong style="color:var(--t);">AnkiWeb — "Spanish Medical Vocabulary"</strong> — search ankiweb.net. 1000+ cards rated 4+ stars. Core clinical vocabulary fast.</div>
+      <div style="padding:9px 0;border-bottom:1px solid var(--b);"><strong style="color:var(--t);">Frequency Dictionary: Top 5000 Spanish</strong> — single highest-yield investment from B2 to near-native. Fills the everyday gaps.</div>
+      <div style="padding:9px 0;border-bottom:1px solid var(--b);"><strong style="color:var(--t);">Medical Spanish for Healthcare Providers</strong> — patient communication scripts. Search AnkiWeb directly.</div>
+      <div style="padding:9px 0;"><strong style="color:var(--t);">Your generated deck (above)</strong> — personalized to your error patterns and clinical focus. Highest yield for fluency gaps.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">session history</div>
+    <div id="sp-hist"><div style="font-size:26px;color:var(--t3);font-style:italic;">No sessions yet.</div></div>
+  </div>
+</div>
+
 </div><!-- v2026-05-17 19:25:02 -->
 
 <nav class="bnav">
@@ -830,6 +918,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
   <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
   <button class="ni" onclick="gM('tasks',this)"><span class="nicon">&#10003;</span><span class="nlbl">TASKS</span></button>
+  <button class="ni" onclick="gM('espanol',this)"><span class="nicon">ES</span><span class="nlbl">ESPAÑOL</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
 </div><!-- v2026-05-17 19:25:02 -->
@@ -900,7 +989,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',tasks:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',tasks:[],spanishLog:{sessions:[],mistakes:{}},checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -926,7 +1015,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); renderSpStats(); renderSpMistakes(); renderSpHist();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1747,6 +1836,149 @@ async function smartAddTasks(){
     if(ok){ document.getElementById('task-input').value=''; renderTasks(); msg('task-smsg','Added '+newTasks.length+' task'+(newTasks.length===1?'':'s')+' — organized by AI'); }
     else{ D.tasks.splice(D.tasks.length-newTasks.length,newTasks.length); msg('task-smsg','Save failed'); }
   }catch(e){ msg('task-smsg','Error: '+escHtml(e.message)); }
+}
+
+// ============================================================
+// ESPAÑOL — MEDICAL SPANISH FLUENCY
+// ============================================================
+const SP_TOPICS={mixed:'Mixed clinical',intake:'Patient intake',exam:'Physical exam',hpi:'HPI / History',icu:'ICU / Critical',meds:'Medications',discharge:'Discharge',consult:'Consult'};
+const SP_FALLBACK=[
+  {english:'Where is your pain on a scale of 1 to 10?',context:'Pain assessment',topic:'intake'},
+  {english:'Are you allergic to any medications?',context:'Medication history',topic:'intake'},
+  {english:'When did your symptoms start?',context:'HPI',topic:'hpi'},
+  {english:'Have you had any blood in your stool recently?',context:'GI history',topic:'hpi'},
+  {english:'Do you have difficulty breathing when you lie flat?',context:'Cardiac/respiratory',topic:'hpi'},
+  {english:'We need to place an IV to give you fluids.',context:'Procedure',topic:'intake'},
+  {english:'Your potassium is low — we need to replace it through your IV.',context:'Lab results',topic:'icu'},
+  {english:'I need to examine your abdomen. Please lie flat and relax your stomach.',context:'Physical exam',topic:'exam'},
+  {english:'Your blood sugar is dangerously high. We are starting insulin.',context:'Glycemic management',topic:'icu'},
+  {english:'We are moving you to the intensive care unit for closer monitoring.',context:'ICU transfer',topic:'icu'},
+  {english:'Do you take your blood pressure medication every day without missing doses?',context:'Medication compliance',topic:'meds'},
+  {english:'The biopsy results should be back in about five business days.',context:'Oncology',topic:'consult'},
+  {english:'You need to fast after midnight — nothing to eat or drink before the procedure.',context:'Pre-procedure',topic:'discharge'},
+  {english:'Is there someone at home who can help you after discharge?',context:'Discharge planning',topic:'discharge'},
+  {english:'Your kidney function has decreased since yesterday — we are adjusting your medications.',context:'AKI',topic:'icu'},
+  {english:'Please take a deep breath and hold it while I listen to your lungs.',context:'Respiratory exam',topic:'exam'},
+  {english:'We need your signature on this consent form before we can proceed.',context:'Informed consent',topic:'intake'},
+  {english:'Have you traveled outside the country in the last three months?',context:'Infectious disease',topic:'hpi'},
+  {english:'Your heart rhythm is irregular — we want to start you on a blood thinner.',context:'Atrial fibrillation',topic:'meds'},
+  {english:'The surgery went well. You are in the recovery room and everything looks stable.',context:'Post-operative',topic:'consult'},
+];
+const SP_MISTAKE_LABELS={ser_estar:'Ser vs. estar',subjunctive:'Subjunctive mood',vocabulary:'Word choice',register:'Register / formality',gender_agreement:'Gender agreement',verb_conjugation:'Verb conjugation',false_cognate:'False cognates',prepositions:'Prepositions',syntax:'Word order / syntax'};
+let _spTopic='mixed',_spCurrentPrompt=null,_spGeneratedCards=[];
+
+function selSpTopic(el,t){ document.querySelectorAll('#sp-topic-chips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); _spTopic=t; }
+function spCardSrcChg(){
+  const src=document.getElementById('sp-card-src').value,inp=document.getElementById('sp-card-topic');
+  if(src==='mistakes'){ const top=Object.entries(D?.spanishLog?.mistakes||{}).sort(([,a],[,b])=>b-a).slice(0,3).map(([k])=>SP_MISTAKE_LABELS[k]||k.replace(/_/g,' ')).join(', '); inp.value=top||'Medical Spanish B2-C1'; inp.disabled=true; }
+  else{ inp.disabled=false; inp.value='Medical Spanish B2-C1'; }
+}
+function renderSpStats(){
+  if(!D||!D.spanishLog) return;
+  const ss=D.spanishLog.sessions||[],scores=ss.filter(s=>s.score).map(s=>s.score);
+  const avg=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'--';
+  const dates=[...new Set(ss.map(s=>s.date))].sort().reverse();
+  let streak=0;
+  if(dates.length){ const td=new Date().toISOString().split('T')[0],yd=new Date();yd.setDate(yd.getDate()-1);const ys=yd.toISOString().split('T')[0]; if(dates[0]===td||dates[0]===ys){ let cur=new Date(dates[0]+'T12:00:00'); for(const d of dates){if(d===cur.toISOString().split('T')[0]){streak++;cur.setDate(cur.getDate()-1);}else break;} } }
+  const g=id=>document.getElementById(id);
+  if(g('sp-sessions')) g('sp-sessions').textContent=ss.length;
+  if(g('sp-avg')) g('sp-avg').textContent=avg!=='--'?avg+'/10':'--';
+  if(g('sp-streak')) g('sp-streak').textContent=streak;
+}
+function renderSpMistakes(){
+  const el=document.getElementById('sp-mistakes'); if(!el||!D||!D.spanishLog) return;
+  const sorted=Object.entries(D.spanishLog.mistakes||{}).filter(([,v])=>v>0).sort(([,a],[,b])=>b-a).slice(0,5);
+  if(!sorted.length){ el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">Patterns emerge after a few graded sessions.</div>'; return; }
+  const mx=sorted[0][1];
+  el.innerHTML=sorted.map(([p,c])=>`<div class="pbw"><div class="pbl"><span>${SP_MISTAKE_LABELS[p]||p.replace(/_/g,' ')}</span><span>${c} occurrence${c===1?'':'s'}</span></div><div class="pbb"><div class="pbf" style="width:${Math.round(c/mx*100)}%;background:#4fc3f7;"></div></div></div>`).join('');
+}
+function renderSpHist(){
+  const el=document.getElementById('sp-hist'); if(!el||!D||!D.spanishLog||!D.spanishLog.sessions||!D.spanishLog.sessions.length){ if(el) el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No sessions yet.</div>'; return; }
+  const sc=s=>s>=9?'#7fff6e':s>=7?'#4fc3f7':s>=5?'#ffb74d':'#ef9a9a';
+  el.innerHTML=[...D.spanishLog.sessions].reverse().slice(0,10).map(s=>`<div class="le" style="flex-direction:column;gap:6px;padding:12px 0;"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><div class="ld">${escHtml(s.date)}</div><span style="font-family:'DM Mono',monospace;font-size:24px;color:${sc(s.score)};font-weight:500;">${s.score}/10</span><span style="font-family:'DM Mono',monospace;font-size:24px;color:var(--t3);">${escHtml(SP_TOPICS[s.topic]||s.topic||'')}</span></div><div style="font-size:25px;color:var(--t3);font-family:'DM Mono',monospace;">EN: ${escHtml(s.english)}</div><div style="font-size:25px;color:var(--t2);">You: ${escHtml(s.answer)}</div>${s.native?`<div style="font-size:25px;color:#7fff6e;border-left:2px solid #7fff6e;padding-left:10px;line-height:1.5;">Native: ${escHtml(s.native)}</div>`:''}</div>`).join('');
+}
+function _spFallback(){ const pool=_spTopic==='mixed'?SP_FALLBACK:(SP_FALLBACK.filter(p=>p.topic===_spTopic)||SP_FALLBACK); const arr=pool.length?pool:SP_FALLBACK; return arr[Math.floor(Math.random()*arr.length)]; }
+async function genSpPrompt(){
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){ const p=_spFallback(); _spCurrentPrompt=p; document.getElementById('sp-prompt').textContent=p.english; document.getElementById('sp-context').textContent='Context: '+p.context; document.getElementById('sp-answer').value=''; document.getElementById('sp-result').innerHTML=''; msg('sp-smsg',''); return; }
+  msg('sp-smsg','Generating phrase...');
+  const topMistakes=Object.entries(D?.spanishLog?.mistakes||{}).sort(([,a],[,b])=>b-a).slice(0,3).map(([k])=>SP_MISTAKE_LABELS[k]||k).join(', ');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:200,system:'Generate medical Spanish translation practice sentences. Return ONLY valid JSON, no explanation.',messages:[{role:'user',content:`Generate one English sentence for medical Spanish translation practice.\nLevel: B2-C1. Topic: ${SP_TOPICS[_spTopic]||'mixed clinical'}.\n${topMistakes?'User struggles with: '+topMistakes+'. Sometimes target these.':''}\n\nReturn JSON only: {"english":"...","context":"brief clinical context 5-8 words"}\n\nMake it something a resident genuinely says to a Spanish-speaking patient — clinically real, not textbook simple, varied difficulty.`}]})});
+    const d=await r.json(); const raw=d.content?.[0]?.text||'';
+    let p; try{ const m=raw.match(/\{[\s\S]*\}/); p=m?JSON.parse(m[0]):null; }catch(e){ p=null; }
+    if(p&&p.english){ _spCurrentPrompt={...p,topic:_spTopic}; document.getElementById('sp-prompt').textContent=p.english; document.getElementById('sp-context').textContent='Context: '+(p.context||''); document.getElementById('sp-answer').value=''; document.getElementById('sp-result').innerHTML=''; msg('sp-smsg',''); }
+    else{ const fb=_spFallback(); _spCurrentPrompt=fb; document.getElementById('sp-prompt').textContent=fb.english; document.getElementById('sp-context').textContent='Context: '+fb.context; msg('sp-smsg',''); }
+  }catch(e){ const fb=_spFallback(); _spCurrentPrompt=fb; document.getElementById('sp-prompt').textContent=fb.english; document.getElementById('sp-context').textContent='Context: '+fb.context; msg('sp-smsg',''); }
+}
+async function gradeTranslation(){
+  if(!_spCurrentPrompt){ msg('sp-smsg','Generate a phrase first'); return; }
+  const answer=document.getElementById('sp-answer').value.trim();
+  if(!answer){ msg('sp-smsg','Write your translation first'); return; }
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){ msg('sp-smsg','Add API key in Settings to enable AI grading'); return; }
+  msg('sp-smsg','Grading...');
+  document.getElementById('sp-result').innerHTML='<div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Grading...</span></div>';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:`You are a medical Spanish expert who grades translations critically at B2-C1 level. You distinguish "technically correct but stiff/textbook" (max 6/10) from "how a native medical professional actually speaks" (8-10). You always give the most natural native way to say it. Return ONLY valid JSON.`,messages:[{role:'user',content:`Grade this medical Spanish translation.
+
+English: "${_spCurrentPrompt.english}"
+Context: "${_spCurrentPrompt.context||''}"
+User's answer: "${answer}"
+
+Return JSON:
+{
+  "score": integer 1-10,
+  "correct": "what they got right, specific (or null if nothing)",
+  "issues": "specific grammar, vocabulary, register problems — be honest and precise (or null if none)",
+  "native": "how a native Spanish-speaking physician or nurse says this naturally — not textbook, not stiff. If there are regional differences, note them (e.g. 'In Mexico/LatAm...'). This is the most important field.",
+  "explanation": "single most important lesson, under 25 words",
+  "mistake_pattern": "ONE of: ser_estar | subjunctive | vocabulary | register | gender_agreement | verb_conjugation | false_cognate | prepositions | syntax | null"
+}`}]})});
+    const d=await r.json(); const raw=d.content?.[0]?.text||'{}';
+    let g; try{ const m=raw.match(/\{[\s\S]*\}/); g=m?JSON.parse(m[0]):{};  }catch(e){ g={}; }
+    if(!g.score){ msg('sp-smsg','Grading failed — check API key'); document.getElementById('sp-result').innerHTML=''; return; }
+    if(!D.spanishLog) D.spanishLog={sessions:[],mistakes:{}};
+    if(!D.spanishLog.sessions) D.spanishLog.sessions=[];
+    if(!D.spanishLog.mistakes) D.spanishLog.mistakes={};
+    const sess={date:new Date().toISOString().split('T')[0],ts:Date.now(),topic:_spTopic,english:_spCurrentPrompt.english,context:_spCurrentPrompt.context||'',answer,score:g.score,correct:g.correct||'',issues:g.issues||'',native:g.native||'',explanation:g.explanation||''};
+    D.spanishLog.sessions.push(sess);
+    if(g.mistake_pattern&&g.mistake_pattern!=='null'&&g.mistake_pattern!==null) D.spanishLog.mistakes[g.mistake_pattern]=(D.spanishLog.mistakes[g.mistake_pattern]||0)+1;
+    await push(null,'sp-smsg');
+    renderSpStats(); renderSpMistakes(); renderSpHist();
+    const sc=g.score>=9?'#7fff6e':g.score>=7?'#4fc3f7':g.score>=5?'#ffb74d':'#ef9a9a';
+    const sl=g.score>=9?'NEAR NATIVE':g.score>=7?'STRONG':g.score>=5?'DEVELOPING':g.score>=3?'NEEDS WORK':'REVIEW BASICS';
+    document.getElementById('sp-result').innerHTML=`<div style="border:1px solid rgba(79,195,247,.2);border-radius:var(--r);padding:16px;background:rgba(79,195,247,.04);margin-top:4px;"><div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;"><div style="font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:${sc};">${g.score}/10</div><div style="font-family:'DM Mono',monospace;font-size:24px;color:${sc};">${sl}</div></div>${g.correct?`<div style="margin-bottom:12px;"><div style="font-family:'DM Mono',monospace;font-size:24px;color:#7fff6e;margin-bottom:4px;">WHAT WORKS</div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml(g.correct)}</div></div>`:''}${g.issues?`<div style="margin-bottom:12px;"><div style="font-family:'DM Mono',monospace;font-size:24px;color:#ef9a9a;margin-bottom:4px;">WHAT TO FIX</div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml(g.issues)}</div></div>`:''}<div style="background:rgba(127,255,110,.06);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;"><div style="font-family:'DM Mono',monospace;font-size:24px;color:#7fff6e;margin-bottom:6px;">&#9733; NATIVE WAY</div><div style="font-size:26px;color:#e8ede8;line-height:1.6;">${escHtml(g.native)}</div></div>${g.explanation?`<div style="font-family:'DM Mono',monospace;font-size:24px;color:var(--t3);">LESSON: ${escHtml(g.explanation)}</div>`:''}<div class="brow" style="margin-top:12px;"><button class="btn bs bi" onclick="genSpPrompt()">Next phrase &#8594;</button></div></div>`;
+    msg('sp-smsg','');
+  }catch(e){ msg('sp-smsg','Error: '+escHtml(e.message)); document.getElementById('sp-result').innerHTML=''; }
+}
+async function genSpCards(){
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){ msg('sp-card-smsg','Add API key in Settings first'); return; }
+  const src=document.getElementById('sp-card-src').value,n=+document.getElementById('sp-card-n').value||20;
+  let focus=document.getElementById('sp-card-topic').value.trim()||'Medical Spanish B2-C1';
+  if(src==='mistakes'){ const top=Object.entries(D?.spanishLog?.mistakes||{}).sort(([,a],[,b])=>b-a).slice(0,4).map(([k,v])=>`${SP_MISTAKE_LABELS[k]||k} (${v}x)`).join(', '); if(top) focus='Fix these patterns: '+top; }
+  msg('sp-card-smsg','Generating '+n+' cards...');
+  document.getElementById('sp-dl-btn').style.display='none';
+  document.getElementById('sp-card-preview').innerHTML='';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,system:'Generate Anki flashcard JSON arrays. Return ONLY a valid JSON array, no markdown, no explanation.',messages:[{role:'user',content:`Generate ${n} Anki flashcards for medical Spanish at B2-C1 level.\nFocus: ${focus}\n\nEach card must be clinically real — what a resident actually says to Spanish-speaking patients in a US hospital, not textbook phrasing.\n\nReturn JSON array: [{"front":"English phrase or sentence","back":"Spanish (native phrasing). Add brief italic usage note if helpful: e.g. regional variation, when to use subjunctive, natural emphasis."}]\n\nPrioritize: phrases said to patients, during procedures, in family meetings, medication counseling, bad news delivery, ICU situations. Mix difficulty from B2 to C1.`}]})});
+    const d=await r.json(); const raw=d.content?.[0]?.text||'[]';
+    let cards; try{ const m=raw.match(/\[[\s\S]*\]/); cards=m?JSON.parse(m[0]):[]; }catch(e){ cards=[]; }
+    if(!cards.length){ msg('sp-card-smsg','Generation failed — try again'); return; }
+    _spGeneratedCards=cards.filter(c=>c&&c.front&&c.back);
+    document.getElementById('sp-card-preview').innerHTML=`<div style="font-family:'DM Mono',monospace;font-size:24px;color:var(--t3);margin-bottom:10px;">${_spGeneratedCards.length} cards — preview (first 5):</div>${_spGeneratedCards.slice(0,5).map(c=>`<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;"><div style="font-size:26px;color:var(--t);margin-bottom:4px;">${escHtml(c.front)}</div><div style="font-size:26px;color:#7fff6e;line-height:1.5;">${escHtml(c.back)}</div></div>`).join('')}${_spGeneratedCards.length>5?`<div style="font-family:'DM Mono',monospace;font-size:24px;color:var(--t3);">+ ${_spGeneratedCards.length-5} more cards in the download</div>`:''}`;
+    document.getElementById('sp-dl-btn').style.display='';
+    msg('sp-card-smsg',_spGeneratedCards.length+' cards ready — download and import into Anki');
+  }catch(e){ msg('sp-card-smsg','Error: '+escHtml(e.message)); }
+}
+function dlSpCards(){
+  if(!_spGeneratedCards.length){ alert('Generate cards first'); return; }
+  const rows=['#separator:Comma','#html:false','#notetype:Basic','Front,Back'];
+  _spGeneratedCards.forEach(c=>{ const f='"'+String(c.front||'').replace(/"/g,'""')+'"',b='"'+String(c.back||'').replace(/"/g,'""')+'"'; rows.push(f+','+b); });
+  const blob=new Blob([rows.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='medical-spanish-'+new Date().toISOString().split('T')[0]+'.txt';a.click();
+  msg('sp-card-smsg','Downloaded! In Anki: File → Import → select file → Note type: Basic → Comma separator → Import');
 }
 </script>
 </body>
