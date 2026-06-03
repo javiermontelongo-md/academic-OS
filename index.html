@@ -190,6 +190,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('anki',this)">ANKI</button>
     <button class="tab" onclick="gT('curriculum',this)">CURRICULUM</button>
     <button class="tab" onclick="gT('mind',this)">MIND</button>
+    <button class="tab" onclick="gT('tasks',this)">TASKS</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
@@ -767,6 +768,51 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- TASKS PANEL -->
+<div id="panel-tasks" class="panel">
+  <div class="h1">Tasks &amp; <span>capture</span></div>
+  <div style="font-size:26px;color:var(--t2);margin-bottom:18px;line-height:1.7;">Dump anything here — academics, appointments, groceries, apartment, meetings, errands. Type one thing or a full brain dump and let AI split and organize it. Everything saves to data.json.</div>
+
+  <div class="card" style="border-color:rgba(127,255,110,.25);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g);">capture</div>
+    <div class="ig"><textarea id="task-input" style="min-height:90px;" placeholder="One task, or dump everything:&#10;'buy dish soap, schedule dentist, review cardiology UWorld, email landlord about hot water, pick up dry cleaning'&#10;&#10;Hit Smart Add — AI splits and labels each one."></textarea></div>
+    <div style="margin-bottom:12px;">
+      <div class="lbl" style="margin-bottom:8px;">category (for single add)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;" id="task-cat-chips">
+        <span class="chip" onclick="selTaskCat(this,'urgent')">URGENT</span>
+        <span class="chip" onclick="selTaskCat(this,'academic')">ACADEMIC</span>
+        <span class="chip" onclick="selTaskCat(this,'appointment')">APPOINTMENT</span>
+        <span class="chip" onclick="selTaskCat(this,'shopping')">SHOPPING</span>
+        <span class="chip on" onclick="selTaskCat(this,'personal')">PERSONAL</span>
+      </div>
+    </div>
+    <div class="brow">
+      <button class="btn bp bi" onclick="addTask()">Add task</button>
+      <button class="btn bs bi" onclick="smartAddTasks()">Smart add with AI</button>
+    </div>
+    <div class="smsg" id="task-smsg"></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div class="lbl" style="margin-bottom:0;">active tasks</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;" id="task-filter-chips">
+        <span class="chip on" onclick="selTaskFilter(this,'all')">ALL</span>
+        <span class="chip" onclick="selTaskFilter(this,'urgent')">URGENT</span>
+        <span class="chip" onclick="selTaskFilter(this,'academic')">ACADEMIC</span>
+        <span class="chip" onclick="selTaskFilter(this,'appointment')">APPT</span>
+        <span class="chip" onclick="selTaskFilter(this,'shopping')">SHOPPING</span>
+        <span class="chip" onclick="selTaskFilter(this,'personal')">PERSONAL</span>
+      </div>
+    </div>
+    <div id="task-list"><div style="font-size:26px;color:var(--t3);font-style:italic;">No tasks yet.</div></div>
+    <div id="task-done-wrap" style="margin-top:14px;display:none;">
+      <div id="done-toggle-btn" onclick="togDone()" style="cursor:pointer;font-family:var(--mono);font-size:24px;color:var(--t3);margin-bottom:8px;user-select:none;">&#9658; Completed (<span id="done-count">0</span>)</div>
+      <div id="task-done" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
 </div><!-- v2026-05-17 19:25:02 -->
 
 <nav class="bnav">
@@ -783,6 +829,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <button class="ni" onclick="gM('anki',this)"><span class="nicon">A↓</span><span class="nlbl">ANKI</span></button>
   <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
   <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
+  <button class="ni" onclick="gM('tasks',this)"><span class="nicon">&#10003;</span><span class="nlbl">TASKS</span></button>
   <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
 </nav>
 </div><!-- v2026-05-17 19:25:02 -->
@@ -853,7 +900,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',tasks:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -879,7 +926,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1619,6 +1666,87 @@ async function chkRoadmap(itemId, phaseId, cb){
   if(el){if(cb.checked)el.classList.add('done');else el.classList.remove('done');}
   await push(null,'smsg-chk');
   renderRoadmap();
+}
+
+// ============================================================
+// TASKS
+// ============================================================
+const TCAT={urgent:{label:'URGENT',color:'#ef5350',bg:'rgba(239,83,80,.09)'},academic:{label:'ACADEMIC',color:'#7fff6e',bg:'rgba(127,255,110,.07)'},appointment:{label:'APPT',color:'#4fc3f7',bg:'rgba(79,195,247,.09)'},shopping:{label:'SHOPPING',color:'#ffb74d',bg:'rgba(255,183,77,.09)'},personal:{label:'PERSONAL',color:'#ef9a9a',bg:'rgba(239,154,154,.09)'}};
+const TVALID=['urgent','academic','appointment','shopping','personal'];
+let _taskCat='personal',_taskFilter='all',_doneOpen=false;
+function selTaskCat(el,cat){ document.querySelectorAll('#task-cat-chips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); _taskCat=cat; }
+function selTaskFilter(el,filter){ document.querySelectorAll('#task-filter-chips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); _taskFilter=filter; renderTasks(); }
+function togDone(){
+  _doneOpen=!_doneOpen;
+  const el=document.getElementById('task-done'),dc=document.getElementById('done-count'),btn=document.getElementById('done-toggle-btn');
+  if(el) el.style.display=_doneOpen?'block':'none';
+  if(btn) btn.innerHTML=(_doneOpen?'&#9660; ':'&#9658; ')+'Completed (<span id="done-count">'+(dc?.textContent||'0')+'</span>)';
+}
+function _taskHtml(tasks){
+  return tasks.map(t=>{ const c=TCAT[t.category]||TCAT.personal; return `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:var(--r);background:${c.bg};border-left:3px solid ${c.color};margin-bottom:8px;"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')" style="width:18px;height:18px;min-width:18px;margin-top:4px;accent-color:${c.color};cursor:pointer;"><div style="flex:1;"><div style="font-size:26px;color:${t.done?'#5a665a':'#e8ede8'};line-height:1.5;${t.done?'text-decoration:line-through;':''}">${escHtml(t.text)}</div><div style="font-family:'DM Mono',monospace;font-size:24px;color:${c.color};margin-top:3px;">${c.label} &middot; ${escHtml(t.date)}</div></div><button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:#5a665a;font-size:26px;cursor:pointer;padding:0 6px;line-height:1;flex-shrink:0;" title="Delete">&times;</button></div>`; }).join('');
+}
+function renderTasks(){
+  const el=document.getElementById('task-list'),de=document.getElementById('task-done'),dw=document.getElementById('task-done-wrap');
+  if(!el) return;
+  if(!D||!D.tasks||!D.tasks.length){ el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No tasks yet.</div>'; if(dw) dw.style.display='none'; return; }
+  const active=D.tasks.filter(t=>!t.done&&(_taskFilter==='all'||t.category===_taskFilter));
+  const done=D.tasks.filter(t=>t.done&&(_taskFilter==='all'||t.category===_taskFilter));
+  active.sort((a,b)=>{ if(a.category==='urgent'&&b.category!=='urgent') return -1; if(b.category==='urgent'&&a.category!=='urgent') return 1; return a.ts-b.ts; });
+  el.innerHTML=active.length?_taskHtml(active):'<div style="font-size:26px;color:var(--t3);font-style:italic;">No active tasks here.</div>';
+  if(done.length){
+    if(dw) dw.style.display='';
+    if(de){ de.innerHTML=_taskHtml(done); de.style.display=_doneOpen?'block':'none'; }
+    const btn=document.getElementById('done-toggle-btn');
+    if(btn) btn.innerHTML=(_doneOpen?'&#9660; ':'&#9658; ')+'Completed (<span id="done-count">'+done.length+'</span>)';
+  } else { if(dw) dw.style.display='none'; }
+}
+async function addTask(){
+  if(!D){ msg('task-smsg','Data not loaded'); return; }
+  const text=document.getElementById('task-input').value.trim();
+  if(!text){ msg('task-smsg','Write something first'); return; }
+  if(!D.tasks) D.tasks=[];
+  const task={id:Date.now().toString(36)+Math.random().toString(36).slice(2),text,category:_taskCat,done:false,date:new Date().toISOString().split('T')[0],ts:Date.now()};
+  D.tasks.push(task);
+  const ok=await push(null,'task-smsg');
+  if(ok){ document.getElementById('task-input').value=''; renderTasks(); }
+  else D.tasks.pop();
+}
+async function toggleTask(id){
+  if(!D||!D.tasks) return;
+  const t=D.tasks.find(t=>t.id===id); if(!t) return;
+  t.done=!t.done; if(t.done) t.doneDate=new Date().toISOString().split('T')[0]; else delete t.doneDate;
+  renderTasks(); await push(null,'task-smsg');
+}
+async function deleteTask(id){
+  if(!D||!D.tasks) return;
+  const idx=D.tasks.findIndex(t=>t.id===id); if(idx===-1) return;
+  const removed=D.tasks.splice(idx,1);
+  renderTasks();
+  const ok=await push(null,'task-smsg');
+  if(!ok){ D.tasks.splice(idx,0,...removed); renderTasks(); }
+}
+async function smartAddTasks(){
+  if(!D){ msg('task-smsg','Data not loaded'); return; }
+  const text=document.getElementById('task-input').value.trim();
+  if(!text){ msg('task-smsg','Write something first'); return; }
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){ addTask(); return; }
+  msg('task-smsg','Organizing with AI...');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:'You parse task input into structured JSON. Return ONLY a valid JSON array, no explanation, no markdown fences.',messages:[{role:'user',content:`Parse this into individual tasks. Return a JSON array where each item is {"text":"...","category":"..."}.\n\nCategories: urgent (time-sensitive, high-stakes), academic (study, UWorld, reading, rotation tasks), appointment (medical/dental visits, scheduled meetings), shopping (things to buy, errands), personal (home, family, life admin, everything else).\n\nSplit compound inputs generously. If something is clearly time-sensitive, label it urgent.\n\nInput: "${text.replace(/"/g,'\\"')}"`}]})});
+    const d=await r.json();
+    const raw=d.content?.[0]?.text||'[]';
+    let parsed=[];
+    try{ const m=raw.match(/\[[\s\S]*\]/); parsed=m?JSON.parse(m[0]):[]; }catch(e){ parsed=[]; }
+    if(!parsed.length){ addTask(); return; }
+    if(!D.tasks) D.tasks=[];
+    const now=Date.now();
+    const newTasks=parsed.filter(t=>t&&t.text).map((t,i)=>({id:(now+i).toString(36)+Math.random().toString(36).slice(2),text:String(t.text).trim(),category:TVALID.includes(t.category)?t.category:'personal',done:false,date:new Date().toISOString().split('T')[0],ts:now+i}));
+    D.tasks.push(...newTasks);
+    const ok=await push(null,'task-smsg');
+    if(ok){ document.getElementById('task-input').value=''; renderTasks(); msg('task-smsg','Added '+newTasks.length+' task'+(newTasks.length===1?'':'s')+' — organized by AI'); }
+    else{ D.tasks.splice(D.tasks.length-newTasks.length,newTasks.length); msg('task-smsg','Save failed'); }
+  }catch(e){ msg('task-smsg','Error: '+escHtml(e.message)); }
 }
 </script>
 </body>
