@@ -773,6 +773,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="lbl">your journal history</div>
     <div id="mind-hist"><div style="font-size:26px;color:var(--t3);font-style:italic;">No entries yet. Write something above.</div></div>
   </div>
+
+  <!-- Past sessions archive -->
+  <div class="card" id="sessions-card" style="display:none;">
+    <div class="lbl">past sessions</div>
+    <div id="sessions-list"></div>
+  </div>
 </div>
 
 <!-- TASKS PANEL -->
@@ -907,7 +913,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',tasks:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',activeChat:{startedAt:null,messages:[]},chatSessions:[],tasks:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -933,7 +939,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread(); renderPastSessions();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1357,66 +1363,130 @@ function renderMindHistory(){
   const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
   el.innerHTML=[...D.burnoutLog].reverse().slice(0,10).map(e=>`<div class="le" style="flex-direction:column;gap:8px;padding:14px 0;"><div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;"><div class="ld">${escHtml(e.date)}</div><span style="font-family:var(--mono);font-size:24px;color:${mc[e.mood]||'#5a665a'};">${ml[e.mood]||e.mood+'/5'}</span></div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml((e.entry||'').substring(0,250))}${(e.entry||'').length>250?'…':''}</div>${e.response?`<div style="font-size:25px;color:var(--t3);border-left:2px solid var(--g);padding-left:10px;margin-top:6px;line-height:1.5;">${escHtml(e.response.substring(0,300))}${e.response.length>300?'…':''}</div>`:''}</div>`).join('');
 }
-async function genMindResponse(){
-  if(!D){ msg('mind-smsg','Data not loaded yet'); return; }
-  const entry=document.getElementById('mind-entry').value.trim();
-  if(!entry){ msg('mind-smsg','Write something first'); return; }
-  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
-  if(!D.burnoutLog) D.burnoutLog=[];
-  const logEntry={date:new Date().toISOString().split('T')[0],ts:Date.now(),mood:_currentMood,entry,response:''};
-  if(!apiKey){
-    D.burnoutLog.push(logEntry);
-    const ok=await push(null,'mind-smsg');
-    if(ok){ document.getElementById('mind-entry').value=''; renderMindHistory(); renderMoodTrend(); }
-    else D.burnoutLog.pop();
-    document.getElementById('mind-out').innerHTML='<div class="air"><div class="al">NOTE</div><p>Entry saved. Add an Anthropic API key in Settings to receive support responses.</p></div>';
-    return;
-  }
-  const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
-  const summary=D.burnoutSummary||'No prior history recorded yet — this is the first session.';
-  const sysPrompt=`You are a psychological support coach for Javier Montelongo, MD. He is a PGY-1 internal medicine resident at Kaiser Permanente San Francisco pursuing anesthesia reapplication 2027-2028. He did not match anesthesia on his first attempt. He carries complex emotions — grief, frustration, and determination — and is concerned that bitterness is leaking into conversations with family and friends. He wants to hold hope for the future without suppressing what is real.\n\nYour role: warm, honest, direct psychological support. Acknowledge what he feels before any reframe. Never minimize. Never use toxic positivity. Help him hold the pain and the goal at the same time. When relevant, gently address the leak concern — the gap between what he feels privately and how he shows up publicly. Reference prior session history when helpful. 200 words max.\n\nPrior session summary:\n${summary}`;
-  const userPrompt=`Mood today: ${_currentMood}/5 (${ml[_currentMood]||''}).\n\n"${entry}"`;
-  document.getElementById('mind-out').innerHTML='<div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Thinking...</span></div>';
-  const btn=document.getElementById('mind-sbtn'); btn.classList.add('saving'); btn.textContent='Thinking...';
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:sysPrompt,messages:[{role:'user',content:userPrompt}]})});
-    const d=await r.json();
-    const responseText=d.content?.[0]?.text||null;
-    logEntry.response=responseText||'';
-    D.burnoutLog.push(logEntry);
-    const ok=await push(null,'mind-smsg');
-    if(ok){ document.getElementById('mind-entry').value=''; renderMindHistory(); renderMoodTrend(); }
-    else D.burnoutLog.pop();
-    document.getElementById('mind-out').innerHTML=responseText?`<div class="air" style="margin-top:12px;"><div class="al">COACH</div><p>${responseText.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:'<div class="air"><div class="al">NOTE</div><p>Check your API key in Settings.</p></div>';
-  }catch(e){
-    document.getElementById('mind-out').innerHTML=`<div class="air"><div class="al">ERROR</div><p>${escHtml(e.message)}</p></div>`;
-    msg('mind-smsg','');
-  }
-  btn.classList.remove('saving'); btn.textContent='Talk to coach';
-}
-async function updateMindSummary(){
-  if(!D||!D.burnoutLog||!D.burnoutLog.length){ alert('No entries to summarize yet.'); return; }
-  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
-  if(!apiKey){ alert('Add API key in Settings first.'); return; }
-  msg('mind-smsg','Updating your summary...');
-  const entries=D.burnoutLog.slice(-20).map(e=>`[${e.date}, mood ${e.mood}/5]: ${e.entry}`).join('\n\n');
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:'You compress psychological support journal entries into a brief summary for future context.',messages:[{role:'user',content:`Summarize these support journal entries in 150 words max. Write in second person ("You have been..."). Capture: recurring emotional themes, mood trend direction, what seems to be helping, what concerns persist, any progress visible. Be honest and specific — this will be used to give better support in future sessions.\n\nEntries:\n${entries}`}]})});
-    const d=await r.json();
-    const summary=d.content?.[0]?.text||'';
-    if(summary){ D.burnoutSummary=summary; await push(null,'mind-smsg'); msg('mind-smsg','Summary updated — future sessions will reference this'); }
-    else msg('mind-smsg','Summary generation failed — check API key');
-  }catch(e){ msg('mind-smsg','Error: '+escHtml(e.message)); }
+// ============================================================
+// COACHING CHAT — GitHub-backed, cross-device, capped history
+// ============================================================
+let _chatThread=[];
+
+function loadChatThread(){
+  if(!D)return;
+  if(!D.activeChat)D.activeChat={startedAt:null,messages:[]};
+  if(!D.chatSessions)D.chatSessions=[];
+  _chatThread=D.activeChat.messages||[];
 }
 
-// ============================================================
-// ANKI — HELPER
-// ============================================================
+async function saveChatThread(){
+  if(!D)return;
+  if(!D.activeChat)D.activeChat={startedAt:null,messages:[]};
+  D.activeChat.messages=_chatThread;
+  if(!D.activeChat.startedAt&&_chatThread.length)D.activeChat.startedAt=new Date().toISOString();
+  await push(null,'chat-smsg');
+}
+
+function renderChatThread(){
+  const el=document.getElementById('chat-thread');if(!el)return;
+  if(!_chatThread.length){
+    el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;text-align:center;padding:28px 0;line-height:1.8;">This space is private.<br>Write what is actually there.</div>';
+    return;
+  }
+  el.innerHTML=_chatThread.map(m=>{
+    const isUser=m.role==='user';
+    if(m.role==='thinking')return`<div style="align-self:flex-start;"><div style="font-family:var(--mono);font-size:23px;color:var(--g);margin-bottom:5px;">COACH</div><div style="background:var(--s2);border:1px solid var(--b);border-radius:4px 16px 16px 16px;padding:12px 15px;"><div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Thinking...</span></div></div></div>`;
+    if(isUser)return`<div style="align-self:flex-end;max-width:82%;background:rgba(127,255,110,.1);border:1px solid rgba(127,255,110,.22);border-radius:16px 16px 4px 16px;padding:12px 15px;"><div style="font-size:26px;color:var(--t);line-height:1.55;">${escHtml(m.content).replace(/\n/g,'<br>')}</div></div>`;
+    const fmt=(m.content||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+    return`<div style="align-self:flex-start;max-width:88%;"><div style="font-family:var(--mono);font-size:23px;color:var(--g);margin-bottom:5px;">COACH</div><div style="background:var(--s2);border:1px solid var(--b);border-radius:4px 16px 16px 16px;padding:12px 15px;"><p style="font-size:26px;color:var(--t2);line-height:1.75;margin:0;">${fmt}</p></div></div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+async function sendChatMessage(){
+  if(!D){msg('chat-smsg','Data not loaded');return;}
+  const inp=document.getElementById('chat-input');
+  const entry=inp.value.trim();if(!entry)return;
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
+  const isFirst=_chatThread.length===0;
+  const userContent=isFirst?`Mood today: ${_currentMood}/5 (${ml[_currentMood]||''}).\n\n${entry}`:entry;
+  _chatThread.push({role:'user',content:userContent,ts:Date.now()});
+  inp.value='';renderChatThread();
+  if(!apiKey){
+    if(!D.burnoutLog)D.burnoutLog=[];
+    D.burnoutLog.push({date:new Date().toISOString().split('T')[0],ts:Date.now(),mood:_currentMood,entry,response:''});
+    _chatThread.push({role:'assistant',content:'Entry saved. Add an Anthropic API key in Settings to receive coach responses.',ts:Date.now()});
+    await saveChatThread();renderMindHistory();renderMoodTrend();return;
+  }
+  _chatThread.push({role:'thinking',content:'',ts:Date.now()});
+  renderChatThread();
+  const btn=document.getElementById('chat-sbtn');btn.disabled=true;btn.textContent='...';
+  const summary=D.burnoutSummary||'No prior session history yet.';
+  const sysPrompt=`You are a psychological support coach for Javier Montelongo, MD. PGY-1 IM at Kaiser Permanente San Francisco, pursuing anesthesia reapplication 2027-2028. Did not match anesthesia on first attempt. Carries grief, frustration, and determination. Worries about bitterness leaking into relationships.\n\nRole: warm, honest, direct psychological support. ALWAYS acknowledge feelings before any reframe. Never minimize. No toxic positivity. Hold pain and goal simultaneously. End each response with one focused follow-up question. 180 words max.\n\nPrior session summary:\n${summary}`;
+  const apiMessages=_chatThread.filter(m=>m.role==='user'||m.role==='assistant').slice(-20).map(m=>({role:m.role,content:m.content}));
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:450,system:sysPrompt,messages:apiMessages})});
+    const data=await r.json();
+    const responseText=data.content?.[0]?.text||null;
+    _chatThread=_chatThread.filter(m=>m.role!=='thinking');
+    _chatThread.push({role:'assistant',content:responseText||'Something went wrong.',ts:Date.now()});
+    await saveChatThread();renderChatThread();
+    if(!D.burnoutLog)D.burnoutLog=[];
+    D.burnoutLog.push({date:new Date().toISOString().split('T')[0],ts:Date.now(),mood:_currentMood,entry,response:responseText||''});
+    renderMindHistory();renderMoodTrend();
+  }catch(e){
+    _chatThread=_chatThread.filter(m=>m.role!=='thinking');
+    _chatThread.push({role:'assistant',content:'Network error: '+e.message,ts:Date.now()});
+    await saveChatThread();renderChatThread();
+  }
+  btn.disabled=false;btn.textContent='Send';
+}
+
+async function newChatSession(){
+  if(_chatThread.length&&!confirm('End this session and start fresh? It will be archived and your summary refreshed.'))return;
+  if(!D)return;
+  if(_chatThread.filter(m=>m.role!=='thinking').length>=2){
+    if(!D.chatSessions)D.chatSessions=[];
+    const firstUser=_chatThread.find(m=>m.role==='user');
+    const rawTitle=(firstUser?.content||'Session').replace(/Mood today.*?\n\n/,'').trim();
+    const title=rawTitle.length>60?rawTitle.substring(0,57)+'...':rawTitle;
+    D.chatSessions.unshift({id:'s'+Date.now(),date:new Date().toISOString().split('T')[0],title,messages:_chatThread.filter(m=>m.role!=='thinking'),startedAt:D.activeChat?.startedAt||new Date().toISOString()});
+    if(D.chatSessions.length>10)D.chatSessions=D.chatSessions.slice(0,10);
+  }
+  _chatThread=[];
+  D.activeChat={startedAt:null,messages:[]};
+  await push(null,'chat-smsg');
+  renderChatThread();renderPastSessions();
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(apiKey&&D.burnoutLog?.length)updateMindSummary();
+}
+
+function renderPastSessions(){
+  const card=document.getElementById('sessions-card');
+  if(!D||!D.chatSessions||!D.chatSessions.length){if(card)card.style.display='none';return;}
+  if(card)card.style.display='';
+  const el=document.getElementById('sessions-list');if(!el)return;
+  el.innerHTML=D.chatSessions.map(s=>`<div style="border:1px solid var(--b);border-radius:var(--r);margin-bottom:8px;overflow:hidden;"><div style="display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;background:var(--s2);" onclick="toggleSess('ss${s.id}')"><span style="font-family:var(--mono);font-size:23px;color:var(--t3);white-space:nowrap;">${escHtml(s.date)}</span><span style="font-size:25px;color:var(--t);flex:1;">${escHtml(s.title)}</span><span style="font-family:var(--mono);font-size:23px;color:var(--t3);">${s.messages.length} msgs ▾</span></div><div id="ss${s.id}" style="display:none;padding:12px 14px;border-top:1px solid var(--b);">${s.messages.filter(m=>m.role==='user'||m.role==='assistant').map(m=>{const u=m.role==='user';return`<div style="margin-bottom:10px;display:flex;flex-direction:column;align-items:${u?'flex-end':'flex-start'};"><div style="font-family:var(--mono);font-size:22px;color:${u?'var(--g)':'var(--t3)'};margin-bottom:3px;">${u?'YOU':'COACH'}</div><div style="max-width:88%;background:${u?'rgba(127,255,110,.08)':'var(--s3)'};border-radius:${u?'12px 12px 3px 12px':'3px 12px 12px 12px'};padding:10px 13px;font-size:25px;color:var(--t2);line-height:1.6;">${escHtml(m.content||'').replace(/\n/g,'<br>')}</div></div>`;}).join('')}</div></div>`).join('');
+}
+function toggleSess(id){const el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'':'none';}
+
+async function updateMindSummary(){
+  if(!D||!D.burnoutLog||!D.burnoutLog.length){alert('No entries to summarize yet.');return;}
+  const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
+  if(!apiKey){alert('Add API key in Settings first.');return;}
+  msg('chat-smsg','Updating summary...');
+  const entries=D.burnoutLog.slice(-20).map(e=>`[${e.date}, mood ${e.mood}/5]: ${e.entry}`).join('\n\n');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:'You compress psychological support journal entries into a brief summary for future context.',messages:[{role:'user',content:`Summarize these support journal entries in 150 words max. Write in second person. Capture: recurring emotional themes, mood trend, what seems to be helping, what concerns persist, any progress visible. Be honest and specific.\n\nEntries:\n${entries}`}]})});
+    const d=await r.json();const summary=d.content?.[0]?.text||'';
+    if(summary){D.burnoutSummary=summary;await push(null,'chat-smsg');msg('chat-smsg','Summary updated');}
+    else msg('chat-smsg','Summary failed — check API key');
+  }catch(e){msg('chat-smsg','Error: '+escHtml(e.message));}
+}
+
 function selChip(el,groupId){
   const p=document.getElementById(groupId)||el.closest('div[id]');
-  if(p) p.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  if(p)p.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
 }
+
 
 async function genAnkiCards(){
   const input=document.getElementById('card-input').value.trim();
