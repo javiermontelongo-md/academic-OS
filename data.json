@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-03",
+  "lastUpdated": "2026-06-11",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -52,6 +52,21 @@
       "mood": 3,
       "entry": "im freaking out because i feel like im in a situation where I am so far away from anesthesia that i sound stupid for even considering it. i cant even think about reapplying in my 2nd or 3rd yer of residency let alone my first year. i just feel very lost and anicous. just moved to san francsico",
       "response": "Javier, that feeling of being far away — like the goal itself has become embarrassing to say out loud — that's one of the harder things to carry. It's not weakness. It's what happens when your ambition outpaces your current circumstances, and the gap feels humiliating instead of just... temporary.\n\nYou're a PGY-1. You literally just arrived. In a new city. After a match that didn't go the way you planned. That's a lot of disorientation stacked on top of grief. The anxiety makes complete sense.\n\nHere's what I want to name honestly: **you're not stupid for wanting this.** You're just standing at the very beginning of a long road and trying to see the end from here — which nobody can do, and which is making you spiral.\n\nYou don't have to have reapplication figured out today. What you *do* need right now is to get your footing in San Francisco, in your intern year, in your own skin again.\n\n**One question to sit with before next session:**\n\nWhen you imagine telling someone you're still pursuing anesthesia — what specifically feels embarrassing? The goal itself, or what you think they'll think of you?\n\nThat distinction matters. We'll come back to it."
+    }
+  ],
+  "activeChat": {
+    "startedAt": null,
+    "messages": []
+  },
+  "chatSessions": [],
+  "tasks": [
+    {
+      "id": "mq9ytzuodkjb5ki4gwp",
+      "text": "watch jamon jamon",
+      "category": "personal",
+      "done": false,
+      "date": "2026-06-11",
+      "ts": 1781210652864
     }
   ]
 }
