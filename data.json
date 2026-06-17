@@ -90,9 +90,10 @@
       "id": "mqa2g6dzyyd6dlidr3",
       "text": "tomorrow need to return the desk",
       "category": "shopping",
-      "done": false,
+      "done": true,
       "date": "2026-06-11",
-      "ts": 1781216726615
+      "ts": 1781216726615,
+      "doneDate": "2026-06-17"
     }
   ]
 }
