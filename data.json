@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-11",
+  "lastUpdated": "2026-06-17",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -81,9 +81,10 @@
       "id": "mqa2fpvfqwk7rwohrma",
       "text": "buy ada some grocieries",
       "category": "personal",
-      "done": false,
+      "done": true,
       "date": "2026-06-11",
-      "ts": 1781216705211
+      "ts": 1781216705211,
+      "doneDate": "2026-06-17"
     },
     {
       "id": "mqa2g6dzyyd6dlidr3",
