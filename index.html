@@ -107,6 +107,33 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .larr{font-size:24px;color:var(--t3);margin-bottom:4px;font-family:var(--mono);}
 .lgood{font-size:25px;color:var(--g2);line-height:1.5;}
 .dvdr{height:1px;background:var(--b);margin:16px 0;}
+/* schedule */
+.sched-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;margin-bottom:3px;cursor:pointer;transition:background .15s;}
+.sched-row:hover{background:var(--s3);}
+.sched-row.sched-now{background:rgba(127,255,110,.08);outline:1px solid rgba(127,255,110,.3);}
+.sched-wnum{font-family:var(--mono);font-size:21px;color:var(--t3);min-width:26px;}
+.sched-dates{font-family:var(--mono);font-size:21px;color:var(--t3);min-width:92px;}
+.sched-chip{font-family:var(--mono);font-size:23px;padding:3px 10px;border-radius:5px;font-weight:500;min-width:80px;text-align:center;flex-shrink:0;}
+.sched-label{font-size:25px;flex:1;color:var(--t2);}
+.sched-now .sched-label{color:var(--t);}
+.sched-now-tag{font-family:var(--mono);font-size:22px;color:var(--g);}
+.mo-hdr{font-family:var(--mono);font-size:23px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 5px;padding-bottom:3px;border-bottom:1px solid var(--b);}
+.splan-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--b);}
+.splan-row:last-child{border-bottom:none;}
+.splan-icon{font-family:var(--mono);font-size:22px;width:26px;color:var(--t3);flex-shrink:0;padding-top:2px;}
+.splan-body{flex:1;}
+.splan-lbl{font-family:var(--mono);font-size:22px;color:var(--t3);margin-bottom:3px;}
+.splan-val{font-size:26px;color:var(--t);line-height:1.5;}
+.splan-why{font-size:24px;color:var(--t2);margin-top:3px;line-height:1.5;}
+/* procedures */
+.proc-card{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.proc-title{font-size:26px;color:var(--t);font-weight:500;margin-bottom:4px;}
+.proc-when{font-family:var(--mono);font-size:22px;color:var(--t3);margin-bottom:8px;}
+.proc-links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.proc-log-entry{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--b);}
+.proc-log-entry:last-child{border-bottom:none;}
+/* rotation banner */
+.rot-banner-strip{border-left:4px solid var(--g);padding-left:12px;}
 .rbanner{background:linear-gradient(135deg,rgba(127,255,110,.05),rgba(79,195,247,.05));border:1px solid rgba(127,255,110,.15);border-radius:var(--rl);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
 .sbtn{background:var(--g);color:#0a0f0a;font-family:var(--mono);font-size:25px;font-weight:500;padding:12px 20px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;transition:all .15s;}
 .sbtn:active{background:#9fff90;}.sbtn.saving{opacity:.6;pointer-events:none;}
@@ -178,10 +205,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
   <div class="tabs">
     <button class="tab on" onclick="gT('today',this)">TODAY</button>
+    <button class="tab" onclick="gT('schedule',this)">SCHEDULE</button>
     <button class="tab" onclick="gT('week',this)">THIS WEEK</button>
     <button class="tab" onclick="gT('uworld',this)">UWORLD</button>
     <button class="tab" onclick="gT('reading',this)">READING</button>
     <button class="tab" onclick="gT('rotations',this)">ROTATIONS</button>
+    <button class="tab" onclick="gT('procedures',this)">PROCEDURES</button>
     <button class="tab" onclick="gT('narrative',this)">NARRATIVE</button>
     <button class="tab" onclick="gT('interview',this)">INTERVIEW</button>
     <button class="tab" onclick="gT('application',this)">APPLICATION</button>
@@ -200,11 +229,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <!-- v2026-05-17 19:25:02 -->
 <div id="panel-today" class="panel on">
   <div class="h1">Today's <span>plan</span></div>
-  <div class="rbanner">
-    <div>
+  <div class="rbanner" id="rot-banner">
+    <div id="rot-info" class="rot-banner-strip">
       <div class="lbl">current rotation</div>
-      <div style="font-family:var(--serif);font-size:29px;font-weight:300;color:var(--g);">Pre-residency transition</div>
-      <div style="font-family:var(--mono);font-size:24px;color:var(--t3);">Orientation June 15 - First rotation ~July 1</div>
+      <div style="font-family:var(--serif);font-size:29px;font-weight:300;color:var(--g);">Loading schedule...</div>
+      <div style="font-family:var(--mono);font-size:24px;color:var(--t3);">Week — of 51</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <select id="mode-sel" style="width:168px;" onchange="modeChg()">
@@ -242,6 +271,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="ci" id="ci-aki"><input type="checkbox" id="cb-aki" onchange="chk('ci-aki')"><label for="cb-aki">!! Email Temple AKI PI -- HIGH PRIORITY</label></div>
     </div>
   </div>
+  <div class="card" id="today-study-plan" style="border-color:rgba(127,255,110,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div class="lbl" style="margin-bottom:0;">today's rotation-tailored plan</div>
+      <button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="gT('schedule',null);document.querySelector('.tab[onclick*=schedule]')&&document.querySelector('.tab[onclick*=schedule]').classList.add('on')">Full schedule →</button>
+    </div>
+    <div id="today-study-body"><div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+  </div>
+
   <div class="card" style="background:linear-gradient(135deg,rgba(127,255,110,.04),rgba(79,195,247,.04));border-color:rgba(127,255,110,.2);">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
       <div class="lbl" style="margin-bottom:0;">weekly momentum score</div>
@@ -826,14 +863,116 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- SCHEDULE PANEL -->
+<div id="panel-schedule" class="panel">
+  <div class="h1">Year <span>schedule</span></div>
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card" id="sched-current-card">
+      <div class="lbl">current rotation</div>
+      <div id="sched-now-detail" style="font-size:26px;color:var(--t3);font-style:italic;">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="lbl">upcoming</div>
+      <div id="sched-upcoming"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div class="lbl" style="margin-bottom:0;">full year — PGY-1 2026–2027</div>
+      <div style="font-family:var(--mono);font-size:23px;color:var(--t3);" id="sched-progress"></div>
+    </div>
+    <div id="sched-grid"></div>
+  </div>
+  <div class="card" id="sched-detail-card" style="display:none;border-color:rgba(127,255,110,.25);">
+    <div class="lbl" style="color:var(--g);">rotation study plan</div>
+    <div id="sched-detail-body"></div>
+  </div>
+</div>
+
+<!-- PROCEDURES PANEL -->
+<div id="panel-procedures" class="panel">
+  <div class="h1">Procedures <span>&amp; skills</span></div>
+  <div style="font-size:26px;color:var(--t2);margin-bottom:16px;line-height:1.7;">Log every procedure you attempt or observe. Ask to do things — attendings respect residents who ask. Aim for signed-off before end of residency. ★ = anesthesia-critical.</div>
+
+  <div class="card" style="border-color:rgba(127,255,110,.2);margin-bottom:14px;">
+    <div class="lbl" style="color:var(--g);">log a procedure</div>
+    <div class="g2 k2" style="margin-bottom:10px;">
+      <div class="ig"><label>Procedure</label>
+        <select id="proc-name">
+          <option value="">Select...</option>
+          <optgroup label="★ Vascular Access">
+            <option>Peripheral IV</option><option>Arterial line – radial ★</option><option>Central line – IJ ★</option><option>Central line – subclavian ★</option><option>Central line – femoral</option>
+          </optgroup>
+          <optgroup label="★ Airway">
+            <option>Bag-mask ventilation ★</option><option>Endotracheal intubation – RSI ★</option><option>LMA / supraglottic airway ★</option><option>Nasotracheal suctioning</option>
+          </optgroup>
+          <optgroup label="Pleural / Abdominal">
+            <option>Thoracentesis</option><option>Paracentesis</option><option>Chest tube management</option>
+          </optgroup>
+          <optgroup label="Other Bedside">
+            <option>Lumbar puncture</option><option>ABG – arterial puncture</option><option>Urinary catheterization</option><option>Nasogastric tube</option><option>Joint aspiration / injection</option><option>Wound closure – suturing</option><option>Wound debridement</option><option>Skin biopsy</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="ig"><label>Status</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;" id="proc-status-chips">
+          <span class="chip on" data-val="observed" onclick="selChip(this,'proc-status-chips')">OBSERVED</span>
+          <span class="chip" data-val="attempted" onclick="selChip(this,'proc-status-chips')">ATTEMPTED</span>
+          <span class="chip" data-val="performed" onclick="selChip(this,'proc-status-chips')">PERFORMED</span>
+          <span class="chip" data-val="signedoff" onclick="selChip(this,'proc-status-chips')">SIGNED OFF ✓</span>
+        </div>
+      </div>
+    </div>
+    <div class="ig"><label>Notes (supervisor, setting, any difficulty)</label><input type="text" id="proc-notes" placeholder="e.g. Attended by Dr. Chen – subclavian, first attempt success"></div>
+    <button class="sbtn" id="proc-sbtn" onclick="saveProc()">Save to GitHub</button>
+    <div class="smsg" id="proc-smsg"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="lbl">signed-off tracker</div>
+    <div id="proc-signoff-tracker" style="font-size:26px;color:var(--t3);font-style:italic;">No procedures logged yet.</div>
+  </div>
+
+  <div class="lbl" style="margin:18px 0 10px;">procedure reference library</div>
+
+  <div class="lbl" style="color:var(--g2);margin-bottom:6px;">★ VASCULAR ACCESS</div>
+  <div class="proc-card"><div class="proc-title">Peripheral IV ★</div><div class="proc-when">Every rotation — do 5 before asking nurses</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">Use largest vein in AC. 18g for resuscitation. Confirm blood flashback → advance → remove stylet. Flush with 10mL NS.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=peripheral+IV+insertion+technique+medical','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.nejm.org/do/10.1056/NEJMvcm1213474/full/','_blank')">NEJM Video</button></div></div>
+
+  <div class="proc-card"><div class="proc-title">Arterial Line – Radial ★★</div><div class="proc-when">ICU, Day Admitting — ask to place every one you can</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">Modified Allen's test first. 20g catheter-over-needle. Palpate radial between tendons. 30-45° angle. Flash → flatten → advance. Constant BP monitoring intraoperatively = anesthesia daily use.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=radial+arterial+line+placement+technique+ICU','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://pubmed.ncbi.nlm.nih.gov/?term=radial+arterial+line+catheter+placement+technique','_blank')">PubMed</button></div></div>
+
+  <div class="proc-card"><div class="proc-title">Central Venous Catheter – IJ/Subclavian ★★</div><div class="proc-when">ICU rotations (x4 blocks this year) — your primary central line rotation</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">US guidance mandatory. Seldinger technique: needle → flash → guidewire → dilate → catheter. Confirm placement with CXR before use. Subclavian = lowest infection risk. IJ = fastest. Ask to do both.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=central+line+placement+IJ+ultrasound+guided+technique','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.nejm.org/do/10.1056/NEJMvcm0800156/full/','_blank')">NEJM Video</button></div></div>
+
+  <div class="lbl" style="color:var(--g2);margin:14px 0 6px;">★★ AIRWAY</div>
+  <div class="proc-card"><div class="proc-title">Endotracheal Intubation – RSI ★★★</div><div class="proc-when">ICU, ED, Night Float — ask to intubate every patient in the ICU</div><div style="font-size:25px;color:var(--t2);line-height:1.6;"><strong style="color:var(--t);">RSI sequence:</strong> Preoxygenate (BNR if time) → Etomidate 0.3mg/kg or Ketamine 1-2mg/kg → Succinylcholine 1.5mg/kg or Rocuronium 1.2mg/kg → Laryngoscope → confirm with waveform capnography. This is what anesthesiologists do 10× per day. Know it in your sleep.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=RSI+rapid+sequence+intubation+technique+emergency','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://pubmed.ncbi.nlm.nih.gov/?term=rapid+sequence+intubation+drugs+technique+emergency','_blank')">PubMed</button></div></div>
+
+  <div class="proc-card"><div class="proc-title">Bag-Mask Ventilation ★★★</div><div class="proc-when">Before every intubation — the skill that saves lives when intubation fails</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">Two-hand CE grip preferred. Jaw thrust — not just chin lift. Adequate seal before pushing air. Anesthesia pearl: if you can't mask ventilate, you can't safely intubate. The most undervalued skill in all of medicine.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=bag+mask+ventilation+technique+two+hand+grip+airway','_blank')">▶ YouTube</button></div></div>
+
+  <div class="lbl" style="color:var(--g2);margin:14px 0 6px;">PLEURAL / ABDOMINAL</div>
+  <div class="proc-card"><div class="proc-title">Thoracentesis</div><div class="proc-when">Wards, ICU — ask to do every effusion workup</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">US guidance. Posterior approach, 1-2 intercostal spaces below fluid level. Superior rib margin (avoid NVB). Light's criteria on all pleural fluid. Diagnostic tap = 50mL enough.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=thoracentesis+technique+ultrasound+guided','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.nejm.org/do/10.1056/NEJMvcm053812/full/','_blank')">NEJM Video</button></div></div>
+
+  <div class="proc-card"><div class="proc-title">Paracentesis</div><div class="proc-when">Wards, Admitting — cirrhosis is common at Kaiser SF</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">Left lower quadrant preferred (avoid epigastric vessels). US mark. SAAG on all first taps. Large volume: 6g albumin per liter removed ≥5L. Peritoneal fluid cell count, culture, glucose, LDH, protein.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=paracentesis+technique+bedside+ultrasound','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.nejm.org/do/10.1056/NEJMvcm0803468/full/','_blank')">NEJM Video</button></div></div>
+
+  <div class="proc-card"><div class="proc-title">Lumbar Puncture</div><div class="proc-when">Wards, Night Float — meningitis/SAH workup</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">L3-L4 or L4-L5 interspace. Lateral decubitus or sitting. Bevel up, aim for umbilicus. Measure opening pressure always. Tubes 1-4: cell count, glucose/protein, culture, extras. Clear fluid = don't celebrate yet (SAH can be xanthochromic).</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=lumbar+puncture+technique+spinal+tap+medical','_blank')">▶ YouTube</button><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.nejm.org/do/10.1056/NEJMvcm054952/full/','_blank')">NEJM Video</button></div></div>
+
+  <div class="lbl" style="color:var(--g2);margin:14px 0 6px;">OTHER BEDSIDE</div>
+  <div class="proc-card"><div class="proc-title">ABG – Arterial Blood Gas</div><div class="proc-when">ICU, Night Float, Admitting — do every one you can</div><div style="font-size:25px;color:var(--t2);line-height:1.6;">Radial preferred. Palpate pulse, 45° angle, advance until flash, then back off 2mm. Hold 5 min pressure. Interpret: pH → PaCO2 → compensation → PaO2 → A-a gradient → lactate.</div><div class="proc-links"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('https://www.youtube.com/results?search_query=ABG+arterial+blood+gas+technique+radial+artery','_blank')">▶ YouTube</button></div></div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="lbl">procedure log history</div>
+    <div id="proc-log-hist"><div style="font-size:26px;color:var(--t3);font-style:italic;">No procedures logged yet.</div></div>
+  </div>
+</div>
+
 </div><!-- v2026-05-17 19:25:02 -->
 
 <nav class="bnav">
   <button class="ni on" onclick="gM('today',this)"><span class="nicon">T</span><span class="nlbl">TODAY</span></button>
+  <button class="ni" onclick="gM('schedule',this)"><span class="nicon">📅</span><span class="nlbl">SCHED</span></button>
   <button class="ni" onclick="gM('week',this)"><span class="nicon">W</span><span class="nlbl">WEEK</span></button>
   <button class="ni" onclick="gM('uworld',this)"><span class="nicon">Q</span><span class="nlbl">UWORLD</span></button>
   <button class="ni" onclick="gM('reading',this)"><span class="nicon">R</span><span class="nlbl">READ</span></button>
   <button class="ni" onclick="gM('rotations',this)"><span class="nicon">Rx</span><span class="nlbl">ROTS</span></button>
+  <button class="ni" onclick="gM('procedures',this)"><span class="nicon">⚕</span><span class="nlbl">PROC</span></button>
   <button class="ni" onclick="gM('narrative',this)"><span class="nicon">N</span><span class="nlbl">NARR</span></button>
   <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
   <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
@@ -852,6 +991,92 @@ var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var RM={pre:{uw:'Cardiology -> Pulm -> Nephrology',rd:'Foundation: hemodynamics, vents, acid-base'},gen:{uw:'IM core: Cardiology, Nephrology, GI',rd:'Clinical reasoning and management'},micu:{uw:'Pulm + Nephrology + Shock physiology',rd:'Critical care: vents, vasopressors'},ccu:{uw:'Cardiology: HF, ACS, arrhythmias',rd:'Hemodynamics, echo, cardiac physiology'},cards:{uw:'Cardiology all blocks',rd:'Landmark cardiac trials'},neph:{uw:'Nephrology + acid-base (your research)',rd:'AKI, CKD, periop renal protection'},pulm:{uw:'Pulm + critical care: ARDS, PE',rd:'Lung-protective ventilation'},periop:{uw:'Surgery / Anesthesia / Periop',rd:'Periop medicine: anesthesia bridge'},clinic:{uw:'Mixed: outpatient, preventive',rd:'Chronic disease + periop risk'}};
 var RI={micu:{title:'MICU / ICU',tag:'Highest priority',items:['Ventilator modes, PEEP, driving pressure -- know cold','Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi','Shock: MAP targets, fluid responsiveness, ScvO2, lactate','For every case: how would periop risk look going to the OR?','Ask to observe intubations, central lines, bronchoscopy']},ccu:{title:'CCU / Cardiology',tag:'Cardiac anesthesia foundation',items:['Read every EKG yourself before the attending. Build speed.','HFrEF vs HFpEF: congestion vs perfusion, GDMT cold','ACS: STEMI vs NSTEMI, antiplatelet risk perioperatively','Valvular disease: which lesions carry highest periop risk','Echo: learn to interpret reports, ask to observe TTE/TEE']},neph:{title:'Nephrology',tag:'Your research area',items:['AKI: prerenal vs intrinsic vs postrenal -- mechanistically','Periop AKI -- your publication makes you the room expert','Electrolytes: K+, Na+, Ca2+, Mg2+ -- all OR emergencies','Acid-base: 5-step approach, mixed disorders cold','Connect every AKI case to surgical risk in your notes']},pulm:{title:'Pulmonology',tag:'Ventilator mastery',items:['ARDS: Berlin criteria, prone positioning, lung protection','COPD/asthma: NIV vs intubation thresholds','Interpret every ABG before the attending','PFTs: obstructive vs restrictive with clinical context','PE: risk stratify, anticoag vs thrombolytics']},gen:{title:'General medicine',tag:'Evaluation foundation',items:['Pre-round before everyone. Know everything first.','One-liner + assessment + plan every time -- not data dump.','Anticipate: K+ low -- I already ordered a recheck.','Make sure every attending knows your name by week 2.','Ask specific feedback at rotation end.']},clinic:{title:'Outpatient',tag:'Longitudinal thinking',items:['DM, HTN, HLD: how chronic disease accumulates periop risk','Preop clearance: what does surgery need from IM?','Preventive medicine screening -- Step 3 high-yield','Lighter days = deeper UWorld + reading.']}};
 var RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, Prevention',journal:'NEJM',day:'MON',why:'Your AKI research makes this essential. Builds the longitudinal disease to acute instability narrative.',q:'perioperative acute kidney injury prevention 2024'},{title:'Hemodynamic Monitoring in Critically Ill Patients -- Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility -- the spine of ICU and anesthesia both.',q:'hemodynamic monitoring critically ill framework 2023'},{title:'Lung-Protective Ventilation -- Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',q:'lung protective ventilation ARDS driving pressure 2023'},{title:'Acid-Base Interpretation -- A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',q:'acid base systematic approach mixed disorders 2022'},{title:'Vasopressors and Inotropes in Shock -- Mechanism, Selection, Dosing',journal:'Crit Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine -- used on every ICU rotation and intraoperatively by anesthesiologists.',q:'vasopressors inotropes shock mechanism selection 2023'}];
+// ============================================================
+// SCHEDULE — full PGY-1 year
+// ============================================================
+var SCHED=[
+  ['2026-06-24','BOOT'],['2026-07-06','ICU-2A'],['2026-07-13','ICU-2A'],
+  ['2026-07-20','E-CARD'],['2026-07-27','E-CARD'],
+  ['2026-08-03','ICU-1B'],['2026-08-10','ICU-1B'],
+  ['2026-08-17','ADM-1'],['2026-08-24','ADM-1'],
+  ['2026-08-31','NF-2'],['2026-09-07','NF-2'],
+  ['2026-09-14','VAC'],['2026-09-21','AC-G'],
+  ['2026-09-28','WD-4A'],['2026-10-05','WD-4A'],
+  ['2026-10-12','ICU-1B'],['2026-10-19','ICU-1B'],
+  ['2026-10-26','WD-2B'],['2026-11-02','WD-2B'],
+  ['2026-11-09','ED'],['2026-11-16','ED'],
+  ['2026-11-23','NF-1'],['2026-11-30','NF-1'],
+  ['2026-12-07','ADM-1'],['2026-12-14','ADM-1'],
+  ['2026-12-21','VAC'],['2026-12-28','VAC'],
+  ['2027-01-04','E-PC'],['2027-01-11','E-PC'],
+  ['2027-01-18','WD-2A'],['2027-01-25','WD-2A'],
+  ['2027-02-01','WD-2A'],['2027-02-08','WD-2A'],
+  ['2027-02-15','E-ID'],['2027-02-22','E-ID'],
+  ['2027-03-01','ICU-1B'],['2027-03-08','ICU-1B'],
+  ['2027-03-15','WD-2A'],['2027-03-22','WD-2A'],
+  ['2027-03-29','NF-2'],['2027-04-05','NF-2'],
+  ['2027-04-12','E-POM'],['2027-04-19','VAC'],
+  ['2027-04-26','ICU-1B'],['2027-05-03','ICU-1B'],
+  ['2027-05-10','WD-4B'],['2027-05-17','WD-4B'],
+  ['2027-05-24','ICU-1A'],['2027-05-31','ICU-1A'],
+  ['2027-06-07','WD-4A'],['2027-06-14','WD-4A'],
+];
+var ROT_META={
+  BOOT:{type:'boot',label:'Bootcamp',bg:'rgba(180,180,180,.12)',border:'rgba(180,180,180,.35)',text:'#b0b0b0'},
+  ICU:{type:'icu',label:'ICU',bg:'rgba(123,31,162,.22)',border:'rgba(156,39,176,.55)',text:'#ce93d8'},
+  'E-CARD':{type:'cards',label:'Elective: Cardiology',bg:'rgba(79,195,247,.15)',border:'rgba(79,195,247,.45)',text:'#4fc3f7'},
+  ADM:{type:'adm',label:'Day Admitting',bg:'rgba(25,25,25,.9)',border:'rgba(70,70,70,.7)',text:'#8a8a8a'},
+  NF:{type:'nf',label:'Night Float',bg:'rgba(10,10,10,1)',border:'rgba(55,55,55,.8)',text:'#666'},
+  VAC:{type:'vac',label:'Vacation',bg:'rgba(90,102,90,.15)',border:'rgba(90,102,90,.3)',text:'#5a665a'},
+  'AC-G':{type:'clinic',label:'Ambulatory – Geary',bg:'rgba(33,150,243,.12)',border:'rgba(33,150,243,.3)',text:'#64b5f6'},
+  WD:{type:'wards',label:'Wards',bg:'rgba(30,80,180,.18)',border:'rgba(60,120,220,.4)',text:'#90caf9'},
+  ED:{type:'ed',label:'ED – Kaiser SF',bg:'rgba(210,210,200,.06)',border:'rgba(180,180,170,.25)',text:'#c0c0b0'},
+  'E-PC':{type:'pc',label:'Elective: Palliative Care',bg:'rgba(100,100,220,.12)',border:'rgba(120,120,240,.3)',text:'#9fa8da'},
+  'E-ID':{type:'id',label:'Elective: Infectious Disease',bg:'rgba(33,150,243,.12)',border:'rgba(33,150,243,.3)',text:'#82b1ff'},
+  'E-POM':{type:'pom',label:'Elective: Periop Medicine ★',bg:'rgba(0,230,118,.12)',border:'rgba(0,230,118,.4)',text:'#69f0ae'},
+};
+function getRotMeta(code){
+  if(!code)return ROT_META.WD;
+  if(code==='BOOT')return ROT_META.BOOT;
+  if(code.startsWith('ICU'))return ROT_META.ICU;
+  if(code==='E-CARD')return ROT_META['E-CARD'];
+  if(code.startsWith('ADM'))return ROT_META.ADM;
+  if(code.startsWith('NF'))return ROT_META.NF;
+  if(code==='VAC')return ROT_META.VAC;
+  if(code.startsWith('AC'))return ROT_META['AC-G'];
+  if(code.startsWith('WD'))return ROT_META.WD;
+  if(code.startsWith('ED'))return ROT_META.ED;
+  if(code.startsWith('E-PC'))return ROT_META['E-PC'];
+  if(code.startsWith('E-ID'))return ROT_META['E-ID'];
+  if(code.startsWith('E-POM'))return ROT_META['E-POM'];
+  return ROT_META.WD;
+}
+function getCurrentSched(){
+  const today=new Date();today.setHours(12,0,0,0);
+  for(let i=0;i<SCHED.length;i++){
+    const ws=new Date(SCHED[i][0]+'T12:00:00');
+    const we=i<SCHED.length-1?new Date(SCHED[i+1][0]+'T12:00:00'):new Date(ws.getTime()+7*86400000);
+    if(today>=ws&&today<we)return{i,code:SCHED[i][1],start:SCHED[i][0],week:i+1,meta:getRotMeta(SCHED[i][1])};
+  }
+  // Before schedule starts
+  if(new Date()<new Date(SCHED[0][0]+'T12:00:00'))return{i:-1,code:'PRE',start:'',week:0,meta:{type:'boot',label:'Pre-residency / Bootcamp starts June 24',bg:'rgba(127,255,110,.08)',border:'rgba(127,255,110,.25)',text:'var(--g)'}};
+  return null;
+}
+var ROT_STUDY={
+  boot:{uw:['Mixed / Random','Cardiology / EKG'],paper:{t:'NEJM Intern at Work — Approach to Common Presentations',why:'Bootcamp week. Mixed topics. Get comfortable with the format before ICU starts.',pm:'approach to common presentations internal medicine intern NEJM'},proc:['Peripheral IV','Blood cultures – sterile technique','Foley catheter placement']},
+  icu:{uw:['Pulmonology / Ventilators','Nephrology / Acid-Base','Cardiology / EKG'],paper:{t:'ARMA Trial — Low Tidal Volume Ventilation in ARDS (NEJM 2000)',why:'The ICU trial every resident must know cold. 6 mL/kg IBW, plateau <30 cmH2O. You will reference this on every intubated patient.',pm:'ARMA low tidal volume ARDS mechanical ventilation NEJM 2000'},proc:['Central line – IJ or subclavian ★','Arterial line – radial ★','Endotracheal intubation RSI ★★','Thoracentesis']},
+  cards:{uw:['Cardiology / EKG'],paper:{t:'PARADIGM-HF — Sacubitril/Valsartan vs Enalapril in HFrEF (NEJM 2014)',why:'The trial that redefined HF GDMT. Every cardiologist quotes it. Shows you think at the consultant level.',pm:'PARADIGM-HF sacubitril valsartan enalapril HFrEF NEJM 2014'},proc:['12-lead EKG interpretation at speed','Synchronized cardioversion basics','Echo report interpretation']},
+  adm:{uw:['Cardiology / EKG','Mixed / Random'],paper:{t:'Revised Cardiac Risk Index (Lee et al., Circulation 1999)',why:'You will use the RCRI on every admitting shift. Know all 6 criteria and the corresponding periop risk — from memory.',pm:'Lee revised cardiac risk index perioperative cardiac events circulation 1999'},proc:['Peripheral IV – rapid access','ABG – arterial puncture','Paracentesis – diagnostic']},
+  nf:{uw:['Cardiology / EKG','Infectious Disease'],paper:{t:'ProCESS Trial — Protocol-Based Care for Early Septic Shock (NEJM 2014)',why:'Night float = sepsis at 2am. Know the evidence for your resuscitation decisions. ProCESS showed protocolized care works.',pm:'ProCESS trial protocol early goal directed septic shock NEJM 2014'},proc:['ABG – arterial blood gas','Urinary catheterization','Nasogastric tube placement']},
+  wards:{uw:['Cardiology / EKG','Nephrology / Acid-Base','Gastroenterology'],paper:{t:'SPRINT Trial — Intensive vs Standard Blood Pressure Control (NEJM 2015)',why:'Most common wards presentation = hypertensive disease. Know the target numbers, exclusions, and the controversy.',pm:'SPRINT trial intensive systolic blood pressure control cardiovascular NEJM 2015'},proc:['Thoracentesis','Paracentesis – large volume','Lumbar puncture']},
+  clinic:{uw:['Ethics / Preventive Med','Mixed / Random'],paper:{t:'UKPDS — Intensive Blood-Glucose Control in Type 2 Diabetes (Lancet 1998)',why:'Outpatient = DM management daily. This is the foundational evidence for glycemic targets.',pm:'UKPDS intensive blood glucose type 2 diabetes lancet 1998'},proc:['Spirometry interpretation','Joint aspiration – knee basics','Skin lesion biopsy']},
+  ed:{uw:['Cardiology / EKG','Pharmacology / Overdose'],paper:{t:'CURE Trial — Clopidogrel plus Aspirin in NSTEMI (NEJM 2001)',why:'ED = chest pain every shift. CURE defined dual antiplatelet therapy for ACS. Know when to give and when to hold for surgery.',pm:'CURE trial clopidogrel aspirin NSTEMI unstable angina NEJM 2001'},proc:['RSI – rapid sequence intubation ★★','IO access – tibial approach','Wound closure – interrupted sutures']},
+  vac:{uw:['Mixed / Random'],paper:{t:'Vacation — choose one topic you have been avoiding',why:'10-15 mixed questions max. Keep the streak alive. Sleep is your number one priority this week.',pm:''},proc:[]},
+  pc:{uw:['Ethics / Preventive Med'],paper:{t:'Temel et al. — Early Palliative Care in Metastatic NSCLC (NEJM 2010)',why:'The paradigm-shifting trial. Early palliative care improved survival AND quality of life. Foundation for goals of care conversations.',pm:'Temel early palliative care metastatic NSCLC survival quality life NEJM 2010'},proc:['Goals of care – REMAP framework','Opioid rotation for dyspnea','Prognosis communication technique']},
+  id:{uw:['Infectious Disease'],paper:{t:'RECOVERY Trial — Dexamethasone in COVID-19 (NEJM 2021)',why:'ID landmark. Framework for anti-inflammatory use in infection — when steroids help vs harm. Translates directly to sepsis/ICU management.',pm:'RECOVERY trial dexamethasone COVID-19 hospitalized mortality NEJM 2021'},proc:['Blood cultures – central vs peripheral technique','LP – CSF analysis interpretation','Wound debridement']},
+  pom:{uw:['Periop / Anesthesia','Cardiology / EKG'],paper:{t:'POISE Trial — Perioperative Beta-blockade (Lancet 2008)',why:'★ THE periop medicine landmark. This elective is your anesthesia application bridge. Know POISE cold — the numbers, the controversy, what it changed about cardiac risk management.',pm:'POISE trial perioperative metoprolol beta blocker cardiac events Lancet 2008'},proc:['Preoperative risk stratification – RCRI + DASI','Anticoagulation bridging protocol','Postoperative pain management – multimodal']},
+};
+
 // ============================================================
 // STATE -- no data here. All data lives in data.json on GitHub.
 // ============================================================
@@ -913,7 +1138,7 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',activeChat:{startedAt:null,messages:[]},chatSessions:[],tasks:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',activeChat:{startedAt:null,messages:[]},chatSessions:[],tasks:[],procLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
 
 // ============================================================
 // INIT
@@ -929,6 +1154,8 @@ document.getElementById('gh-file').value=CFG.file;
 if(CFG.api){ document.getElementById('api-key').value=CFG.api; document.getElementById('api-st').textContent='Key loaded'; }
 fetchData();
 buildRdList();
+buildTodayRotation();
+renderSchedPanel();
 
 function hOv(){ const e=document.getElementById('ov'); if(e){ e.style.opacity='0'; e.style.transition='opacity .4s'; setTimeout(()=>e.remove(),400); } }
 
@@ -939,7 +1166,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread(); renderPastSessions();
+  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread(); renderPastSessions(); buildTodayRotation(); renderSchedPanel(); renderProcLog();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1801,6 +2028,245 @@ async function deleteTask(id){
   const ok=await push(null,'task-smsg');
   if(!ok){ D.tasks.splice(idx,0,...removed); renderTasks(); }
 }
+// ============================================================
+// SCHEDULE — build today rotation banner + study plan
+// ============================================================
+function buildTodayRotation(){
+  const cur=getCurrentSched();
+  const ri=document.getElementById('rot-info');
+  const rb=document.getElementById('rot-banner');
+  const sb=document.getElementById('today-study-body');
+  if(!cur){
+    if(ri)ri.innerHTML='<div class="lbl">current rotation</div><div style="font-family:var(--serif);font-size:29px;font-weight:300;color:var(--g);">Schedule complete</div><div style="font-family:var(--mono);font-size:24px;color:var(--t3);">PGY-1 year finished — congratulations</div>';
+    return;
+  }
+  const m=cur.meta;
+  // Update banner
+  if(ri){
+    ri.style.borderLeftColor=m.text||'var(--g)';
+    const weeksLeft=SCHED.length-cur.week;
+    ri.innerHTML=`<div class="lbl">current rotation</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <span style="font-family:var(--mono);font-size:26px;padding:4px 12px;border-radius:6px;background:${m.bg};border:1px solid ${m.border};color:${m.text};font-weight:500;">${escHtml(cur.code)}</span>
+        <span style="font-family:var(--serif);font-size:27px;font-weight:300;color:${m.text};">${escHtml(m.label)}</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:24px;color:var(--t3);">Week ${cur.week} of 51 &nbsp;·&nbsp; ${weeksLeft} weeks remaining &nbsp;·&nbsp; starts ${escHtml(cur.start)}</div>`;
+  }
+  // Build study plan
+  if(sb){
+    const type=m.type||'wards';
+    const st=ROT_STUDY[type]||ROT_STUDY.wards;
+    const dow=new Date().getDay(); // 0=Sun
+    const uwIdx=Math.max(0,Math.min(dow-1,st.uw.length-1));
+    const todayUW=st.uw[dow%st.uw.length]||st.uw[0];
+    const pmUrl=st.paper.pm?'https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent(st.paper.pm):'';
+    const procList=st.proc.length?st.proc.map(p=>`<span class="bdg gr" style="margin:2px 4px 2px 0;display:inline-block;">${escHtml(p)}</span>`).join(''):
+      '<span style="color:var(--t3);">Rest day — maintenance only</span>';
+    sb.innerHTML=`
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g);">Q</div>
+        <div class="splan-body">
+          <div class="splan-lbl">UWORLD TODAY</div>
+          <div class="splan-val" style="color:var(--g);">${escHtml(todayUW)}</div>
+          <div class="splan-why">15-20 questions, timed tutor mode. Rotate through: ${escHtml(st.uw.join(' → '))}</div>
+        </div>
+      </div>
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g2);">📄</div>
+        <div class="splan-body">
+          <div class="splan-lbl">LANDMARK PAPER</div>
+          <div class="splan-val">${escHtml(st.paper.t)}</div>
+          <div class="splan-why">${escHtml(st.paper.why)}</div>
+          ${pmUrl?`<div style="margin-top:6px;"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('${pmUrl}','_blank')">PubMed →</button></div>`:''}
+        </div>
+      </div>
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g3);">⚕</div>
+        <div class="splan-body">
+          <div class="splan-lbl">PROCEDURES TO ASK ABOUT</div>
+          <div class="splan-val">${procList}</div>
+          <div class="splan-why">Ask your senior or attending. "Can I do the next one?" is how you get there.</div>
+        </div>
+      </div>`;
+  }
+}
+
+// ============================================================
+// SCHEDULE PANEL
+// ============================================================
+function renderSchedPanel(){
+  const cur=getCurrentSched();
+  // Current block detail
+  const snd=document.getElementById('sched-now-detail');
+  if(snd&&cur&&cur.week>0){
+    const m=cur.meta;
+    const weeksLeft=SCHED.length-cur.week;
+    snd.innerHTML=`<span style="font-family:var(--mono);font-size:26px;padding:4px 12px;border-radius:6px;background:${m.bg};border:1px solid ${m.border};color:${m.text};font-weight:500;">${escHtml(cur.code)}</span>
+      <div style="margin-top:8px;font-size:26px;color:var(--t);">${escHtml(m.label)}</div>
+      <div style="font-family:var(--mono);font-size:24px;color:var(--t3);margin-top:4px;">Week ${cur.week} of 51 · started ${escHtml(cur.start)}</div>
+      <div style="font-family:var(--mono);font-size:24px;color:var(--t3);">${weeksLeft} week${weeksLeft===1?'':'s'} left in internship</div>`;
+  } else if(snd&&cur&&cur.week===0){
+    snd.innerHTML=`<div style="color:var(--g);font-size:26px;">Bootcamp starts June 24, 2026</div><div style="font-family:var(--mono);font-size:24px;color:var(--t3);margin-top:6px;">Enjoy orientation — you earned it</div>`;
+  }
+  // Progress
+  const sp=document.getElementById('sched-progress');
+  if(sp&&cur&&cur.week>0) sp.textContent=`${cur.week}/51 weeks done`;
+  // Upcoming
+  const su=document.getElementById('sched-upcoming');
+  if(su&&cur){
+    const nextIdx=cur.i+1;
+    const upcoming=SCHED.slice(nextIdx,nextIdx+4);
+    if(upcoming.length){
+      su.innerHTML=upcoming.map(([d,c],i)=>{const m2=getRotMeta(c);return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--b);">${i===0?'<span style="font-family:var(--mono);font-size:22px;color:var(--g);">NEXT</span>':'<span style="font-family:var(--mono);font-size:22px;color:var(--t3);">+${i}wk</span>'}<span style="font-family:var(--mono);font-size:22px;padding:2px 8px;border-radius:4px;background:${m2.bg};border:1px solid ${m2.border};color:${m2.text};">${escHtml(c)}</span><span style="font-size:24px;color:var(--t2);">${escHtml(m2.label)}</span></div>`;}).join('');
+    } else {
+      su.innerHTML='<div style="font-size:26px;color:var(--t3);">End of internship year</div>';
+    }
+  }
+  // Full year grid
+  const grid=document.getElementById('sched-grid');
+  if(!grid)return;
+  // Group by month
+  const months={};
+  SCHED.forEach(([d,c],i)=>{
+    const dt=new Date(d+'T12:00:00');
+    const mo=dt.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    if(!months[mo])months[mo]=[];
+    months[mo].push({d,c,i,dt});
+  });
+  let html='';
+  for(const [mo,weeks] of Object.entries(months)){
+    html+=`<div class="mo-hdr">${mo}</div>`;
+    weeks.forEach(({d,c,i,dt})=>{
+      const m2=getRotMeta(c);
+      const isNow=cur&&cur.i===i;
+      const endDt=i<SCHED.length-1?new Date(SCHED[i+1][0]+'T12:00:00'):new Date(dt.getTime()+7*86400000);
+      endDt.setDate(endDt.getDate()-1);
+      const dateRange=`${dt.toLocaleDateString('en-US',{month:'numeric',day:'numeric'})}–${endDt.toLocaleDateString('en-US',{month:'numeric',day:'numeric'})}`;
+      html+=`<div class="sched-row${isNow?' sched-now':''}" onclick="showSchedDetail(${i})">
+        <span class="sched-wnum">${i+1}</span>
+        <span class="sched-dates">${dateRange}</span>
+        <span class="sched-chip" style="background:${m2.bg};border:1px solid ${m2.border};color:${m2.text};">${escHtml(c)}</span>
+        <span class="sched-label">${escHtml(m2.label)}</span>
+        ${isNow?'<span class="sched-now-tag">◀ NOW</span>':''}
+      </div>`;
+    });
+  }
+  grid.innerHTML=html;
+  // Scroll today into view after render
+  if(cur&&cur.week>0){
+    setTimeout(()=>{
+      const rows=grid.querySelectorAll('.sched-row');
+      if(rows[cur.i])rows[cur.i].scrollIntoView({behavior:'smooth',block:'center'});
+    },300);
+  }
+}
+
+function showSchedDetail(idx){
+  const card=document.getElementById('sched-detail-card');
+  const body=document.getElementById('sched-detail-body');
+  if(!card||!body||!SCHED[idx])return;
+  const [d,c]=SCHED[idx];
+  const m=getRotMeta(c);
+  const st=ROT_STUDY[m.type]||ROT_STUDY.wards;
+  const pmUrl=st.paper.pm?'https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent(st.paper.pm):'';
+  const procList=st.proc.length?st.proc.map(p=>`<span class="bdg gr" style="margin:2px 4px 2px 0;display:inline-block;">${escHtml(p)}</span>`).join(''):
+    '<span style="color:var(--t3);">Rest / maintenance</span>';
+  body.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+      <span style="font-family:var(--mono);font-size:26px;padding:4px 14px;border-radius:6px;background:${m.bg};border:1px solid ${m.border};color:${m.text};font-weight:500;">${escHtml(c)}</span>
+      <span style="font-size:26px;color:var(--t);font-weight:500;">${escHtml(m.label)}</span>
+      <span style="font-family:var(--mono);font-size:23px;color:var(--t3);">Week ${idx+1} · ${escHtml(d)}</span>
+    </div>
+    <div class="splan-row">
+      <div class="splan-icon" style="color:var(--g);">Q</div>
+      <div class="splan-body">
+        <div class="splan-lbl">UWORLD TOPICS</div>
+        <div class="splan-val">${escHtml(st.uw.join(', '))}</div>
+      </div>
+    </div>
+    <div class="splan-row">
+      <div class="splan-icon" style="color:var(--g2);">📄</div>
+      <div class="splan-body">
+        <div class="splan-lbl">LANDMARK PAPER</div>
+        <div class="splan-val">${escHtml(st.paper.t)}</div>
+        <div class="splan-why">${escHtml(st.paper.why)}</div>
+        ${pmUrl?`<div style="margin-top:6px;"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('${pmUrl}','_blank')">PubMed →</button></div>`:''}
+      </div>
+    </div>
+    <div class="splan-row">
+      <div class="splan-icon" style="color:var(--g3);">⚕</div>
+      <div class="splan-body">
+        <div class="splan-lbl">PROCEDURES TO TARGET</div>
+        <div class="splan-val">${procList}</div>
+      </div>
+    </div>`;
+  card.style.display='';
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ============================================================
+// PROCEDURES — save + render
+// ============================================================
+async function saveProc(){
+  if(!D){msg('proc-smsg','Data not loaded yet');return;}
+  const name=document.getElementById('proc-name').value;
+  const notes=document.getElementById('proc-notes').value.trim();
+  const statusEl=document.querySelector('#proc-status-chips .chip.on');
+  const status=statusEl?statusEl.dataset.val:'observed';
+  if(!name){msg('proc-smsg','Select a procedure first');return;}
+  if(!D.procLog)D.procLog=[];
+  D.procLog.push({name,status,notes,date:new Date().toISOString().split('T')[0],ts:Date.now()});
+  const ok=await push('proc-sbtn','proc-smsg');
+  if(ok){document.getElementById('proc-name').value='';document.getElementById('proc-notes').value='';renderProcLog();}
+  else D.procLog.pop();
+}
+
+function renderProcLog(){
+  if(!D||!D.procLog){return;}
+  const hist=document.getElementById('proc-log-hist');
+  const tracker=document.getElementById('proc-signoff-tracker');
+  if(!D.procLog.length){
+    if(hist)hist.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No procedures logged yet.</div>';
+    if(tracker)tracker.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No procedures logged yet.</div>';
+    return;
+  }
+  const sc={observed:'#5a665a',attempted:'#ffb74d',performed:'#4fc3f7',signedoff:'#7fff6e'};
+  const sl={observed:'OBSERVED',attempted:'ATTEMPTED',performed:'PERFORMED',signedoff:'SIGNED OFF ✓'};
+  // History
+  if(hist){
+    hist.innerHTML=[...D.procLog].reverse().slice(0,20).map(p=>`
+      <div class="proc-log-entry">
+        <span style="font-family:var(--mono);font-size:22px;color:var(--t3);min-width:70px;">${escHtml(p.date)}</span>
+        <span style="font-size:25px;color:var(--t);flex:1;">${escHtml(p.name)}</span>
+        <span style="font-family:var(--mono);font-size:22px;color:${sc[p.status]||'#888'};">${sl[p.status]||p.status}</span>
+      </div>${p.notes?`<div style="font-size:24px;color:var(--t3);padding:0 0 6px 78px;line-height:1.4;">${escHtml(p.notes)}</div>`:''}
+    `).join('');
+  }
+  // Signoff tracker — aggregate by procedure name
+  if(tracker){
+    const byName={};
+    D.procLog.forEach(p=>{
+      if(!byName[p.name])byName[p.name]={name:p.name,attempts:0,performed:0,signedoff:false,latest:p.status};
+      byName[p.name].attempts++;
+      if(p.status==='performed'||p.status==='signedoff')byName[p.name].performed++;
+      if(p.status==='signedoff')byName[p.name].signedoff=true;
+      byName[p.name].latest=p.status;
+    });
+    const entries=Object.values(byName).sort((a,b)=>{
+      const order={signedoff:0,performed:1,attempted:2,observed:3};
+      return(order[a.latest]||4)-(order[b.latest]||4);
+    });
+    tracker.innerHTML=entries.map(e=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);">
+        <span style="font-size:25px;color:${e.signedoff?'var(--t)':'var(--t2)'};flex:1;${e.signedoff?'':''}">
+          ${e.signedoff?'✓ ':''}<strong>${escHtml(e.name)}</strong>
+        </span>
+        <span style="font-family:var(--mono);font-size:22px;color:var(--t3);">${e.attempts}x</span>
+        <span style="font-family:var(--mono);font-size:22px;color:${sc[e.latest]||'#888'};">${sl[e.latest]||e.latest}</span>
+      </div>`).join('');
+  }
+}
+
 async function smartAddTasks(){
   if(!D){ msg('task-smsg','Data not loaded'); return; }
   const text=document.getElementById('task-input').value.trim();
