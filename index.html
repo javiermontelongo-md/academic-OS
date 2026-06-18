@@ -27,12 +27,15 @@ body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:26px;
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 .tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{font-family:var(--mono);font-size:25px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
+.tab{font-family:var(--mono);font-size:14px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
 .tab:hover{color:var(--t2);}.tab.on{color:var(--g);border-bottom:2px solid var(--g);}
+/* ABX panel desktop scaling */
+#panel-abx [style*="font-size:11px"]{font-size:18px !important;letter-spacing:.06em;}
+#panel-abx [style*="font-size:22px"]{font-size:15px !important;}
 .main{flex:1;padding:24px 32px;max-width:80%;width:100%;margin:0 auto;}
 .panel{display:none;}.panel.on{display:block;animation:fadeUp .25s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.bnav{display:none;}.mbar{display:none;}
+.bnav{display:none;}.mbar{display:none;}.more-tray{display:none;}
 .card{background:var(--s1);border:1px solid var(--b);border-radius:var(--rl);padding:18px 20px;margin-bottom:16px;transition:border-color .2s;}.card:hover{border-color:var(--b2);}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
@@ -234,8 +237,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     gap:4px;padding:12px 6px;border-radius:12px;background:var(--s2);border:1px solid var(--b);
     cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .more-item:active{background:var(--s3);}
-  .more-item .micon{font-size:20px;line-height:1.2;color:var(--t2);}
-  .more-item .mlbl{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
+  .more-item .micon{font-size:22px;line-height:1.2;color:var(--t2);}
+  .more-item .mlbl{font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
   .more-item.on .micon,.more-item.on .mlbl{color:var(--g);}
   .more-hdl{width:36px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 4px;}
 
@@ -261,6 +264,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   [style*="font-size:22px"]{font-size:10px !important;}
   [style*="font-size:21px"]{font-size:10px !important;}
   [style*="font-size:20px"]{font-size:10px !important;}
+  [style*="font-size:18px"]{font-size:10px !important;}
 
   /* ── CARDS ── */
   .card{padding:11px 12px;border-radius:11px;margin-bottom:9px;}
@@ -1813,18 +1817,18 @@ function openAbxDrawer(key){
 
   let html=`<div style="padding:20px 20px 12px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-      <div style="font-family:var(--mono);font-size:15px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${d.title}</div>
-      <button onclick="closeAbxDrawer()" style="background:transparent;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0;">×</button>
+      <div style="font-family:var(--mono);font-size:24px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${d.title}</div>
+      <button onclick="closeAbxDrawer()" style="background:transparent;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0;">×</button>
     </div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.08em;margin-bottom:16px;">${d.severity}</div>`;
+    <div style="font-family:var(--mono);font-size:20px;color:var(--t3);letter-spacing:.06em;margin-bottom:16px;">${d.severity}</div>`;
 
   // Drugs table
   html+=`<div style="margin-bottom:18px;">`;
   d.drugs.forEach(drug=>{
     html+=`<div style="border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;background:var(--s3);">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--g);letter-spacing:.06em;margin-bottom:5px;">${drug.name}</div>
-      <div style="font-size:13px;color:var(--t);line-height:1.5;margin-bottom:${drug.note?'6px':'0'};">${drug.dose}</div>
-      ${drug.note?`<div style="font-size:12px;color:var(--t3);line-height:1.5;font-style:italic;">${drug.note}</div>`:''}
+      <div style="font-family:var(--mono);font-size:20px;color:var(--g);letter-spacing:.06em;margin-bottom:5px;">${drug.name}</div>
+      <div style="font-size:24px;color:var(--t);line-height:1.5;margin-bottom:${drug.note?'6px':'0'};">${drug.dose}</div>
+      ${drug.note?`<div style="font-size:22px;color:var(--t3);line-height:1.5;font-style:italic;">${drug.note}</div>`:''}
     </div>`;
   });
   html+=`</div>`;
@@ -1832,9 +1836,9 @@ function openAbxDrawer(key){
   // Pearls
   if(d.pearls && d.pearls.length){
     html+=`<div style="background:rgba(127,255,110,0.04);border:1px solid rgba(127,255,110,0.12);border-radius:var(--r);padding:14px 16px;">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.1em;margin-bottom:10px;">CLINICAL PEARLS</div>`;
+      <div style="font-family:var(--mono);font-size:18px;color:var(--g);letter-spacing:.1em;margin-bottom:10px;">CLINICAL PEARLS</div>`;
     d.pearls.forEach(p=>{
-      html+=`<div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:7px;padding-left:14px;position:relative;">
+      html+=`<div style="font-size:22px;color:var(--t2);line-height:1.6;margin-bottom:7px;padding-left:14px;position:relative;">
         <span style="position:absolute;left:0;color:var(--g);font-family:var(--mono);">›</span>${p}</div>`;
     });
     html+=`</div>`;
