@@ -215,14 +215,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   /* ── BOTTOM NAV ── */
   .bnav{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--s1);
     border-top:1px solid var(--b);padding-bottom:var(--safe);z-index:100;
-    height:calc(var(--nav) + var(--safe));overflow-x:auto;scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;}
-  .bnav::-webkit-scrollbar{display:none;}
-  .ni{flex:0 0 54px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:5px 2px;cursor:pointer;gap:2px;border:none;background:none;-webkit-tap-highlight-color:transparent;}
-  .nicon{font-size:17px;color:var(--t2);line-height:1.2;}
-  .nlbl{font-family:var(--mono);font-size:8.5px;color:var(--t3);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;}
+    height:calc(var(--nav) + var(--safe));touch-action:pan-y;overflow-x:hidden;}
+  .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:5px 2px;cursor:pointer;gap:2px;border:none;background:none;-webkit-tap-highlight-color:transparent;min-width:0;}
+  .nicon{font-size:18px;color:var(--t2);line-height:1.2;}
+  .nlbl{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;}
   .ni.on .nicon,.ni.on .nlbl{color:var(--g);}
+  /* ── MORE TRAY ── */
+  .more-tray{display:none;position:fixed;inset:0;z-index:200;}
+  .more-tray.open{display:block;}
+  .more-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);}
+  .more-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:20px 20px 0 0;
+    border-top:1px solid var(--b2);padding:16px 16px calc(var(--safe) + 16px);
+    animation:slideUp .22s ease;}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .more-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+  .more-item{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;padding:12px 6px;border-radius:12px;background:var(--s2);border:1px solid var(--b);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .more-item:active{background:var(--s3);}
+  .more-item .micon{font-size:20px;line-height:1.2;color:var(--t2);}
+  .more-item .mlbl{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
+  .more-item.on .micon,.more-item.on .mlbl{color:var(--g);}
+  .more-hdl{width:36px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 4px;}
 
   /* ── TYPOGRAPHY — reset ALL the giant px values ── */
   body{font-size:14px;line-height:1.55;}
@@ -1179,25 +1194,37 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 </div><!-- v2026-05-17 19:25:02 -->
 
-<nav class="bnav">
-  <button class="ni on" onclick="gM('today',this)"><span class="nicon">T</span><span class="nlbl">TODAY</span></button>
-  <button class="ni" onclick="gM('schedule',this)"><span class="nicon">📅</span><span class="nlbl">SCHED</span></button>
-  <button class="ni" onclick="gM('week',this)"><span class="nicon">W</span><span class="nlbl">WEEK</span></button>
-  <button class="ni" onclick="gM('uworld',this)"><span class="nicon">Q</span><span class="nlbl">UWORLD</span></button>
-  <button class="ni" onclick="gM('reading',this)"><span class="nicon">R</span><span class="nlbl">READ</span></button>
-  <button class="ni" onclick="gM('rotations',this)"><span class="nicon">Rx</span><span class="nlbl">ROTS</span></button>
-  <button class="ni" onclick="gM('procedures',this)"><span class="nicon">⚕</span><span class="nlbl">PROC</span></button>
-  <button class="ni" onclick="gM('narrative',this)"><span class="nicon">N</span><span class="nlbl">NARR</span></button>
-  <button class="ni" onclick="gM('interview',this)"><span class="nicon">IV</span><span class="nlbl">INTV</span></button>
-  <button class="ni" onclick="gM('application',this)"><span class="nicon">A</span><span class="nlbl">APP</span></button>
-  <button class="ni" onclick="gM('milestones',this)"><span class="nicon">G</span><span class="nlbl">GOALS</span></button>
-  <button class="ni" onclick="gM('roadmap',this)"><span class="nicon">★</span><span class="nlbl">ROAD</span></button>
-  <button class="ni" onclick="gM('anki',this)"><span class="nicon">A↓</span><span class="nlbl">ANKI</span></button>
-  <button class="ni" onclick="gM('curriculum',this)"><span class="nicon">Hx</span><span class="nlbl">CURR</span></button>
-  <button class="ni" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">MIND</span></button>
-  <button class="ni" onclick="gM('tasks',this)"><span class="nicon">&#10003;</span><span class="nlbl">TASKS</span></button>
-  <button class="ni" onclick="gM('settings',this)"><span class="nicon">S</span><span class="nlbl">SET</span></button>
+<nav class="bnav" id="bnav">
+  <button class="ni on" id="ni-today" onclick="gM('today',this)"><span class="nicon">🏠</span><span class="nlbl">Today</span></button>
+  <button class="ni" id="ni-schedule" onclick="gM('schedule',this)"><span class="nicon">📅</span><span class="nlbl">Sched</span></button>
+  <button class="ni" id="ni-uworld" onclick="gM('uworld',this)"><span class="nicon">Q</span><span class="nlbl">UWorld</span></button>
+  <button class="ni" id="ni-mind" onclick="gM('mind',this)"><span class="nicon">♡</span><span class="nlbl">Mind</span></button>
+  <button class="ni" id="ni-tasks" onclick="gM('tasks',this)"><span class="nicon">✓</span><span class="nlbl">Tasks</span></button>
+  <button class="ni" id="ni-more" onclick="togMore()"><span class="nicon">⋯</span><span class="nlbl">More</span></button>
 </nav>
+
+<!-- More tray -->
+<div class="more-tray" id="more-tray">
+  <div class="more-backdrop" onclick="togMore()"></div>
+  <div class="more-sheet">
+    <div class="more-hdl"></div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-align:center;letter-spacing:.08em;margin-bottom:4px;">ALL SECTIONS</div>
+    <div class="more-grid">
+      <div class="more-item" id="mi-week" onclick="gM('week',null);togMore()"><span class="micon">W</span><span class="mlbl">Week</span></div>
+      <div class="more-item" id="mi-reading" onclick="gM('reading',null);togMore()"><span class="micon">R</span><span class="mlbl">Read</span></div>
+      <div class="more-item" id="mi-rotations" onclick="gM('rotations',null);togMore()"><span class="micon">Rx</span><span class="mlbl">Rotations</span></div>
+      <div class="more-item" id="mi-procedures" onclick="gM('procedures',null);togMore()"><span class="micon">⚕</span><span class="mlbl">Procs</span></div>
+      <div class="more-item" id="mi-narrative" onclick="gM('narrative',null);togMore()"><span class="micon">N</span><span class="mlbl">Narrative</span></div>
+      <div class="more-item" id="mi-interview" onclick="gM('interview',null);togMore()"><span class="micon">IV</span><span class="mlbl">Interview</span></div>
+      <div class="more-item" id="mi-application" onclick="gM('application',null);togMore()"><span class="micon">A</span><span class="mlbl">App</span></div>
+      <div class="more-item" id="mi-milestones" onclick="gM('milestones',null);togMore()"><span class="micon">G</span><span class="mlbl">Goals</span></div>
+      <div class="more-item" id="mi-roadmap" onclick="gM('roadmap',null);togMore()"><span class="micon">★</span><span class="mlbl">Roadmap</span></div>
+      <div class="more-item" id="mi-anki" onclick="gM('anki',null);togMore()"><span class="micon">A↓</span><span class="mlbl">Anki</span></div>
+      <div class="more-item" id="mi-curriculum" onclick="gM('curriculum',null);togMore()"><span class="micon">Hx</span><span class="mlbl">Curr</span></div>
+      <div class="more-item" id="mi-settings" onclick="gM('settings',null);togMore()"><span class="micon">⚙</span><span class="mlbl">Settings</span></div>
+    </div>
+  </div>
+</div>
 </div><!-- v2026-05-17 19:25:02 -->
 
 <script>
@@ -1404,11 +1431,28 @@ function gT(n,el){
   const p=document.getElementById('panel-'+n); if(p) p.classList.add('on');
   if(el) el.classList.add('on');
 }
+// Pinned nav tab ids
+var _PINNED=['today','schedule','uworld','mind','tasks'];
+
 function gM(n,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.more-item').forEach(x=>x.classList.remove('on'));
   const p=document.getElementById('panel-'+n); if(p){ p.classList.add('on'); p.scrollTop=0; }
-  if(el) el.classList.add('on');
+  // Highlight pinned tab or More button
+  const pinBtn=document.getElementById('ni-'+n);
+  const moreBtn=document.getElementById('ni-more');
+  if(pinBtn){ pinBtn.classList.add('on'); }
+  else if(moreBtn){ moreBtn.classList.add('on'); }
+  // Highlight item in tray
+  const mi=document.getElementById('mi-'+n);
+  if(mi) mi.classList.add('on');
+}
+
+function togMore(){
+  const tray=document.getElementById('more-tray');
+  if(!tray)return;
+  tray.classList.toggle('open');
 }
 
 // ============================================================
