@@ -27,15 +27,12 @@ body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:26px;
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 .tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{font-family:var(--mono);font-size:14px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
+.tab{font-family:var(--mono);font-size:25px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
 .tab:hover{color:var(--t2);}.tab.on{color:var(--g);border-bottom:2px solid var(--g);}
-/* ABX panel desktop scaling */
-#panel-abx [style*="font-size:11px"]{font-size:18px !important;letter-spacing:.06em;}
-#panel-abx [style*="font-size:22px"]{font-size:15px !important;}
 .main{flex:1;padding:24px 32px;max-width:80%;width:100%;margin:0 auto;}
 .panel{display:none;}.panel.on{display:block;animation:fadeUp .25s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.bnav{display:none;}.mbar{display:none;}.more-tray{display:none;}
+.bnav{display:none;}.mbar{display:none;}
 .card{background:var(--s1);border:1px solid var(--b);border-radius:var(--rl);padding:18px 20px;margin-bottom:16px;transition:border-color .2s;}.card:hover{border-color:var(--b2);}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
@@ -237,8 +234,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     gap:4px;padding:12px 6px;border-radius:12px;background:var(--s2);border:1px solid var(--b);
     cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .more-item:active{background:var(--s3);}
-  .more-item .micon{font-size:22px;line-height:1.2;color:var(--t2);}
-  .more-item .mlbl{font-family:var(--mono);font-size:11px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
+  .more-item .micon{font-size:20px;line-height:1.2;color:var(--t2);}
+  .more-item .mlbl{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
   .more-item.on .micon,.more-item.on .mlbl{color:var(--g);}
   .more-hdl{width:36px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 4px;}
 
@@ -264,7 +261,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   [style*="font-size:22px"]{font-size:10px !important;}
   [style*="font-size:21px"]{font-size:10px !important;}
   [style*="font-size:20px"]{font-size:10px !important;}
-  [style*="font-size:18px"]{font-size:10px !important;}
 
   /* ── CARDS ── */
   .card{padding:11px 12px;border-radius:11px;margin-bottom:9px;}
@@ -1568,236 +1564,444 @@ function gM(n,el){
 // ABX DRAWER
 // ============================================================
 var ABX_DATA={
-  cap:{title:'Community-Acquired Pneumonia',severity:'Outpatient → Inpatient → ICU',drugs:[
-    {name:'Outpatient (healthy, no comorbidities)',dose:'Amoxicillin 1g PO TID × 5d',note:'First-line. No atypical coverage needed if low severity.'},
-    {name:'Outpatient (comorbidities / prior ABx)',dose:'Azithromycin 500mg PO day 1 → 250mg × 4d  OR  Doxycycline 100mg PO BID × 5d',note:'Atypical coverage. Avoid macrolides if high local resistance.'},
-    {name:'Inpatient non-ICU',dose:'Ceftriaxone 1–2g IV q24h + Azithromycin 500mg IV/PO q24h  OR  Respiratory FQ (levofloxacin 750mg q24h)',note:'Beta-lactam + macrolide is preferred. FQ monotherapy acceptable.'},
-    {name:'Inpatient ICU',dose:'Ceftriaxone 2g IV q24h + Azithromycin 500mg IV q24h  ±  Vancomycin/Linezolid if MRSA risk',note:'Add antipseudomonal coverage if structural lung disease or recent hospitalization.'},
-  ],pearls:['PSI/PORT score > CURB-65 for admission decision.','Blood cultures before ABx only in ICU-level or immunocompromised.','Procalcitonin helps distinguish viral vs bacterial; don\'t treat viral CAP with ABx.','Duration: 5 days if clinical improvement by day 3. Reassess at 72h.','MRSA risk factors: prior MRSA, IV drug use, necrotizing PNA on imaging, influenza superinfection.']},
+  cap:{title:'Community-Acquired Pneumonia',category:'RESPIRATORY',drugs:[
+    {label:'Outpatient — Healthy host, no comorbidities',options:[
+      {drug:'Amoxicillin',dose:'1g PO TID × 5 days',covers:'S. pneumoniae, H. influenzae, Moraxella — the dominant CAP pathogens in healthy adults',why:'Atypical coverage not needed at this severity level. High oral bioavailability (>90%). Narrow-spectrum first choice per ATS/IDSA.'}
+    ]},
+    {label:'Outpatient — Comorbidities or prior ABx in 90 days',options:[
+      {drug:'Azithromycin',dose:'500mg PO day 1 → 250mg PO q24h × 4 days',covers:'Atypicals (Mycoplasma pneumoniae, Chlamydophila pneumoniae, Legionella), Strep variable',why:'Comorbidities increase atypical pathogen probability. Macrolide adds intracellular coverage. Avoid if local macrolide resistance >25%.'},
+      {drug:'Doxycycline',dose:'100mg PO BID × 5 days',covers:'Atypicals, Strep (variable), H. influenzae, some gram-neg',why:'Alternative to macrolide. Preferred if macrolide resistance concern. Excellent bioavailability (~93% PO = IV).'}
+    ]},
+    {label:'Inpatient — Non-ICU',options:[
+      {drug:'Ceftriaxone + Azithromycin',dose:'Ceftriaxone 1–2g IV q24h + Azithromycin 500mg IV/PO q24h',covers:'Ceftriaxone: Strep, H. flu, gram-neg. Azithromycin adds: Legionella, Mycoplasma, Chlamydophila',why:'Combination outperforms monotherapy in inpatient CAP. Azithromycin also has immunomodulatory anti-inflammatory effects shown to reduce mortality.'},
+      {drug:'Levofloxacin (monotherapy)',dose:'750mg IV/PO q24h × 5 days',covers:'Strep, atypicals, H. flu, gram-neg, some anaerobes — respiratory FQ covers the full CAP spectrum',why:'Respiratory FQ chosen when beta-lactam cannot be used (PCN allergy) or outpatient compliance concern. Single drug convenience. Avoid if recent FQ use.'}
+    ]},
+    {label:'ICU-level CAP',options:[
+      {drug:'Ceftriaxone + Azithromycin ± MRSA coverage',dose:'Ceftriaxone 2g IV q24h + Azithromycin 500mg IV q24h. Add Vancomycin or Linezolid if MRSA risk.',covers:'Broad gram-pos/gram-neg + atypical. Vancomycin/Linezolid adds MRSA if: prior MRSA, necrotizing PNA, post-influenza, cavitary disease',why:'ICU CAP: add antipseudomonal coverage (pip-tazo or cefepime) if structural lung disease, bronchiectasis, or recent hospitalization.'}
+    ]}
+  ],pearls:['PSI/PORT score preferred over CURB-65 for admission decisions.','MRSA nasal swab negative NPV ~95% — use to withhold MRSA coverage.','Procalcitonin: helps distinguish bacterial vs viral. Do not treat viral CAP with antibiotics.','Duration: 5 days if afebrile and improving by day 3. No benefit to longer courses.','Daptomycin is inactivated by surfactant — NEVER use for pneumonia.']},
 
-  hap:{title:'Hospital-Acquired Pneumonia (HAP/VAP)',severity:'Any hospitalized patient ≥48h after admission',drugs:[
-    {name:'No MDR risk, low mortality risk',dose:'Pip-tazo 3.375g IV q6h  OR  Cefepime 2g IV q8h  OR  Levofloxacin 750mg IV q24h',note:'Monotherapy acceptable if not VAP and no MDR risk factors.'},
-    {name:'MDR risk or VAP',dose:'Pip-tazo 4.5g IV q6h (extended infusion)  +  Vancomycin IV (trough 15–20) or Linezolid 600mg IV q12h',note:'Double gram-negative coverage if high mortality risk or prior resistant organism.'},
-    {name:'Pseudomonas risk',dose:'Cefepime 2g IV q8h  +  Pip-tazo 4.5g IV q6h  (or add ciprofloxacin 400mg IV q8h)',note:'Structural lung disease, bronchiectasis, prolonged steroids.'},
-  ],pearls:['MDR risk: prior ABx in last 90d, hospitalization ≥5d, septic shock, ARDS, RRT, wound care.','VAP: VAP bundle compliance reduces incidence — head-of-bed 30°, daily SAT/SBT, chlorhexidine oral care.','Deescalate at 48–72h based on culture data.','Duration: 7 days for most. 8d for VAP in JAMA trial.']},
+  hap:{title:'Hospital-Acquired / Ventilator-Associated Pneumonia',category:'RESPIRATORY',drugs:[
+    {label:'HAP — No MDR risk factors, low mortality risk',options:[
+      {drug:'Cefepime',dose:'2g IV q8h',covers:'Gram-neg including Pseudomonas, gram-pos (not MRSA), H. flu',why:'4th-gen cephalosporin with anti-pseudomonal activity. No MRSA coverage — add vancomycin if risk factors present. Preferred over pip-tazo for HAP when no anaerobic source.'},
+      {drug:'Pip-Tazo',dose:'4.5g IV q6h (extended infusion preferred)',covers:'Gram-pos (not MRSA), gram-neg (Pseudomonas), anaerobes',why:'Broader anaerobic coverage than cefepime. Choose over cefepime if aspiration component or abdominal source.'},
+      {drug:'Levofloxacin',dose:'750mg IV q24h',covers:'Gram-neg, atypicals, Strep — NOT reliable Pseudomonas',why:'Only use if no Pseudomonas risk and FQ not used recently. High resistance risk limits utility.'}
+    ]},
+    {label:'HAP/VAP — MDR risk or septic shock',options:[
+      {drug:'Cefepime or Pip-Tazo + Vancomycin',dose:'Cefepime 2g IV q8h + Vancomycin AUC-guided (target AUC 400–600)',covers:'Adds MRSA coverage to gram-neg/anti-pseudomonal backbone',why:'MDR risk triggers MRSA coverage: prior MRSA, ICU >5 days, structural lung disease, immunosuppressed. Vancomycin preferred; linezolid if renal failure.'},
+      {drug:'Meropenem + Vancomycin',dose:'Meropenem 1g IV q8h (extended 3h infusion for MDR) + Vancomycin AUC-guided',covers:'Broadest beta-lactam spectrum: Pseudomonas, ESBL, Acinetobacter, anaerobes + vancomycin adds MRSA',why:'Escalate to carbapenem if prior MDR organism, ESBL on recent culture, or failure of pip-tazo.'}
+    ]}
+  ],pearls:['MDR risk factors: IV ABx in last 90 days, hospitalization ≥5 days, septic shock, ARDS, RRT, wound care.','VAP bundle: head of bed 30°, daily SAT/SBT, chlorhexidine oral care, avoid unnecessary PPI.','Deescalate at 48–72h based on cultures — most important stewardship moment.','Duration: 7 days for HAP/VAP regardless of pathogen (JAMA 2006 non-inferior data).','MRSA nasal swab: if negative, withhold vancomycin — NPV ~95% for MRSA pneumonia.']},
 
-  aecopd:{title:'AECOPD — Acute Exacerbation COPD',severity:'Outpatient or inpatient depending on severity',drugs:[
-    {name:'Mild–Moderate (outpatient)',dose:'Azithromycin 500mg PO × 1 → 250mg × 4d  OR  Doxycycline 100mg PO BID × 5d  OR  Amoxicillin-clavulanate 875/125mg PO BID × 5d',note:'Not all AECOPD needs ABx — only if ≥2 of: increased dyspnea, sputum, purulence.'},
-    {name:'Severe (inpatient)',dose:'Ceftriaxone 1g IV q24h  +  Azithromycin 500mg IV q24h',note:'Add anti-pseudomonal if structural lung disease or frequent exacerbator.'},
-  ],pearls:['Anthonisen criteria: ↑ dyspnea + ↑ sputum volume + ↑ sputum purulence → ABx benefit.','Steroids: prednisone 40mg PO × 5d (non-inferior to 14d).','SABA + SAMA bronchodilators are the primary treatment.','Azithromycin prophylaxis (qd × 1 year) reduces exacerbations in select patients.']},
+  aecopd:{title:'AECOPD — Acute Exacerbation of COPD',category:'RESPIRATORY',drugs:[
+    {label:'Mild–Moderate (outpatient)',options:[
+      {drug:'Azithromycin',dose:'500mg PO day 1 → 250mg PO q24h × 4 days',covers:'H. influenzae, Moraxella catarrhalis, S. pneumoniae, atypicals — the dominant AECOPD pathogens',why:'Macrolide covers the typical bacterial triggers of AECOPD. Short course. Also has anti-inflammatory properties. Use only if meets Anthonisen criteria.'},
+      {drug:'Doxycycline',dose:'100mg PO BID × 5 days',covers:'H. influenzae, Moraxella, Strep, atypicals',why:'Equivalent to macrolide. Preferred if recent macrolide use or resistance concern.'},
+      {drug:'Amoxicillin-Clavulanate',dose:'875/125mg PO BID × 5 days',covers:'Beta-lactamase-producing H. influenzae and Moraxella — common AECOPD pathogens that produce beta-lactamases',why:'Choose over plain amoxicillin because ~30% of H. flu and ~90% of Moraxella are beta-lactamase producers.'}
+    ]},
+    {label:'Severe (inpatient)',options:[
+      {drug:'Ceftriaxone ± Azithromycin',dose:'Ceftriaxone 1g IV q24h + Azithromycin 500mg IV q24h if atypical suspected',covers:'H. flu, Moraxella, Strep, gram-neg. Azithromycin adds atypical coverage.',why:'Hospitalized AECOPD with respiratory failure. Add antipseudomonal (cefepime/pip-tazo) if structural lung disease, bronchiectasis, or prior Pseudomonas.'}
+    ]}
+  ],pearls:['Anthonisen criteria: treat ABx only if ≥2 of — ↑ dyspnea, ↑ sputum volume, ↑ sputum purulence.','ABx reduce treatment failure by ~50% when Anthonisen criteria are met.','Steroids: prednisone 40mg PO × 5 days (non-inferior to 14d, REDUCE trial).','Azithromycin 250mg qd × 1yr prophylaxis reduces exacerbations in select patients (NNT ~3).','SABA + SAMA bronchodilators are the primary treatment — antibiotics are adjunctive.']},
 
-  abscess_lung:{title:'Lung Abscess',severity:'Usually anaerobes from aspiration',drugs:[
-    {name:'First-line',dose:'Amoxicillin-clavulanate 875/125mg PO BID × 4–6 wks  OR  Pip-tazo 3.375g IV q6h → step down',note:'Anaerobic coverage essential.'},
-    {name:'Alternative (penicillin allergy)',dose:'Clindamycin 600mg PO TID  +  Ceftriaxone 1g IV q24h',note:'Clindamycin excellent anaerobic coverage; add gram-neg coverage.'},
-  ],pearls:['Risk factors: aspiration (seizure, EtOH, poor dentition), immunosuppression.','Imaging: air-fluid level on CXR/CT; right lower lobe most common.','Prolonged ABx (4–6 weeks) required; duration guided by clinical and imaging response.','Consider bronchoscopy if no improvement at 3–4 weeks.']},
+  abscess_lung:{title:'Lung Abscess',category:'RESPIRATORY',drugs:[
+    {label:'First-line (aspiration-related)',options:[
+      {drug:'Amoxicillin-Clavulanate',dose:'875/125mg PO BID × 4–6 weeks',covers:'Oral anaerobes (Peptostreptococcus, Fusobacterium, Prevotella), streptococci, gram-neg — the pathogens in aspiration-related abscess',why:'Clavulanate extends coverage to beta-lactamase-producing anaerobes. PO course acceptable after IV initiation. Long duration needed for complete cavity resolution.'},
+      {drug:'Pip-Tazo → step down',dose:'3.375g IV q6h until improving, then amoxicillin-clavulanate PO',covers:'Same spectrum plus broader gram-neg coverage',why:'Choose IV pip-tazo for inpatient/severe or if cannot tolerate PO. Step down to PO amox-clav when afebrile and tolerating oral intake.'}
+    ]},
+    {label:'PCN allergy',options:[
+      {drug:'Clindamycin + Ceftriaxone',dose:'Clindamycin 600mg PO/IV TID + Ceftriaxone 1g IV q24h',covers:'Clindamycin: anaerobes (excellent). Ceftriaxone: gram-neg pathogens including H. flu, Klebsiella',why:'Clindamycin is the classic anaerobic agent. Must add gram-neg coverage — clindamycin alone has no gram-neg activity. Duration 4–6 weeks.'}
+    ]}
+  ],pearls:['Risk factors: aspiration (seizure, EtOH, dysphagia, poor dentition), immunosuppression, post-obstructive (tumor).','CXR: air-fluid level in a cavity. Right lower lobe most common (aspiration in upright position).','Prolonged course (4–6 wks) required — duration guided by imaging response (cavity shrinkage).','Bronchoscopy if: no improvement at 3–4 weeks (r/o endobronchial lesion), need drainage.','Most resolve with antibiotics alone; drainage reserved for failure or large cavities.']},
 
-  uti_uncomplicated:{title:'Uncomplicated UTI (Cystitis)',severity:'Non-pregnant women, no structural abnormality',drugs:[
-    {name:'First-line',dose:'Nitrofurantoin 100mg PO BID × 5d  OR  Trimethoprim-sulfamethoxazole DS 1 tab PO BID × 3d',note:'TMP-SMX only if local resistance <20%. Nitrofurantoin not for pyelonephritis.'},
-    {name:'Alternative',dose:'Fosfomycin 3g PO × 1 dose',note:'Single-dose convenience; good for MDR organisms.'},
-    {name:'Avoid (reserve)',dose:'Fluoroquinolones (ciprofloxacin/levofloxacin)',note:'Reserve FQs. Side effect profile (tendinopathy, QTc, CNS) disproportionate for uncomplicated UTI.'},
-  ],pearls:['Pyuria alone is not an indication for treatment — treat symptoms, not the UA.','Asymptomatic bacteriuria: treat ONLY in pregnancy or pre-urologic procedure.','Post-void residual if recurrent UTI in men — r/o retention.']},
+  uti_uncomplicated:{title:'Uncomplicated UTI (Acute Cystitis)',category:'URINARY TRACT',drugs:[
+    {label:'First-line (preferred agents)',options:[
+      {drug:'Nitrofurantoin',dose:'100mg PO BID (macrocrystals) × 5 days',covers:'E. coli, Staph saprophyticus, Enterococcus — the dominant cystitis pathogens. NOT Proteus, Klebsiella, Pseudomonas.',why:'Concentrated in urine → urinary levels far exceed MIC. Low systemic absorption means minimal collateral flora damage. Avoid if CrCl <30 (inadequate urinary concentrations) or if pyelonephritis (doesn\'t achieve tissue levels).'},
+      {drug:'TMP-SMX DS',dose:'1 tab PO BID × 3 days',covers:'E. coli, Staph saprophyticus, some Klebsiella',why:'Use only if local E. coli resistance <20%. Excellent bioavailability. 3-day course superior compliance. Avoid in sulfa allergy or late pregnancy.'},
+      {drug:'Fosfomycin',dose:'3g PO × 1 dose',covers:'E. coli (including ESBL), Enterococcus, some Klebsiella',why:'Single-dose convenience. Excellent option for ESBL-producing E. coli cystitis. MDR UTI escape route. Does NOT achieve tissue levels — cystitis only.'}
+    ]},
+    {label:'Avoid / Reserve',options:[
+      {drug:'Fluoroquinolones (Ciprofloxacin, Levofloxacin)',dose:'Reserve — do not use as first-line for uncomplicated cystitis',covers:'Broad spectrum; overkill for uncomplicated cystitis',why:'Risk-benefit unfavorable for uncomplicated cystitis: tendinopathy, peripheral neuropathy, QTc prolongation, C. diff risk, drives resistance. FDA black box warning. Reserve for complicated UTI, pyelonephritis, prostatitis.'}
+    ]}
+  ],pearls:['Pyuria alone ≠ infection. Treat symptoms, not the urinalysis.','Asymptomatic bacteriuria: treat ONLY in pregnancy or pre-urologic procedure.','Post-void residual if recurrent UTI in men — rule out retention as driver.','Test of cure only in pregnancy.','ESBL E. coli: fosfomycin or nitrofurantoin (cystitis only). Pyelo/complicated: ertapenem.']},
 
-  uti_complicated:{title:'Complicated UTI',severity:'Men, structural abnormality, catheter, immunocompromised',drugs:[
-    {name:'Outpatient',dose:'Ciprofloxacin 500mg PO BID × 7d  OR  TMP-SMX DS BID × 7d (if susceptible)',note:'FQ acceptable here — complicated UTI justifies the spectrum.'},
-    {name:'Inpatient',dose:'Ceftriaxone 1g IV q24h  OR  Pip-tazo 3.375g IV q6h (if MDR risk)',note:'Tailor to culture results at 48h.'},
-  ],pearls:['Complicated = male, pregnant, immunocompromised, structural/functional urologic abnormality, catheter-associated, recent urologic procedure.','CAUTI: treat only if symptomatic — remove or change catheter first.','7-day course for most; 10–14d if slow to respond.']},
+  uti_complicated:{title:'Complicated UTI',category:'URINARY TRACT',drugs:[
+    {label:'Outpatient (mild, tolerating PO)',options:[
+      {drug:'Ciprofloxacin',dose:'500mg PO BID × 7 days',covers:'E. coli, Klebsiella, Pseudomonas, Proteus — most gram-neg uropathogens including Pseudomonas',why:'FQ justified in complicated UTI — systemic exposure needed to reach deeper tissue (prostate, structural lesions). Ensure local susceptibility before using.'},
+      {drug:'TMP-SMX DS',dose:'BID × 7 days (if susceptible)',covers:'E. coli, Klebsiella, Proteus — NOT Pseudomonas',why:'Use only after susceptibility confirmed. Do not use empirically if risk of gram-neg resistance.'}
+    ]},
+    {label:'Inpatient (IV)',options:[
+      {drug:'Ceftriaxone',dose:'1g IV q24h → step down to PO at 48h',covers:'E. coli, Klebsiella, Proteus, Strep (not Pseudomonas)',why:'First-choice for hospitalized complicated UTI without MDR risk. Narrow spectrum, once-daily dosing.'},
+      {drug:'Pip-Tazo',dose:'3.375g IV q6h',covers:'Adds Pseudomonas and anaerobic coverage',why:'Choose over ceftriaxone if Pseudomonas risk (prior Pseudomonas, structural urinary tract disease, nosocomial).'}
+    ]}
+  ],pearls:['Complicated = male sex, pregnancy, immunocompromised, structural/functional urologic abnormality, catheter, recent procedure.','CAUTI: treat only if symptomatic. Remove or replace catheter first — reduces bacterial burden significantly.','7-day course standard; 10–14d if slow to respond or source control incomplete.','ESBL UTI: ertapenem 1g IV q24h (or pip-tazo if susceptible by extended-infusion).']},
 
-  pyelonephritis:{title:'Pyelonephritis',severity:'Outpatient (mild) or inpatient (vomiting, sepsis)',drugs:[
-    {name:'Outpatient',dose:'Ciprofloxacin 500mg PO BID × 7d  OR  TMP-SMX DS BID × 14d (if susceptible)',note:'FQ preferred outpatient for pyelonephritis. TMP-SMX only if susceptibility known.'},
-    {name:'Inpatient',dose:'Ceftriaxone 1–2g IV q24h → step down to PO when tolerating',note:'Add Vancomycin if Enterococcus concern (urologic procedure, hospital-acquired).'},
-    {name:'Severe / MDR risk',dose:'Pip-tazo 3.375g IV q6h  OR  Meropenem 1g IV q8h (ESBL or prior MDR)',note:'ESBL common in pyelonephritis — check local epidemiology.'},
-  ],pearls:['Blood cultures before ABx if hospitalized or immunocompromised.','Renal ultrasound if no improvement at 48–72h (r/o obstruction, abscess).','Pregnancy: IV ceftriaxone, consult OB; never FQs in pregnancy.','Treat 7d (FQ) to 14d (beta-lactam) based on clinical course.']},
+  pyelonephritis:{title:'Pyelonephritis',category:'URINARY TRACT',drugs:[
+    {label:'Outpatient (mild, tolerating PO)',options:[
+      {drug:'Ciprofloxacin',dose:'500mg PO BID × 7 days',covers:'E. coli, Klebsiella, Proteus, Enterobacter — must confirm local FQ susceptibility (E. coli FQ resistance now >20% in many regions)',why:'FQ achieves excellent renal tissue levels. PO bioavailability ~80% (ciprofloxacin), ~99% (levofloxacin). Nitrofurantoin CANNOT be used — does not achieve tissue levels.'},
+      {drug:'TMP-SMX DS',dose:'BID × 14 days',covers:'E. coli, Klebsiella, Proteus',why:'Use only if susceptibility confirmed before treatment or empirically in low-resistance regions. 14 days for pyelo (vs 3d for cystitis).'}
+    ]},
+    {label:'Inpatient (vomiting, sepsis, MDR risk)',options:[
+      {drug:'Ceftriaxone',dose:'1–2g IV q24h → step to PO when tolerating',covers:'E. coli, Klebsiella, Proteus, Strep — adequate for most community-acquired pyelo',why:'IV route when cannot tolerate PO. Step down to oral FQ or TMP-SMX at 48h once culture confirms susceptibility.'},
+      {drug:'Ertapenem',dose:'1g IV q24h',covers:'E. coli (including ESBL), Klebsiella, most Enterobacteriaceae — no Pseudomonas activity',why:'ESBL-producing E. coli is increasingly common in pyelonephritis. Ertapenem is the go-to for ESBL pyelo. Does not cover Pseudomonas — advantage when Pseudo not suspected.'}
+    ]}
+  ],pearls:['Nitrofurantoin is CONTRAINDICATED in pyelonephritis — does not achieve adequate kidney tissue concentrations.','Blood cultures before ABx if hospitalized or febrile — bacteremia in ~20% of pyelo.','Renal ultrasound if no improvement at 48–72h — rule out obstruction or perinephric abscess.','Pregnancy: IV ceftriaxone, consult OB. FQs and TMP-SMX contraindicated in pregnancy.','ESBL risk: prior ESBL, healthcare contact, travel to endemic regions (India, SE Asia).']},
 
-  prostatitis:{title:'Prostatitis (Acute Bacterial)',severity:'Perineal/pelvic pain, fever, obstructive symptoms',drugs:[
-    {name:'Outpatient',dose:'Ciprofloxacin 500mg PO BID × 4–6 wks  OR  TMP-SMX DS BID × 4–6 wks',note:'Prolonged course required — prostate penetration is the challenge.'},
-    {name:'Inpatient (septic)',dose:'Ceftriaxone 2g IV q24h  OR  Amp + Gentamicin',note:'Once improving, step down to PO FQ to complete 4–6 weeks.'},
-  ],pearls:['Avoid vigorous prostate exam in acute prostatitis — risk of bacteremia.','Long course (4–6 wks) required for fluoroquinolones to penetrate prostate tissue.','Retention common: intermittent catheterization preferred over Foley if possible.']},
+  prostatitis:{title:'Acute Bacterial Prostatitis',category:'URINARY TRACT',drugs:[
+    {label:'Outpatient (mild)',options:[
+      {drug:'Ciprofloxacin',dose:'500mg PO BID × 4–6 weeks',covers:'E. coli, Klebsiella, Proteus, Enterococcus (variable) — gram-neg organisms dominate prostatitis',why:'FQs penetrate prostate tissue exceptionally well — lipophilicity and high tissue:serum ratios (10:1 in prostate). Prolonged course mandatory: prostate is a pharmacokinetic sanctuary.'},
+      {drug:'TMP-SMX DS',dose:'BID × 4–6 weeks',covers:'E. coli, Klebsiella, Proteus',why:'Alternative to FQ. Good prostate penetration. Use only if confirmed susceptibility. 4–6 week course same requirement.'}
+    ]},
+    {label:'Inpatient (septic, unable to tolerate PO)',options:[
+      {drug:'Ceftriaxone + transition to oral FQ',dose:'Ceftriaxone 2g IV q24h until afebrile and stable, then Ciprofloxacin 500mg PO BID to complete 4–6 weeks',covers:'Empiric gram-neg coverage IV, then step down to agent with prostate penetration',why:'IV ceftriaxone for sepsis management. Must step down to an agent with prostate tissue penetration (FQ or TMP-SMX) to complete the course — ceftriaxone does not penetrate prostate adequately.'}
+    ]}
+  ],pearls:['Avoid vigorous digital rectal exam in acute prostatitis — can precipitate bacteremia.','Prolonged 4–6 week course is non-negotiable: the prostate is pharmacokinetically inaccessible to most antibiotics except FQs and TMP-SMX.','Urinary retention common: intermittent catheterization preferred over Foley (less biofilm risk).','Chronic prostatitis: 6–12 weeks of FQ or TMP-SMX.']},
 
-  cellulitis:{title:'Cellulitis / Erysipelas',severity:'Non-purulent; strep/staph',drugs:[
-    {name:'Non-purulent cellulitis (outpatient)',dose:'Cephalexin 500mg PO QID × 5d  OR  Dicloxacillin 500mg PO QID × 5d',note:'Streptococcal coverage first. No MRSA coverage needed for non-purulent.'},
-    {name:'Non-purulent (inpatient)',dose:'Cefazolin 1g IV q8h  OR  Nafcillin 2g IV q4h',note:'Step down to PO when fever resolves and cellulitis stabilizing.'},
-    {name:'Systemic toxicity or failed outpatient',dose:'Vancomycin IV (trough 15–20 or AUC-guided)',note:'Add MRSA coverage if failed beta-lactam, systemic toxicity, penetrating trauma, IV drug use.'},
-  ],pearls:['Mark borders with a skin marker at presentation to track progression.','Erysipelas (raised, demarcated, face/legs) is almost always Group A Strep — Pen G or amoxicillin.','Bilateral lower extremity "cellulitis" is almost never cellulitis — think stasis dermatitis.','Elevate affected limb; treat underlying tinea pedis as entry point.','No improvement at 48–72h → broaden to cover MRSA, consider imaging for abscess/necrotizing.']},
+  cellulitis:{title:'Cellulitis / Erysipelas',category:'SKIN & SOFT TISSUE',drugs:[
+    {label:'Non-purulent cellulitis — Outpatient',options:[
+      {drug:'Cephalexin',dose:'500mg PO QID × 5 days',covers:'Group A Streptococcus (primary pathogen), MSSA',why:'Non-purulent cellulitis is caused almost entirely by beta-hemolytic Streptococcus (Group A, B, C, G). Cephalexin covers strep perfectly. No MRSA coverage needed — purulent infections require that, not non-purulent.'},
+      {drug:'Dicloxacillin',dose:'500mg PO QID × 5 days',covers:'MSSA, Streptococcus',why:'Anti-staphylococcal penicillin. Equivalent to cephalexin. Must be taken on empty stomach (food reduces absorption by 50%).'}
+    ]},
+    {label:'Non-purulent cellulitis — Inpatient',options:[
+      {drug:'Cefazolin',dose:'1–2g IV q8h',covers:'Streptococcus, MSSA — same targets as outpatient agents but IV delivery',why:'Step up to IV when: systemic toxicity, failed 48–72h outpatient therapy, immunocompromised, facial or orbital involvement.'}
+    ]},
+    {label:'Failed beta-lactam / MRSA risk / Systemic toxicity',options:[
+      {drug:'Vancomycin',dose:'25–30mg/kg IV q8–12h, AUC-guided (target AUC 400–600)',covers:'MRSA, MSSA, Streptococcus, Enterococcus',why:'Add MRSA coverage if: failed 48–72h beta-lactam, penetrating trauma, IV drug use, prior MRSA, systemic toxicity. MRSA is uncommon in non-purulent cellulitis but dominant in purulent/abscess.'}
+    ]}
+  ],pearls:['Mark borders with pen at presentation — reassess at 48h. Non-spreading + defervescence = treatment working.','Erysipelas (raised, sharply demarcated, often face/leg): almost always Group A Strep → penicillin or amoxicillin is ideal.','Bilateral lower leg "cellulitis" is almost never true cellulitis — consider stasis dermatitis, lipodermatosclerosis.','Treat underlying tinea pedis (entry point): clotrimazole cream to toe webs.','Duration: 5 days, extend if not improved. No benefit shown beyond 5 days if responding.']},
 
-  abscess_ssti:{title:'Skin Abscess / MRSA SSTI',severity:'Purulent — staph dominant',drugs:[
-    {name:'Abscess (any size)',dose:'Incision and Drainage (I&D) — primary treatment',note:'I&D alone is curative for uncomplicated abscess <2cm in healthy hosts.'},
-    {name:'ABx adjunct to I&D (>2cm, systemic signs, or failed I&D)',dose:'TMP-SMX DS 1–2 tabs PO BID × 5d  OR  Doxycycline 100mg PO BID × 5d',note:'MRSA coverage both options. TMP-SMX marginally superior in trials.'},
-    {name:'Inpatient / severe MRSA SSTI',dose:'Vancomycin IV AUC-guided (target AUC/MIC 400–600)',note:'Linezolid 600mg PO/IV BID × 5–10d if oral therapy preferred or VRE.'},
-  ],pearls:['MRSA is now the most common cause of purulent SSTI in the US.','I&D is primary treatment — ABx alone without drainage fails.','Risk factors for CA-MRSA: household contacts with SSTI, incarceration, sports teams, childcare.','Decolonization for recurrent MRSA: mupirocin 2% nasal BID × 5d + chlorhexidine body wash × 5d.']},
+  abscess_ssti:{title:'Skin Abscess / Purulent SSTI',category:'SKIN & SOFT TISSUE',drugs:[
+    {label:'Any abscess — Primary treatment',options:[
+      {drug:'Incision and Drainage (I&D)',dose:'Primary treatment — antibiotics alone are insufficient',covers:'Removes the bacterial colony physically. Pus = no blood supply = antibiotics cannot penetrate.',why:'I&D is curative for most uncomplicated abscesses ≤2cm in healthy hosts. The bacterial burden in an abscess exceeds what systemic antibiotics can achieve alone.'}
+    ]},
+    {label:'Adjunct ABx after I&D (>2cm, systemic signs, high-risk host)',options:[
+      {drug:'TMP-SMX DS',dose:'1–2 tabs PO BID × 5 days',covers:'MRSA (CA-MRSA specifically), MSSA, Streptococcus',why:'CA-MRSA is now the most common pathogen in purulent SSTIs in the US. TMP-SMX covers CA-MRSA. Marginally superior to doxycycline in NEJM NEJM 2017 trial (cure rate 80% vs 73%).'},
+      {drug:'Doxycycline',dose:'100mg PO BID × 5 days',covers:'CA-MRSA, MSSA, atypicals',why:'Alternative to TMP-SMX. Use if sulfa allergy or trimethoprim resistance. Equivalent MRSA SSTI coverage.'}
+    ]},
+    {label:'Inpatient / Severe MRSA SSTI',options:[
+      {drug:'Vancomycin',dose:'AUC-guided (target AUC/MIC 400–600)',covers:'MRSA, MSSA, Strep, Enterococcus',why:'IV therapy when: septic, large abscess requiring OR, failed outpatient management, immunocompromised.'},
+      {drug:'Linezolid',dose:'600mg IV/PO BID × 5–10 days',covers:'MRSA, VRE, Streptococcus',why:'Alternative to vancomycin. PO bioavailability 100% — excellent for oral step-down. Superior lung tissue penetration (relevant if concurrent pneumonia).'}
+    ]}
+  ],pearls:['I&D is primary treatment — do not give ABx without draining.','MRSA nasal decolonization for recurrent MRSA: mupirocin 2% nasal BID × 5 days + chlorhexidine body wash × 5 days.','CA-MRSA risk: household contact with SSTI, incarceration, sports teams, IV drug use, childcare workers.','Cephalexin alone is inadequate for purulent SSTI — covers Strep/MSSA but not MRSA.']},
 
-  necrotizing:{title:'Necrotizing Fasciitis',severity:'SURGICAL EMERGENCY',drugs:[
-    {name:'Empiric (Type I — polymicrobial)',dose:'Vancomycin 25–30mg/kg IV q8–12h  +  Pip-tazo 4.5g IV q6h  +  Clindamycin 900mg IV q8h',note:'Clindamycin added for antitoxin effect (inhibits toxin production). Meropenem if ESBL risk.'},
-    {name:'Type II — Group A Strep',dose:'Penicillin G 4 MU IV q4h  +  Clindamycin 900mg IV q8h',note:'Clindamycin critical — Eagle effect: high inoculum reduces beta-lactam efficacy. Clindamycin works independently of growth phase.'},
-  ],pearls:['LRINEC score ≥6 raises concern, but clinical suspicion should drive surgical decision.','Surgical debridement is the treatment — ABx are adjunctive.','Key signs: pain out of proportion, gray dishwater fluid, skin necrosis, rapid spread, crepitus.','Do NOT delay surgery for imaging if clinical suspicion is high.','IVIG considered for streptococcal toxic shock syndrome.']},
+  necrotizing:{title:'Necrotizing Fasciitis',category:'SKIN & SOFT TISSUE',drugs:[
+    {label:'Type I — Polymicrobial (most common, post-surgical/diabetic)',options:[
+      {drug:'Vancomycin + Pip-Tazo + Clindamycin',dose:'Vancomycin AUC-guided + Pip-Tazo 4.5g IV q6h + Clindamycin 900mg IV q8h',covers:'Vancomycin: MRSA. Pip-tazo: gram-neg, anaerobes, Strep, MSSA. Clindamycin: added for toxin inhibition (inhibits ribosomal protein synthesis → shuts off toxin production regardless of growth phase).',why:'Polymicrobial: mixed gram-pos, gram-neg, and anaerobes. Clindamycin is critical — even if organism is resistant to it, the antitoxin effect works by inhibiting toxin translation.'}
+    ]},
+    {label:'Type II — Group A Streptococcus (monomicrobial)',options:[
+      {drug:'Penicillin G + Clindamycin',dose:'Penicillin G 4 MU IV q4h + Clindamycin 900mg IV q8h',covers:'Penicillin: definitive streptococcal coverage (most active beta-lactam vs GAS). Clindamycin: antitoxin effect — suppresses streptococcal pyrogenic exotoxin production.',why:'Eagle effect: at high bacterial inoculum, strep enters stationary growth phase where beta-lactams lose efficacy (target penicillin-binding proteins only active in dividing cells). Clindamycin works independently of growth phase.'}
+    ]}
+  ],pearls:['SURGICAL EMERGENCY — do not delay OR for imaging if clinical suspicion is high.','LRINEC score ≥6 raises concern: CRP >150, WBC >15, Hgb <13.5, Na <135, Cr >1.13, glucose >180.','Signs: pain out of proportion, skin crepitus, gray "dishwater" drainage, bullae, rapid spread.','IVIG 1–2g/kg considered for streptococcal toxic shock syndrome.','Mortality 20–30% even with surgery; driven by time to debridement.']},
 
-  diabetic_foot:{title:'Diabetic Foot Infection',severity:'Grade 1–4 (IDSA)',drugs:[
-    {name:'Mild (Grade 2 — no systemic signs)',dose:'TMP-SMX DS BID  OR  Cephalexin 500mg QID  OR  Amoxicillin-clavulanate 875/125mg BID × 1–2 wks',note:'Cover staph/strep. No MRSA coverage unless risk factors.'},
-    {name:'Moderate (Grade 3 — cellulitis >2cm, deep structures)',dose:'Amoxicillin-clavulanate 875/125mg PO BID  OR  Pip-tazo 3.375g IV q6h ± Vancomycin if MRSA risk',note:'Anaerobic coverage for deep/necrotic infections.'},
-    {name:'Severe (Grade 4 — systemic toxicity)',dose:'Vancomycin + Pip-tazo 4.5g IV q6h  OR  Vancomycin + Meropenem 1g IV q8h',note:'Osteomyelitis: 6-week IV or PO course after debridement.'},
-  ],pearls:['Probe to bone test: metal probe contacts bone = 89% PPV for osteomyelitis.','MRI is best imaging for osteomyelitis.','Vascular surgery consult for any ischemic foot — perfusion drives healing.','Wound care and offloading are as important as antibiotics.']},
+  diabetic_foot:{title:'Diabetic Foot Infection',category:'SKIN & SOFT TISSUE',drugs:[
+    {label:'Mild — Grade 2 (cellulitis ≤2cm, no deep structures)',options:[
+      {drug:'TMP-SMX DS or Cephalexin',dose:'TMP-SMX DS 1 tab PO BID or Cephalexin 500mg PO QID × 1–2 weeks',covers:'Staph, Strep — the dominant pathogens in mild non-limb-threatening DFI',why:'Narrow spectrum appropriate for mild infection. TMP-SMX if MRSA risk; cephalexin if lower MRSA probability.'},
+      {drug:'Amoxicillin-Clavulanate',dose:'875/125mg PO BID × 1–2 weeks',covers:'Strep, MSSA, gram-neg (H. flu, Klebsiella), anaerobes — adds anaerobic coverage for deeper wounds',why:'Choose amox-clav over cephalexin when wound has necrotic tissue or odor (anaerobic component likely).'}
+    ]},
+    {label:'Moderate — Grade 3 (cellulitis >2cm, deep tissue, no systemic signs)',options:[
+      {drug:'Pip-Tazo ± Vancomycin',dose:'Pip-Tazo 3.375g IV q6h ± Vancomycin if MRSA risk',covers:'Pip-tazo: gram-pos, gram-neg, anaerobes, Pseudomonas. Add vancomycin for MRSA if prior MRSA, failed outpatient, necrotic tissue.',why:'Moderate DFI often polymicrobial — gram-pos, gram-neg, and anaerobes co-present. Pip-tazo is the most convenient single agent for this spectrum.'}
+    ]},
+    {label:'Severe — Grade 4 (systemic toxicity, limb-threatening)',options:[
+      {drug:'Vancomycin + Pip-Tazo or Meropenem',dose:'Vancomycin AUC-guided + Pip-Tazo 4.5g IV q6h OR Meropenem 1g IV q8h',covers:'Broadest coverage: MRSA, Pseudomonas, ESBL, gram-neg, anaerobes',why:'Escalate to carbapenem if MDR risk (prior resistant organism, healthcare-associated). Osteomyelitis requires 6-week course after debridement.'}
+    ]}
+  ],pearls:['Probe-to-bone test: metal probe contacts bone = 89% PPV for osteomyelitis.','MRI is gold standard for osteomyelitis — superior to plain films.','Vascular surgery consult for any ischemic foot — ABx work only if perfusion allows delivery.','Wound care + offloading are as important as antibiotics (pressure relief drives healing).']},
 
-  iai_mild:{title:'Intra-Abdominal Infection — Mild/Moderate',severity:'Perforated appendix, mild diverticulitis, community-acquired',drugs:[
-    {name:'Outpatient / mild',dose:'Amoxicillin-clavulanate 875/125mg PO BID × 4–7d',note:'Adequate for mild community-acquired IAI after source control.'},
-    {name:'Inpatient',dose:'Ceftriaxone 2g IV q24h + Metronidazole 500mg IV q8h  OR  Ertapenem 1g IV q24h',note:'Ertapenem convenient single-agent; anaerobic + gram-neg coverage.'},
-  ],pearls:['Source control is primary treatment — ABx are adjunctive.','Duration: 4 days if source control achieved (STOP-IT trial).','No MRSA coverage unless healthcare-associated.']},
+  iai_mild:{title:'Intra-Abdominal Infection — Community-Acquired',category:'INTRA-ABDOMINAL',drugs:[
+    {label:'Mild–Moderate (perforated appendix, mild diverticulitis)',options:[
+      {drug:'Amoxicillin-Clavulanate',dose:'875/125mg PO BID × 4–7 days (after source control)',covers:'E. coli, Klebsiella, Strep, Bacteroides fragilis — the core community-acquired IAI pathogens',why:'Amox-clav covers the Enterobacteriaceae + Bacteroides fragilis combination driving most community-acquired IAI. PO step-down acceptable once source control achieved.'},
+      {drug:'Ceftriaxone + Metronidazole',dose:'Ceftriaxone 2g IV q24h + Metronidazole 500mg IV q8h',covers:'Ceftriaxone: E. coli, Klebsiella, Strep. Metronidazole: Bacteroides fragilis and other anaerobes.',why:'Classic IAI combination. Metronidazole is specifically chosen for anaerobes — it forms free radicals inside anaerobic bacteria that disrupt DNA. Excellent bioavailability PO (100%) → easy step-down.'},
+      {drug:'Ertapenem (single-agent)',dose:'1g IV q24h',covers:'E. coli (including ESBL), Klebsiella, anaerobes — broad Enterobacteriaceae + anaerobic coverage in one drug. No Pseudomonas activity.',why:'Convenient once-daily single-agent option. Choose when compliance or IV access is a concern.'}
+    ]}
+  ],pearls:['Source control is the primary treatment — antibiotics are adjunctive.','Duration: 4 days if adequate source control achieved (STOP-IT trial, NEJM 2015).','No MRSA coverage needed for community-acquired IAI — Enterococcus rarely pathogenic in mild IAI.','Reassess at 48–72h; escalate if not improving.']},
 
-  iai_severe:{title:'Intra-Abdominal Infection — Severe/ICU',severity:'Healthcare-associated, high APACHE II, MDR risk',drugs:[
-    {name:'Severe / healthcare-associated',dose:'Pip-tazo 4.5g IV q6h  OR  Meropenem 1g IV q8h  ±  Vancomycin (if MRSA risk)',note:'Escalate to carbapenem if MDR organism on prior cultures or recent hospitalization.'},
-    {name:'Candida risk (prolonged hospital, TPN, post-op)',dose:'Add Micafungin 100mg IV q24h (echinocandin preferred)',note:'Fungal peritonitis is lethal if missed; low threshold to add antifungal in ICU.'},
-  ],pearls:['APACHE II >15 or failure of source control = higher mortality.','Candida peritonitis risk: upper GI perforation, recurrent perforation, immunosuppressed.','Duration: 4–7d after source control. No benefit to longer courses.']},
+  iai_severe:{title:'Intra-Abdominal Infection — Severe / Healthcare-Associated',category:'INTRA-ABDOMINAL',drugs:[
+    {label:'Severe or healthcare-associated IAI',options:[
+      {drug:'Pip-Tazo',dose:'4.5g IV q6h (extended infusion 4h preferred)',covers:'Gram-pos, gram-neg including Pseudomonas, Bacteroides and anaerobes, Enterococcus faecalis (not VRE)',why:'Healthcare-associated IAI introduces MDR gram-neg and Pseudomonas risk. Pip-tazo single agent covers this plus Enterococcus (unlike ceftriaxone + metro). Extended infusion maximizes time above MIC.'},
+      {drug:'Meropenem ± Vancomycin',dose:'Meropenem 1g IV q8h ± Vancomycin if MRSA or VRE risk',covers:'Meropenem: ESBL, Pseudomonas, Acinetobacter, anaerobes. Add vancomycin for MRSA or healthcare-associated gram-pos.',why:'Escalate to carbapenem if prior ESBL/MDR on cultures, failure of pip-tazo, or septic shock.'}
+    ]},
+    {label:'Candida risk (upper GI perforation, TPN, ICU)',options:[
+      {drug:'Micafungin',dose:'100mg IV q24h',covers:'Candida spp. including C. glabrata, C. krusei, C. albicans',why:'Echinocandins are first-line for invasive candidiasis. Upper GI perforation dramatically increases Candida peritonitis risk. Echinocandin preferred over fluconazole empirically — covers azole-resistant species.'}
+    ]}
+  ],pearls:['Candida peritonitis: upper GI perforation, recurrent perforation, immunosuppressed, TPN-dependent.','Duration: 4–7 days after source control. No mortality benefit to longer courses (IDSA).','APACHE II >15 or tertiary peritonitis → higher MDR risk, broaden empirically.']},
 
-  cdiff:{title:'Clostridioides difficile Colitis',severity:'Non-severe → Severe → Fulminant',drugs:[
-    {name:'Non-severe (WBC <15, Cr <1.5)',dose:'Vancomycin 125mg PO QID × 10d  OR  Fidaxomicin 200mg PO BID × 10d',note:'Fidaxomicin superior for preventing recurrence (30% vs 25%). Use if high recurrence risk.'},
-    {name:'Severe (WBC ≥15, Cr ≥1.5)',dose:'Vancomycin 125mg PO QID × 10d',note:'Same dose — oral vanco stays in the colon. IV vanco does NOT treat C. diff.'},
-    {name:'Fulminant (hypotension, ileus, megacolon)',dose:'Vancomycin 500mg PO/NG QID  +  Metronidazole 500mg IV q8h  ±  Vancomycin rectal enema',note:'Surgery consult early. Metronidazole IV used here to reach colon via inflamed mucosa.'},
-    {name:'Recurrent (1st recurrence)',dose:'Fidaxomicin 200mg PO BID × 10d  OR  Vancomycin taper × 6 weeks',note:'2nd recurrence: Bezlotoxumab (monoclonal AB) + standard therapy; FMT referral.'},
-  ],pearls:['Stop the offending antibiotic if possible.','Do NOT use anti-motility agents (loperamide) — worsens colitis.','Contact precautions: spores survive alcohol gel — soap and water required.','Test of cure is NOT recommended — can be positive for weeks after treatment.','Metronidazole is no longer first-line for any severity of C. diff (2021 IDSA guideline).']},
+  cdiff:{title:'Clostridioides difficile Colitis',category:'INTRA-ABDOMINAL',drugs:[
+    {label:'Non-severe (WBC <15k, Cr <1.5 mg/dL)',options:[
+      {drug:'Vancomycin PO',dose:'125mg PO QID × 10 days',covers:'C. difficile — vancomycin acts only within the GI lumen (not absorbed systemically)',why:'Oral vancomycin stays in the colon and kills C. diff in situ. IV vancomycin does NOT treat C. diff — cannot reach the colon.'},
+      {drug:'Fidaxomicin',dose:'200mg PO BID × 10 days',covers:'C. difficile — narrow-spectrum macrocyclic agent, minimal effect on normal flora',why:'Fidaxomicin preferred if high recurrence risk (age >65, concurrent ABx, prior C. diff episode). Lower recurrence rate than vancomycin (12% vs 26%) by preserving colonization resistance. More expensive.'}
+    ]},
+    {label:'Severe (WBC ≥15k OR Cr ≥1.5 mg/dL)',options:[
+      {drug:'Vancomycin PO',dose:'125mg PO QID × 10 days',covers:'Same as non-severe — higher dose (500mg QID) only for fulminant',why:'Increased severity does not change antibiotic choice in stable patients — increase dose only in fulminant disease with ileus.'}
+    ]},
+    {label:'Fulminant (hypotension, ileus, megacolon)',options:[
+      {drug:'Vancomycin PO/NG 500mg QID + Metronidazole IV',dose:'Vancomycin 500mg QID (NG if ileus) + Metronidazole 500mg IV q8h',covers:'Vancomycin: intraluminal C. diff. IV Metronidazole: reaches colon via inflamed, hyperpermeable mucosa in severe colitis.',why:'In ileus, oral vanco cannot transit the colon — add rectal enemas (500mg in 500mL NS) and IV metronidazole which reaches inflamed colon hematogenously. Surgical consult immediately.'}
+    ]},
+    {label:'1st Recurrence',options:[
+      {drug:'Fidaxomicin',dose:'200mg PO BID × 10 days',covers:'C. difficile',why:'Superior to repeat vancomycin for recurrence. Spares Bacteroides (colonization resistance). If recurrence after fidaxomicin, use vancomycin taper or bezlotoxumab + standard therapy.'}
+    ]}
+  ],pearls:['Stop the offending antibiotic if at all possible — reduces C. diff burden.','Metronidazole is NO LONGER first-line for any severity (2021 IDSA guideline update).','Do NOT use anti-motility agents (loperamide) — risk of toxic megacolon.','Contact precautions: spores survive alcohol gel → soap and water handwashing required.','Test of cure NOT recommended — PCR can remain positive 4–6 weeks after treatment.']},
 
-  sbp:{title:'Spontaneous Bacterial Peritonitis (SBP)',severity:'Cirrhosis + ascites PMN ≥250/mm³',drugs:[
-    {name:'Empiric',dose:'Cefotaxime 2g IV q8h × 5d  OR  Ceftriaxone 2g IV q24h × 5d',note:'Most effective and studied regimen. 5 days equivalent to 10 days.'},
-    {name:'Oral step-down (improving, tolerating PO)',dose:'Ciprofloxacin 500mg PO BID  OR  Ofloxacin 400mg PO BID',note:'PO equivalent if uncomplicated and not in shock.'},
-    {name:'Prevention (secondary prophylaxis)',dose:'Norfloxacin 400mg PO QD  OR  TMP-SMX DS daily',note:'Indefinitely after first episode.'},
-  ],pearls:['Albumin infusion: 1.5g/kg at diagnosis and 1g/kg on day 3 — reduces HRS and mortality.','PMN ≥250 is the threshold to treat empirically (do not wait for culture).','Repeat paracentesis at 48h if not improving to confirm treatment response.','Primary prophylaxis: ciprofloxacin 500mg PO QD if ascites protein <1.5 + renal/hepatic dysfunction.']},
+  sbp:{title:'Spontaneous Bacterial Peritonitis',category:'INTRA-ABDOMINAL',drugs:[
+    {label:'Empiric treatment',options:[
+      {drug:'Cefotaxime',dose:'2g IV q8h × 5 days',covers:'E. coli, Klebsiella, Strep — the gram-neg enteric organisms that translocate across the gut wall in cirrhosis',why:'SBP is caused by bacterial translocation from a leaky gut in cirrhosis. Gram-neg enteric organisms dominate. Cefotaxime is the most studied agent (mortality reduction in seminal trials). 5 days equivalent to 10 days.'},
+      {drug:'Ceftriaxone',dose:'2g IV q24h × 5 days',covers:'Same spectrum as cefotaxime — equally effective, once-daily convenience',why:'Practical alternative. Same gram-neg enteric coverage. Simplifies nursing administration.'}
+    ]},
+    {label:'Secondary prophylaxis (after first episode)',options:[
+      {drug:'Norfloxacin or TMP-SMX DS',dose:'Norfloxacin 400mg PO qd indefinitely OR TMP-SMX DS 1 tab PO qd',covers:'Gram-neg enteric organisms — reduces gut colonization density to prevent translocation',why:'After first SBP, recurrence rate is 70% at 1 year without prophylaxis. Norfloxacin decontaminates the gut (selective intestinal decontamination). Continue until liver transplant or death.'}
+    ]}
+  ],pearls:['PMN ≥250 cells/mm³ on paracentesis = treat empirically — do not wait for culture.','Albumin infusion: 1.5g/kg IV on day 1 + 1g/kg IV on day 3 reduces hepatorenal syndrome and 30-day mortality (NNT ~5).','Primary prophylaxis: ciprofloxacin 500mg PO qd if ascites protein <1.5 + renal/hepatic dysfunction (Cr >1.2, BUN >25, Na <130, or Child-Pugh ≥9 with bili ≥3).','Repeat diagnostic paracentesis at 48h if not improving — confirm PMN count falling.']},
 
-  cholangitis:{title:'Cholangitis / Cholecystitis',severity:'Tokyo Guidelines',drugs:[
-    {name:'Mild cholecystitis / cholangitis',dose:'Cefazolin 1–2g IV q8h  OR  Amp-sulbactam 3g IV q6h',note:'Add metronidazole if biliary-enteric anastomosis or previous intervention.'},
-    {name:'Moderate–Severe',dose:'Ceftriaxone 2g IV q24h + Metronidazole 500mg IV q8h  OR  Pip-tazo 3.375g IV q6h',note:'Pip-tazo provides single-agent anaerobic + gram-neg coverage.'},
-    {name:'Severe (organ dysfunction)',dose:'Meropenem 1g IV q8h  ±  Vancomycin if healthcare-associated',note:'Empiric coverage for ESBL/MDR organisms.'},
-  ],pearls:['Source control (ERCP for cholangitis, cholecystectomy for cholecystitis) is primary treatment.','Charcot\'s triad: fever, RUQ pain, jaundice = cholangitis. Reynolds\' pentad adds altered mental status + shock.','Blood cultures before ABx — bacteremia common in cholangitis.','Duration: 4–7d for cholecystitis after procedure. Cholangitis: until clinical resolution.']},
+  cholangitis:{title:'Cholangitis / Acute Cholecystitis',category:'INTRA-ABDOMINAL',drugs:[
+    {label:'Mild (Tokyo Grade I)',options:[
+      {drug:'Amoxicillin-Clavulanate',dose:'875/125mg PO BID × 5–7 days (after ERCP/procedure)',covers:'E. coli, Klebsiella, Enterococcus, Bacteroides — the biliary flora',why:'Biliary infections: E. coli and Klebsiella predominate, Enterococcus common (biliary tree has enterococcal colonization). Amox-clav covers this spectrum plus anaerobes. Adequate for mild disease after biliary drainage.'},
+      {drug:'Cefazolin ± Metronidazole',dose:'Cefazolin 1–2g IV q8h ± Metronidazole 500mg IV q8h (add if biliary-enteric anastomosis)',covers:'Cefazolin: Strep, MSSA, E. coli, Klebsiella. Metronidazole adds anaerobic coverage for anastomotic sites.',why:'Add metronidazole if biliary-enteric anastomosis, prior biliary intervention, or necrotic gallbladder — anaerobic risk is higher.'}
+    ]},
+    {label:'Moderate–Severe (Tokyo Grade II–III)',options:[
+      {drug:'Pip-Tazo',dose:'3.375g IV q6h',covers:'Gram-pos (Strep, Enterococcus faecalis), gram-neg (E. coli, Klebsiella, Pseudomonas), anaerobes',why:'Single-agent broad coverage. Pip-tazo covers Enterococcus (unlike ceftriaxone). Preferred when healthcare-associated or severe cholangitis.'},
+      {drug:'Ceftriaxone + Metronidazole',dose:'Ceftriaxone 2g IV q24h + Metronidazole 500mg IV q8h',covers:'Ceftriaxone: gram-neg, Strep. Metronidazole: Bacteroides and anaerobes. Note: ceftriaxone does NOT cover Enterococcus.',why:'Classic two-drug combination for moderate cholangitis. If Enterococcus coverage needed, switch to pip-tazo or add ampicillin.'},
+      {drug:'Meropenem',dose:'1g IV q8h',covers:'ESBL, Pseudomonas, Acinetobacter, anaerobes — reserve for MDR organisms',why:'Escalate to carbapenem if prior ESBL on biliary culture, healthcare-associated with MDR risk, or failure of pip-tazo.'}
+    ]}
+  ],pearls:['Charcot\'s triad: fever + RUQ pain + jaundice = cholangitis. Reynolds\' pentad adds altered mental status + shock.','ERCP for biliary drainage is the primary treatment — antibiotics are adjunctive.','Blood cultures × 2 before ABx — bacteremia in 30–40% of cholangitis.','Duration: 4–7 days for cholecystitis after cholecystectomy/drainage. Cholangitis: until clinical resolution (usually 7–14 days).']},
 
-  meningitis_bact:{title:'Bacterial Meningitis',severity:'EMERGENCY — ABx within 30 min of diagnosis',drugs:[
-    {name:'Empiric (18–50 y/o)',dose:'Ceftriaxone 2g IV q12h  +  Vancomycin 25–30mg/kg IV q8–12h  +  Dexamethasone 0.15mg/kg IV q6h × 4d',note:'Dexamethasone immediately before or with first ABx dose. Reduces mortality and hearing loss in S. pneumo.'},
-    {name:'Empiric (>50 y/o, immunocompromised)',dose:'Ceftriaxone 2g IV q12h  +  Vancomycin  +  Ampicillin 2g IV q4h  +  Dexamethasone',note:'Ampicillin added for Listeria coverage (elderly, pregnancy, immunocompromised).'},
-    {name:'N. meningitidis (confirmed)',dose:'Penicillin G 4 MU IV q4h  OR  Ceftriaxone 2g IV q12h × 7d',note:'Rifampin prophylaxis for close contacts.'},
-    {name:'S. pneumoniae (confirmed, PCN sensitive)',dose:'Penicillin G 4 MU IV q4h × 10–14d',note:'Narrow if MIC ≤0.06. Continue Vancomycin until susceptibility known.'},
-  ],pearls:['Do NOT delay ABx for CT or LP if clinical suspicion is high.','Dexamethasone 0.15mg/kg IV q6h × 4d before first ABx dose — most benefit for pneumococcal meningitis.','LP: opening pressure, cell count (>1000 WBC suggests bacterial), protein, glucose, gram stain, culture, pneumococcal antigen.','CSF: bacterial = PMN predominance, low glucose, high protein.','Treat empirically — CSF cell count/protein may be normal early in meningococcemia.']},
+  meningitis_bact:{title:'Bacterial Meningitis',category:'CNS',drugs:[
+    {label:'Empiric — Adults 18–50 (S. pneumo, N. meningitidis)',options:[
+      {drug:'Ceftriaxone + Vancomycin + Dexamethasone',dose:'Ceftriaxone 2g IV q12h + Vancomycin 25–30mg/kg q8–12h + Dexamethasone 0.15mg/kg IV q6h × 4 days',covers:'Ceftriaxone: S. pneumoniae (most strains), N. meningitidis, H. flu, gram-neg. Vancomycin added because PCN-resistant S. pneumo cannot be excluded — ceftriaxone alone may fail PCN-resistant pneumococcus.',why:'Dexamethasone: start immediately BEFORE or WITH first dose of ABx. Reduces mortality (NNT ~11) and hearing loss in pneumococcal meningitis by dampening the inflammatory cascade triggered by bacterial cell wall lysis.'}
+    ]},
+    {label:'Empiric — >50 y/o or Immunocompromised (add Listeria coverage)',options:[
+      {drug:'Ceftriaxone + Vancomycin + Ampicillin + Dexamethasone',dose:'Add Ampicillin 2g IV q4h to above regimen',covers:'Ampicillin adds Listeria monocytogenes coverage — ceftriaxone has NO activity against Listeria. Listeria causes meningitis in elderly, pregnancy, transplant, alcoholics, malignancy.',why:'Listeria is a gram-pos rod with intrinsic cephalosporin resistance. It appears only on gram stain and culture. If you wait for the culture to add ampicillin, you will miss the treatment window.'}
+    ]},
+    {label:'Confirmed N. meningitidis',options:[
+      {drug:'Penicillin G or Ceftriaxone',dose:'Penicillin G 4 MU IV q4h × 7 days OR Ceftriaxone 2g IV q12h × 7 days',covers:'N. meningitidis — most strains remain PCN-susceptible',why:'Narrow down once organism confirmed. Rifampin 600mg PO BID × 2 days for close contacts. Droplet precautions for first 24h of therapy.'}
+    ]},
+    {label:'Confirmed S. pneumoniae (PCN-sensitive)',options:[
+      {drug:'Penicillin G',dose:'4 MU IV q4h × 10–14 days',covers:'PCN-sensitive S. pneumoniae',why:'Narrow once MIC confirmed ≤0.06. Keep vancomycin until susceptibility known.'}
+    ]}
+  ],pearls:['Antibiotic timing: give within 30 min of presentation — every hour of delay increases mortality.','Do NOT delay ABx for LP or CT if there is clinical urgency. Get blood cultures and give ABx, then image.','Dexamethasone: most benefit in pneumococcal meningitis. Give with or before first ABx dose — after ABx, the benefit is lost.','CSF bacterial profile: PMN predominance, glucose <40 (or CSF:serum <0.4), protein >150, opening pressure >200.','Hib meningitis: dexamethasone reduces hearing loss (most studied in children).']},
 
-  encephalitis:{title:'HSV Encephalitis',severity:'Temporal lobe involvement — treat empirically',drugs:[
-    {name:'Empiric (start immediately)',dose:'Acyclovir 10mg/kg IV q8h × 14–21d',note:'Do NOT wait for CSF PCR results — start immediately if clinical suspicion.'},
-  ],pearls:['MRI: temporal lobe T2/FLAIR hyperintensity is classic. EEG: periodic lateralized epileptiform discharges.','CSF PCR HSV: sensitivity 96%, specificity 99%. Repeat at 72–96h if initially negative.','Seizure prophylaxis during acute phase.','Renal dose acyclovir — nephrotoxic; ensure adequate hydration, monitor creatinine.','Varicella encephalitis: acyclovir same dosing.']},
+  encephalitis:{title:'HSV Encephalitis',category:'CNS',drugs:[
+    {label:'Empiric treatment (start immediately on suspicion)',options:[
+      {drug:'Acyclovir',dose:'10mg/kg IV q8h × 14–21 days (renally adjusted)',covers:'HSV-1 (most common cause of sporadic encephalitis), HSV-2, VZV',why:'Acyclovir is a nucleoside analogue that inhibits viral DNA polymerase after phosphorylation by viral thymidine kinase. Do NOT wait for CSF PCR — sensitivity 96% but can be falsely negative in the first 24–72h. Untreated HSE has 70% mortality.'}
+    ]}
+  ],pearls:['Start empirically if any of: altered consciousness + fever, temporal lobe involvement on MRI, CSF pleocytosis + fever.','MRI: T2/FLAIR hyperintensity in temporal lobe + insular cortex. EEG: PLEDs.','CSF HSV PCR: sensitivity 96%, specificity 99%. Repeat at 72–96h if initially negative with high suspicion.','Renal toxicity: hydrate aggressively (500mL NS before each dose), monitor creatinine daily.','VZV encephalitis: same dose of acyclovir. CMV encephalitis (immunocompromised): ganciclovir.']},
 
-  brain_abscess:{title:'Brain Abscess',severity:'Usually polymicrobial — source-dependent',drugs:[
-    {name:'Post-neurosurgery / trauma',dose:'Vancomycin + Cefepime 2g IV q8h  OR  Vancomycin + Meropenem 1g IV q8h',note:'Covers staph and gram-negatives.'},
-    {name:'Odontogenic / hematogenous from lung',dose:'Ceftriaxone 2g IV q12h + Metronidazole 500mg IV q8h',note:'Anaerobic coverage essential for dental/abdominal source.'},
-    {name:'Immunocompromised (Toxoplasma)',dose:'Pyrimethamine 200mg PO loading → 75mg/d + Sulfadiazine 1.5g PO QID + Leucovorin 20mg PO QD',note:'Empiric Toxo therapy if ring-enhancing lesion in HIV patient.'},
-  ],pearls:['Neurosurgery consult: aspiration/drainage for abscess >2.5cm or mass effect.','Duration: 4–8 weeks of IV or highly bioavailable PO ABx.','Serial MRI to monitor response — size should decrease by week 2–3.','Source: dental 25%, contiguous spread (sinusitis, mastoiditis), hematogenous (endocarditis, pulm AV malformation).']},
+  brain_abscess:{title:'Brain Abscess',category:'CNS',drugs:[
+    {label:'Odontogenic / sinusitis / hematogenous (most common)',options:[
+      {drug:'Ceftriaxone + Metronidazole',dose:'Ceftriaxone 2g IV q12h + Metronidazole 500mg IV q8h',covers:'Strep milleri group (most common isolate), oral anaerobes (Fusobacterium, Prevotella), gram-neg. Metronidazole provides obligate anaerobe coverage that ceftriaxone lacks.',why:'Brain abscesses are most often polymicrobial. The Strep milleri group (S. anginosus, S. constellatus) is the most common isolate — known for forming abscesses. Metronidazole excellent CNS penetration.'}
+    ]},
+    {label:'Post-neurosurgery / penetrating trauma / nosocomial',options:[
+      {drug:'Vancomycin + Cefepime or Meropenem',dose:'Vancomycin AUC-guided + Cefepime 2g IV q8h OR Meropenem 2g IV q8h (higher dose for CNS)',covers:'Vancomycin: MRSA, CoNS (common post-neurosurgical pathogens). Cefepime/meropenem: Pseudomonas and gram-neg nosocomial pathogens.',why:'Post-surgical brain abscess: S. aureus and CoNS predominate. Gram-negatives including Pseudomonas are common. Use meropenem 2g q8h for CNS penetration.'}
+    ]},
+    {label:'Immunocompromised — HIV/AIDS (Toxoplasma)',options:[
+      {drug:'Pyrimethamine + Sulfadiazine + Leucovorin',dose:'Pyrimethamine 200mg PO loading → 75mg/d + Sulfadiazine 1.5g PO QID + Leucovorin 20mg PO qd',covers:'Toxoplasma gondii — the most common CNS space-occupying lesion in HIV patients with CD4 <200',why:'Empiric Toxo therapy for ring-enhancing lesion(s) in HIV+ patient with CD4 <100. Response at 2 weeks confirms Toxo (>50% size reduction). Leucovorin prevents pyrimethamine-induced bone marrow suppression (inhibits DHFR).'}
+    ]}
+  ],pearls:['Neurosurgery consult: aspiration/drainage for abscess >2.5cm or mass effect — drainage is diagnostic and therapeutic.','Duration: 4–8 weeks; longer if not drained. Monitor with serial MRI.','Do NOT use corticosteroids unless herniation risk — they reduce antibiotic penetration and can mask clinical response.','Seizure prophylaxis during acute phase (high cortical irritation risk).']},
 
-  bacteremia:{title:'Bacteremia / Sepsis — Empiric',severity:'Unknown source, systemic signs of infection',drugs:[
-    {name:'Community-acquired sepsis',dose:'Ceftriaxone 2g IV q24h  +  Azithromycin 500mg IV q24h (if PNA source)  OR  Pip-tazo 4.5g IV q6h (if GI/GU source)',note:'Cover likely source — do not reflexively use vancomycin or carbapenem.'},
-    {name:'Healthcare-associated / post-surgical / ICU',dose:'Vancomycin 25–30mg/kg IV q8–12h  +  Pip-tazo 4.5g IV q6h  OR  Meropenem 1g IV q8h',note:'Broaden empirically then deescalate at 48–72h.'},
-    {name:'Septic shock (unknown source)',dose:'Vancomycin  +  Meropenem 1g IV q8h  ±  Micafungin 100mg IV q24h (if Candida risk)',note:'Antifungal if TPN, prolonged hospitalization, GI surgery, immunocompromised.'},
-  ],pearls:['Blood cultures × 2 sets before ABx — do not delay >1 hour for cultures if septic shock.','Lactate: ≥2 = sepsis. ≥4 = septic shock.','Bundle: lactate, blood cultures × 2, broad spectrum ABx, 30mL/kg fluid resuscitation, vasopressors for MAP <65.','Deescalate at 48–72h based on culture data — this is equally important as the initial ABx choice.','Procalcitonin-guided deescalation reduces antibiotic days without increased mortality.']},
+  bacteremia:{title:'Bacteremia / Sepsis — Empiric',category:'BACTEREMIA & ENDOCARDITIS',drugs:[
+    {label:'Community-acquired, source unclear',options:[
+      {drug:'Ceftriaxone ± source-directed coverage',dose:'Ceftriaxone 2g IV q24h ± Azithromycin if pulmonary source, ± Metronidazole if GI source',covers:'E. coli, Klebsiella, Strep pneumoniae, Strep viridans — most common community-acquired bacteremia pathogens',why:'Avoid reflex broad-spectrum therapy in community-acquired sepsis without MDR risk. Add targeted coverage based on suspected source.'}
+    ]},
+    {label:'Healthcare-associated / ICU / post-procedural',options:[
+      {drug:'Vancomycin + Pip-Tazo',dose:'Vancomycin AUC-guided + Pip-Tazo 4.5g IV q6h',covers:'Vancomycin: MRSA, CoNS, Enterococcus. Pip-tazo: gram-neg including Pseudomonas, anaerobes, MSSA, Strep.',why:'Healthcare-associated bacteremia: MRSA and MDR gram-neg are real possibilities. This combination covers both without carbapenem. Deescalate at 48–72h — the stewardship moment.'}
+    ]},
+    {label:'Septic shock — Unknown source',options:[
+      {drug:'Vancomycin + Meropenem ± Micafungin',dose:'Vancomycin AUC-guided + Meropenem 1g IV q8h ± Micafungin 100mg IV q24h if Candida risk',covers:'Broadest empiric coverage: MRSA, gram-neg (ESBL, Pseudomonas, Acinetobacter), anaerobes. Micafungin: Candida spp.',why:'Septic shock mortality rises with every hour of delay to appropriate therapy. Add antifungal if: TPN, prolonged hospitalization, GI surgery, immunocompromised, prior Candida colonization.'}
+    ]}
+  ],pearls:['1-hour bundle: lactate, blood cultures × 2, broad-spectrum ABx, 30mL/kg crystalloid, vasopressors for MAP <65.','Deescalate at 48–72h based on cultures — equally important as initial ABx choice.','S. aureus bacteremia: mandatory TEE (r/o endocarditis), minimum 14 days even if "simple."','Procalcitonin-guided deescalation reduces antibiotic days without increased mortality (meta-analysis).']},
 
-  endocarditis_native:{title:'Endocarditis — Native Valve',severity:'Viridans strep, S. aureus, Enterococcus, HACEK',drugs:[
-    {name:'Empiric (before cultures)',dose:'Vancomycin 25–30mg/kg IV q8–12h  +  Ceftriaxone 2g IV q24h (gentamicin controversial)',note:'Empiric coverage until blood culture speciation + sensitivities.'},
-    {name:'S. aureus (MSSA)',dose:'Nafcillin/Oxacillin 2g IV q4h × 6 wks (native valve)',note:'Beta-lactam superior to vancomycin for MSSA bacteremia — deescalate from vanco.'},
-    {name:'S. aureus (MRSA)',dose:'Vancomycin IV AUC-guided × 6 wks  OR  Daptomycin 8–10mg/kg IV q24h',note:'Daptomycin for right-sided endocarditis or intolerance to vancomycin.'},
-    {name:'Viridans Strep (PCN sensitive)',dose:'Penicillin G 3 MU IV q4h × 4 wks  OR  Ceftriaxone 2g IV q24h × 4 wks',note:'2-week short course if uncomplicated and met criteria (IDSA).'},
-    {name:'Enterococcus',dose:'Ampicillin 2g IV q4h + Ceftriaxone 2g IV q12h × 6 wks  OR  Ampicillin + Gentamicin (for synergy) × 4–6 wks',note:'Ampicillin-ceftriaxone preferred — less nephrotoxic than amp-gentamicin, equivalent efficacy.'},
-  ],pearls:['Duke criteria: 2 major, or 1 major + 3 minor, or 5 minor.','Major: positive blood culture, positive echo (vegetation, abscess, dehiscence).','Echo: TTE first, TEE if TTE non-diagnostic or high suspicion (sensitivity TEE 90% vs TTE 65%).','Surgery consult for: heart failure, uncontrolled infection, embolic risk (vegetation >10mm).','Dental prophylaxis for high-risk cardiac conditions before dental procedures.']},
+  endocarditis_native:{title:'Endocarditis — Native Valve',category:'BACTEREMIA & ENDOCARDITIS',drugs:[
+    {label:'Empiric (before cultures return)',options:[
+      {drug:'Vancomycin + Ceftriaxone',dose:'Vancomycin AUC-guided + Ceftriaxone 2g IV q24h',covers:'Vancomycin: MRSA, CoNS, Enterococcus. Ceftriaxone: Strep viridans, HACEK organisms, Strep bovis, gram-neg.',why:'Empiric two-drug regimen covering the most common native valve IE pathogens. Gentamicin no longer routinely added (nephrotoxicity without proven mortality benefit).'}
+    ]},
+    {label:'MSSA (confirmed)',options:[
+      {drug:'Nafcillin or Oxacillin',dose:'2g IV q4h × 6 weeks (native valve)',covers:'MSSA — anti-staphylococcal penicillin is the most bactericidal agent for MSSA endocarditis',why:'Anti-staphylococcal penicillin is superior to vancomycin for MSSA endocarditis (lower failure rate, faster sterilization). This is a critical deescalation point — do not keep patient on vancomycin for MSSA. Cefazolin 2g IV q8h is equivalent and may be preferred (less ADRs).'}
+    ]},
+    {label:'MRSA (confirmed)',options:[
+      {drug:'Vancomycin',dose:'AUC-guided × 6 weeks (native valve)',covers:'MRSA — vancomycin is bactericidal via cell wall inhibition; slower than beta-lactams but effective',why:'Daptomycin 8–10mg/kg IV q24h is an alternative — bactericidal via membrane disruption. Daptomycin is CONTRAINDICATED for MRSA pneumonia (inactivated by surfactant) but excellent for right-sided endocarditis.'}
+    ]},
+    {label:'Viridans Strep (PCN-sensitive)',options:[
+      {drug:'Penicillin G or Ceftriaxone',dose:'PCN-G 3 MU IV q4h × 4 weeks OR Ceftriaxone 2g IV q24h × 4 weeks',covers:'Streptococcus viridans group — most commonly S. sanguinis, S. oralis (dental origin)',why:'Short course (2 weeks with gentamicin synergy) acceptable for uncomplicated PCN-sensitive viridans strep if: native valve, no abscess, MIC ≤0.12. Gentamicin synergy adds bactericidal speed.'}
+    ]},
+    {label:'Enterococcus',options:[
+      {drug:'Ampicillin + Ceftriaxone',dose:'Ampicillin 2g IV q4h + Ceftriaxone 2g IV q12h × 6 weeks',covers:'Enterococcus faecalis — this combination achieves synergistic bactericidal activity via dual PBP inhibition',why:'Ampicillin-ceftriaxone (double beta-lactam) is preferred over ampicillin-gentamicin — equivalent efficacy, less nephrotoxicity. Mechanism: ceftriaxone saturates different PBPs from ampicillin → enhanced killing. VRE: linezolid or daptomycin.'}
+    ]}
+  ],pearls:['Duke criteria: definite = 2 major, or 1 major + 3 minor, or 5 minor.','TTE first; TEE if TTE non-diagnostic (sensitivity: TTE 65%, TEE 90%).','Surgery indications: heart failure, vegetation >10mm with emboli, uncontrolled infection, abscess.','Dental prophylaxis for high-risk cardiac conditions: amoxicillin 2g PO 30–60 min before procedure.','S. bovis bacteremia: colonoscopy — associated with colonic neoplasm.']},
 
-  endocarditis_prosthetic:{title:'Endocarditis — Prosthetic Valve',severity:'Higher mortality; usually requires surgery',drugs:[
-    {name:'Empiric',dose:'Vancomycin 25–30mg/kg IV q8–12h  +  Gentamicin 1mg/kg IV q8h  +  Rifampin 300mg PO q8h',note:'Rifampin added for biofilm penetration — add after 3–5 days of bactericidal therapy.'},
-    {name:'MSSA (late PVE >12 months)',dose:'Nafcillin/Oxacillin 2g IV q4h + Rifampin 300mg PO q8h + Gentamicin 1mg/kg IV q8h × 2 wks then stop gent, continue naf + rifampin × 4–6 wks',note:''},
-  ],pearls:['Early PVE (<12 months from surgery) = usually staph from OR — higher mortality.','Late PVE (>12 months) = community-acquired organisms similar to native valve.','Rifampin added for prosthetic material biofilm penetration — but AFTER bactericidal therapy started.','Surgery often required — consult early.']},
+  endocarditis_prosthetic:{title:'Endocarditis — Prosthetic Valve',category:'BACTEREMIA & ENDOCARDITIS',drugs:[
+    {label:'Empiric (early PVE <12 months or unknown)',options:[
+      {drug:'Vancomycin + Gentamicin + Rifampin',dose:'Vancomycin AUC-guided + Gentamicin 1mg/kg IV q8h × 2 weeks + Rifampin 300mg PO q8h (start after 3–5 days of bactericidal therapy)',covers:'Vancomycin: MRSA, CoNS (dominant early PVE pathogens from OR contamination). Gentamicin: synergy. Rifampin: penetrates biofilm on prosthetic material.',why:'Rifampin is uniquely able to penetrate staphylococcal biofilm on prosthetic valves — but must be added AFTER bactericidal therapy is established (3–5 days) because rifampin monotherapy rapidly selects for resistance.'}
+    ]},
+    {label:'MSSA prosthetic valve',options:[
+      {drug:'Nafcillin + Rifampin + Gentamicin',dose:'Nafcillin 2g IV q4h × 6 weeks + Rifampin 300mg PO q8h × 6 weeks + Gentamicin 1mg/kg IV q8h × 2 weeks',covers:'MSSA with biofilm penetration (rifampin) and synergistic killing (gentamicin for first 2 weeks)',why:'Cefazolin can substitute for nafcillin (equivalent outcomes, fewer ADRs). Rifampin critical for all prosthetic valve endocarditis regardless of pathogen.'}
+    ]}
+  ],pearls:['Early PVE (<12 months): S. aureus and CoNS from OR contamination — higher mortality, often requires surgery.','Late PVE (>12 months): community-acquired organisms similar to native valve IE.','Rifampin: always add after 3–5 days of bactericidal therapy, never as monotherapy.','Consult cardiac surgery early — prosthetic valve IE has higher surgical rate than native valve.']},
 
-  clabsi:{title:'CLABSI (Central Line-Associated BSI)',severity:'Remove the line when possible',drugs:[
-    {name:'Empiric',dose:'Vancomycin 25–30mg/kg IV q8–12h (covers MRSA/CoNS)',note:'Line removal is primary treatment — ABx alone insufficient for most CLABSIs.'},
-    {name:'Gram-negative bacteremia (immunocompromised, neutropenic)',dose:'Add Pip-tazo 4.5g IV q6h  OR  Cefepime 2g IV q8h',note:'Broaden empirically if neutropenic or in ICU.'},
-  ],pearls:['Remove catheter for: S. aureus, Candida, tunnel/port infection, hemodynamic instability.','S. aureus CLABSI: 4–6 weeks (rule out endocarditis with TEE).','CoNS CLABSI: 10–14 days if catheter removed. Antibiotic lock therapy if catheter cannot be removed.','Zero tolerance bundle: hand hygiene, maximal barrier precautions, chlorhexidine skin, optimal site selection, remove ASAP.']},
+  clabsi:{title:'CLABSI — Central Line-Associated BSI',category:'BACTEREMIA & ENDOCARDITIS',drugs:[
+    {label:'Empiric',options:[
+      {drug:'Vancomycin',dose:'AUC-guided (target AUC 400–600)',covers:'CoNS (most common CLABSI pathogen), MRSA, Enterococcus — the gram-pos organisms that colonize intravascular devices',why:'Gram-pos organisms dominate CLABSI because they express surface adhesins (MSCRAMM proteins) that attach to the fibronectin-coated catheter surface and form biofilm. Vancomycin covers this spectrum.'}
+    ]},
+    {label:'Gram-negative bacteremia / neutropenic / ICU',options:[
+      {drug:'Vancomycin + Cefepime or Pip-Tazo',dose:'Add Cefepime 2g IV q8h or Pip-Tazo 4.5g IV q6h',covers:'Adds gram-neg coverage including Pseudomonas — necessary in immunocompromised or critically ill',why:'Gram-neg CLABSI is less common but carries higher mortality in high-risk hosts. Broaden empirically in neutropenia or ICU settings.'}
+    ]}
+  ],pearls:['Remove the catheter for: S. aureus, Candida, tunnel or port site infection, hemodynamic instability — retention dramatically increases treatment failure.','S. aureus CLABSI: TEE to r/o endocarditis. Minimum 14 days (up to 6 weeks if complicated).','CoNS CLABSI: 10–14 days if catheter removed; antibiotic lock therapy if catheter salvage attempted.','Zero-tolerance bundle: hand hygiene, maximal barrier precautions, chlorhexidine skin prep, optimal site (subclavian > IJ > femoral), remove ASAP.']},
 
-  gonorrhea:{title:'Gonorrhea',severity:'Increasing resistance — ceftriaxone only',drugs:[
-    {name:'Uncomplicated (urethral/cervical/rectal)',dose:'Ceftriaxone 500mg IM × 1 (use 1g IM if ≥150kg)',note:'Dual therapy with azithromycin NO LONGER recommended (2020 CDC update) unless chlamydia not ruled out.'},
-    {name:'Pharyngeal gonorrhea',dose:'Ceftriaxone 500mg IM × 1',note:'Same dose. Test of cure at 14 days for pharyngeal infection.'},
-    {name:'Disseminated gonococcal infection (DGI)',dose:'Ceftriaxone 1g IV q24h × 7d (transition to PO after improvement × 24–48h)',note:'Cefixime 400mg PO BID to complete 7 days.'},
-  ],pearls:['Always treat for chlamydia co-infection unless tested and negative.','Test of cure: NOT recommended for uncomplicated gonorrhea if ceftriaxone used. Required for pharyngeal infection.','Do NOT use fluoroquinolones — high resistance nationally.','Report to public health; partner notification required.']},
+  gonorrhea:{title:'Gonorrhea (Neisseria gonorrhoeae)',category:'STI',drugs:[
+    {label:'Uncomplicated urogenital / rectal / pharyngeal',options:[
+      {drug:'Ceftriaxone',dose:'500mg IM × 1 dose (1g if weight ≥150kg)',covers:'N. gonorrhoeae — ceftriaxone is now the only reliably effective agent nationally',why:'FQ resistance now >30% nationally — fluoroquinolones are contraindicated empirically. Azithromycin dual therapy removed from CDC guidelines (2020) due to rising macrolide resistance. Ceftriaxone 500mg (↑ from 250mg) due to emerging reduced susceptibility. Test of cure required for pharyngeal infection at 14 days.'}
+    ]},
+    {label:'Disseminated Gonococcal Infection (DGI)',options:[
+      {drug:'Ceftriaxone IV → step down',dose:'Ceftriaxone 1g IV q24h × 7 days total; transition to Cefixime 400mg PO BID after 24–48h of IV improvement',covers:'N. gonorrhoeae bacteremia — disseminated from genital source; triad of arthralgias/dermatitis/tenosynovitis or septic arthritis',why:'IV required until clinical improvement. DGI accounts for most septic arthritis in sexually active young adults. Joint aspiration if septic arthritis.'}
+    ]}
+  ],pearls:['Always co-treat for chlamydia unless tested and confirmed negative (doxycycline 100mg BID × 7d).','Report to public health. Partner notification and treatment required.','Do NOT use fluoroquinolones — high and rising resistance. Do NOT use azithromycin monotherapy.','Pharyngeal gonorrhea: test of cure at 14 days (harder to eradicate than urogenital).']},
 
-  chlamydia:{title:'Chlamydia',severity:'Most common bacterial STI in US',drugs:[
-    {name:'Uncomplicated',dose:'Doxycycline 100mg PO BID × 7d  (preferred)  OR  Azithromycin 1g PO × 1 dose',note:'Doxycycline superior per 2021 CDC STI guidelines (lower treatment failure rate).'},
-    {name:'Pregnancy',dose:'Azithromycin 1g PO × 1  OR  Amoxicillin 500mg PO TID × 7d',note:'Doxycycline contraindicated in pregnancy.'},
-  ],pearls:['Test of cure NOT recommended unless pregnant or symptoms persist.','Screen MSM and women ≤25 annually per USPSTF.','Partner treatment: expedited partner therapy (EPT) reduces re-infection.','LGV (L1-L3 serovars): Doxycycline 100mg PO BID × 21 days.']},
+  chlamydia:{title:'Chlamydia trachomatis',category:'STI',drugs:[
+    {label:'Uncomplicated urogenital / rectal',options:[
+      {drug:'Doxycycline',dose:'100mg PO BID × 7 days',covers:'Chlamydia trachomatis (serovars D-K), Mycoplasma genitalium (common co-pathogen)',why:'2021 CDC STI guidelines moved doxycycline to preferred over azithromycin — doxycycline has lower treatment failure rate for rectal chlamydia (azithromycin failure 22% vs doxycycline 8%). Also covers Mycoplasma genitalium co-infection.'},
+      {drug:'Azithromycin',dose:'1g PO × 1 dose',covers:'C. trachomatis — intracellular activity via concentration in macrophages and tissue',why:'Use when single-dose directly observed therapy needed or doxycycline not tolerated. Less preferred due to higher rectal failure rate. Avoid in settings with high Mycoplasma genitalium prevalence.'}
+    ]},
+    {label:'Pregnancy',options:[
+      {drug:'Azithromycin',dose:'1g PO × 1 dose',covers:'C. trachomatis',why:'Doxycycline contraindicated in pregnancy (fetal tooth/bone development). Azithromycin is safe in pregnancy. Amoxicillin 500mg TID × 7d is an alternative.'}
+    ]}
+  ],pearls:['Test of cure NOT recommended unless pregnant or symptoms persist.','Screen MSM and women ≤25 annually per USPSTF.','LGV (serovars L1-L3): doxycycline 100mg BID × 21 days.','Partner notification required; expedited partner therapy reduces reinfection.']},
 
-  syphilis:{title:'Syphilis',severity:'Stage-dependent treatment',drugs:[
-    {name:'Primary, Secondary, Early Latent (<1 year)',dose:'Benzathine Penicillin G 2.4 MU IM × 1 dose',note:'Single dose curative for early disease. Doxycycline 100mg PO BID × 14d if PCN allergic.'},
-    {name:'Late Latent (>1 year) or Unknown Duration',dose:'Benzathine Penicillin G 2.4 MU IM qWK × 3 doses',note:'Doxycycline 100mg PO BID × 28d if PCN allergic.'},
-    {name:'Neurosyphilis',dose:'Penicillin G 3–4 MU IV q4h × 10–14d  →  Benzathine PCN 2.4 MU IM × 3 after',note:'Desensitize if PCN allergic — no proven alternatives for neurosyphilis.'},
-  ],pearls:['Jarisch-Herxheimer reaction: fever, rigors, headache 2–8h after first dose — not PCN allergy. Treat with acetaminophen.','RPR/VDRL titer should decrease 4-fold at 6 and 12 months after treatment.','HIV-positive patients: same treatment, but follow RPR more closely.','LP for neurosyphilis if: neurologic symptoms, treatment failure, HIV, late latent/unknown duration.']},
+  syphilis:{title:'Syphilis (Treponema pallidum)',category:'STI',drugs:[
+    {label:'Primary, Secondary, Early Latent (<1 year)',options:[
+      {drug:'Benzathine Penicillin G',dose:'2.4 MU IM × 1 dose',covers:'T. pallidum — the only validated treatment for syphilis at all stages. Penicillin is the only drug with proven efficacy in neurosyphilis and pregnancy.',why:'Benzathine PCN-G creates a depot injection with prolonged low-level penicillin exposure — matches the slow replication time of T. pallidum (30-hour doubling time). Single dose curative for early syphilis.'}
+    ]},
+    {label:'Late Latent or Unknown Duration (>1 year)',options:[
+      {drug:'Benzathine Penicillin G',dose:'2.4 MU IM weekly × 3 doses (weeks 0, 1, 2)',covers:'T. pallidum — 3 doses for longer tissue penetration time required for late/latent disease',why:'Longer replication time of organisms in late disease requires 3 weeks of sustained penicillin exposure.'}
+    ]},
+    {label:'Neurosyphilis',options:[
+      {drug:'Aqueous Penicillin G IV',dose:'3–4 MU IV q4h × 10–14 days → Benzathine PCN 2.4 MU IM weekly × 3',covers:'T. pallidum in the CNS — only aqueous (not benzathine) PCN achieves adequate CSF levels',why:'Benzathine PCN does NOT cross the blood-brain barrier adequately for neurosyphilis. Aqueous PCN IV maintains constant high CSF treponemicidal levels. If PCN-allergic, desensitize — no proven alternatives for neurosyphilis.'}
+    ]}
+  ],pearls:['Jarisch-Herxheimer reaction: fever, chills, myalgia 2–8h after first dose — not PCN allergy. Treat with acetaminophen. Do not stop antibiotics.','RPR/VDRL: confirm treatment response with 4-fold titer decrease at 6 and 12 months.','Syphilis in HIV: same treatment; more frequent serologic monitoring.','LP for neurosyphilis if: neurologic symptoms, ocular symptoms, treatment failure, HIV with late latent.']},
 
-  pid:{title:'Pelvic Inflammatory Disease (PID)',severity:'Outpatient or inpatient depending on severity',drugs:[
-    {name:'Outpatient',dose:'Ceftriaxone 500mg IM × 1  +  Doxycycline 100mg PO BID × 14d  +  Metronidazole 500mg PO BID × 14d',note:'Metronidazole added for anaerobic coverage (BV often co-present).'},
-    {name:'Inpatient',dose:'Cefoxitin 2g IV q6h + Doxycycline 100mg IV/PO q12h  OR  Clindamycin 900mg IV q8h + Gentamicin 2mg/kg loading → 1.5mg/kg q8h',note:'Transition to PO doxycycline 100mg BID to complete 14 days after clinical improvement.'},
-  ],pearls:['Admit if: surgical emergency cannot be excluded, TOA, pregnancy, severe illness, failed outpatient.','Tubo-ovarian abscess (TOA): admit for IV ABx; drain if no improvement at 72h.','IUD does not need to be removed unless no improvement at 72h.','Fertility implications: each episode increases ectopic pregnancy and infertility risk.']},
+  pid:{title:'Pelvic Inflammatory Disease',category:'STI',drugs:[
+    {label:'Outpatient (mild–moderate)',options:[
+      {drug:'Ceftriaxone + Doxycycline + Metronidazole',dose:'Ceftriaxone 500mg IM × 1 + Doxycycline 100mg PO BID × 14 days + Metronidazole 500mg PO BID × 14 days',covers:'Ceftriaxone: N. gonorrhoeae. Doxycycline: C. trachomatis, Mycoplasma. Metronidazole: anaerobes (BV-associated bacteria commonly co-present in PID).',why:'PID is polymicrobial: gonorrhea, chlamydia, and normal vaginal flora (anaerobes, BV organisms) all play a role. Three-drug combination targets this full spectrum.'}
+    ]},
+    {label:'Inpatient',options:[
+      {drug:'Cefoxitin + Doxycycline',dose:'Cefoxitin 2g IV q6h + Doxycycline 100mg IV/PO q12h until improved, then Doxycycline 100mg PO BID × 14 days total',covers:'Cefoxitin (2nd-gen cephalosporin with anaerobic activity): gram-neg + anaerobes. Doxycycline: C. trachomatis + Mycoplasma.',why:'IV regimen for hospitalized PID. Transition to PO doxycycline when clinically improving. Cefoxitin has intrinsic anaerobic coverage unlike ceftriaxone.'},
+      {drug:'Clindamycin + Gentamicin',dose:'Clindamycin 900mg IV q8h + Gentamicin 2mg/kg loading → 1.5mg/kg IV q8h (or 5mg/kg q24h)',covers:'Clindamycin: anaerobes + gram-pos. Gentamicin: gram-neg coverage.',why:'Alternative inpatient regimen. Requires monitoring of gentamicin levels.'}
+    ]}
+  ],pearls:['Admit if: TOA, surgical emergency cannot be excluded, pregnancy, severe illness, failed outpatient therapy.','TOA: IV ABx, imaging-guided drainage if no improvement at 72h.','IUD does NOT need to be removed unless no improvement at 72h.','Each episode of PID increases ectopic pregnancy risk (~6-fold after 3 episodes) and infertility risk.']},
 
-  sepsis_empiric:{title:'Sepsis — Unknown Source (Empiric)',severity:'Treat the most likely source, then deescalate',drugs:[
-    {name:'Community-acquired, not severe',dose:'Ceftriaxone 2g IV q24h  ±  Azithromycin (if pulmonary source)',note:'Avoid over-broad coverage in non-severe community sepsis.'},
-    {name:'Healthcare-associated / post-procedural',dose:'Vancomycin + Pip-tazo 4.5g IV q6h',note:'Covers MRSA, gram-negatives, anaerobes.'},
-    {name:'Septic shock, unknown source',dose:'Vancomycin + Meropenem 1g IV q8h  ±  Micafungin 100mg IV q24h',note:'Broadest empiric coverage. Add antifungal if candida risk factors (TPN, prolonged hospitalization, recent abdominal surgery).'},
-  ],pearls:['Hour-1 bundle: lactate, blood cultures × 2, broad ABx, 30mL/kg crystalloid, vasopressors for MAP <65.','Source control is as important as ABx — early imaging and surgical consult.','Deescalate at 48–72h — this is the antibiotic stewardship moment.','Duration guided by clinical response + source control + procalcitonin trend.']},
+  sepsis_empiric:{title:'Sepsis — Unknown Source',category:'EMPIRIC / ICU',drugs:[
+    {label:'Community-acquired, not in shock',options:[
+      {drug:'Ceftriaxone ± source-directed coverage',dose:'Ceftriaxone 2g IV q24h ± Azithromycin (pulmonary) or Metronidazole (GI) based on suspected source',covers:'Community gram-neg (E. coli, Klebsiella, Strep pneumo) — the most common pathogens in community sepsis',why:'Avoid reflexive broad-spectrum coverage without MDR risk factors. Antibiotic stewardship starts here.'}
+    ]},
+    {label:'Healthcare-associated / post-operative',options:[
+      {drug:'Vancomycin + Pip-Tazo',dose:'Vancomycin AUC-guided + Pip-Tazo 4.5g IV q6h',covers:'MRSA, CoNS, gram-neg (Pseudomonas), Enterococcus, anaerobes',why:'Healthcare exposure introduces MRSA and MDR gram-neg risk. This combination covers both spectrums without carbapenem. Critical to deescalate at 48–72h.'}
+    ]},
+    {label:'Septic shock — unknown source',options:[
+      {drug:'Vancomycin + Meropenem ± Micafungin',dose:'Vancomycin AUC-guided + Meropenem 1g IV q8h ± Micafungin 100mg IV q24h',covers:'MRSA, ESBL, Pseudomonas, Acinetobacter, anaerobes ± Candida spp.',why:'Septic shock: cost of undertreating far exceeds cost of overtreatment in first 24h. Add antifungal if candida risk factors (TPN, prolonged hospitalization, GI surgery, immunocompromised).'}
+    ]}
+  ],pearls:['Hour-1 bundle: lactate, cultures × 2, ABx, 30mL/kg crystalloid, vasopressors for MAP <65.','Source control is equally important to ABx — image early and consult surgery.','Deescalate at 48–72h based on culture data and clinical improvement.','Duration guided by clinical response + source control achievement + PCT trend.']},
 
-  febrile_neutropenia:{title:'Febrile Neutropenia',severity:'ANC <500, T ≥38.3°C',drugs:[
-    {name:'Low-risk (Talcott criteria, MASCC score ≥21)',dose:'Ciprofloxacin 500mg PO BID + Amoxicillin-clavulanate 875/125mg PO BID × 7d',note:'PO therapy acceptable if meets low-risk criteria and reliable follow-up.'},
-    {name:'High-risk',dose:'Cefepime 2g IV q8h  OR  Pip-tazo 4.5g IV q6h  OR  Meropenem 1g IV q8h',note:'Monotherapy adequate. Add vancomycin only if specific indications present.'},
-    {name:'Add Vancomycin when:',dose:'Hemodynamic instability  OR  MRSA suspected/proven  OR  Mucositis + mouth sores  OR  Skin/port infection',note:'Do NOT add vancomycin empirically to every febrile neutropenia case.'},
-    {name:'Add Antifungal when:',dose:'Persistent fever >4d despite ABx  OR  Unstable on ABx  OR  Prior fungal infection  OR  Prolonged neutropenia expected',note:'Micafungin 100mg IV q24h or Caspofungin 70mg → 50mg IV q24h.'},
-  ],pearls:['Monotherapy with antipseudomonal beta-lactam is standard for high-risk.','G-CSF does not reduce mortality but reduces duration of neutropenia.','Duration: until ANC ≥500 and fever resolves × 48h minimum.','Blood cultures × 2 sets (one peripheral, one from each lumen of CVC).']},
+  febrile_neutropenia:{title:'Febrile Neutropenia',category:'EMPIRIC / ICU',drugs:[
+    {label:'High-risk (ANC <100, expected >7 days, inpatient)',options:[
+      {drug:'Cefepime',dose:'2g IV q8h',covers:'Gram-neg including Pseudomonas — the lethal organisms in febrile neutropenia (gram-neg bacteremia kills faster than gram-pos)',why:'Anti-pseudomonal monotherapy is standard. Cefepime chosen over pip-tazo in some guidelines due to similar efficacy and less nephrotoxicity when combined with vancomycin.'},
+      {drug:'Pip-Tazo',dose:'4.5g IV q6h',covers:'Gram-neg (Pseudomonas), gram-pos (not MRSA), anaerobes',why:'Broader anaerobic coverage; choose over cefepime if GI source (mucositis, typhlitis, perirectal abscess).'},
+      {drug:'Meropenem',dose:'1g IV q8h',covers:'Broadest gram-neg including ESBL, Pseudomonas, Acinetobacter',why:'Escalate to carbapenem if: prior MDR gram-neg, hemodynamic instability, ESBL on recent culture, or failure of cefepime/pip-tazo at 48–72h.'}
+    ]},
+    {label:'Add Vancomycin when:',options:[
+      {drug:'Vancomycin (targeted indications only)',dose:'AUC-guided, add to above regimen',covers:'MRSA, CoNS, Strep viridans — do NOT add empirically without specific indications',why:'Indications: hemodynamic instability, suspected MRSA, catheter-site infection, mucositis with gram-pos bacteremia risk, skin/soft tissue infection, prior MRSA. Routine empiric vancomycin does NOT improve outcomes and increases nephrotoxicity.'}
+    ]},
+    {label:'Add Antifungal when:',options:[
+      {drug:'Micafungin or Caspofungin',dose:'Micafungin 100mg IV q24h OR Caspofungin 70mg loading → 50mg IV q24h',covers:'Candida spp. (all) — echinocandin covers azole-resistant species',why:'Add antifungal if: fever persisting >4 days on broad-spectrum ABx, prior fungal infection, prolonged neutropenia expected, clinical instability. Echinocandin preferred over fluconazole — covers C. krusei and resistant C. glabrata.'}
+    ]},
+    {label:'Low-risk (MASCC ≥21, outpatient eligible)',options:[
+      {drug:'Ciprofloxacin + Amoxicillin-Clavulanate',dose:'Cipro 500mg PO BID + Amox-clav 875/125mg PO BID',covers:'Gram-neg (Cipro) + gram-pos/anaerobes (amox-clav)',why:'PO therapy acceptable for low-risk: solid tumor, no comorbidities, MASCC ≥21. Must have reliable follow-up and ability to return if worsening.'}
+    ]}
+  ],pearls:['ANC <500 or ANC <1000 falling = neutropenic for ABx purposes.','Gram-neg bacteremia in neutropenia = 50% mortality if untreated first 24h — start ABx within 30 min.','Duration: until ANC ≥500 AND fever resolved ≥48h minimum.','G-CSF reduces duration of neutropenia but not established mortality benefit in established febrile neutropenia.']},
 
-  mrsa_coverage:{title:'When to Add MRSA Coverage',severity:'Clinical decision framework',drugs:[
-    {name:'ALWAYS add Vancomycin / Linezolid / Daptomycin for:',dose:'Suspected MRSA bacteremia, endocarditis, MRSA pneumonia, CNS infection with staph suspicion, septic shock (empiric)',note:''},
-    {name:'CONSIDER adding if:',dose:'Prior MRSA infection/colonization  |  MRSA nasal swab positive  |  Failed beta-lactam  |  IV drug use  |  Recurrent skin infections  |  Recent hospitalization/healthcare exposure',note:''},
-    {name:'Do NOT add for:',dose:'Uncomplicated community CAP  |  Non-purulent cellulitis  |  Routine UTI  |  CAP in healthy young adult  |  Prophylactic antibiotics',note:''},
-  ],pearls:['MRSA nasal swab: negative predictive value ~95% for MRSA pneumonia — use to deescalate.','Vancomycin: AUC/MIC guided dosing preferred (target AUC 400–600 mg·h/L). Trough-only monitoring is outdated.','Linezolid PO bioavailability ~100% — use for discharge on MRSA coverage when reliable patient.','Daptomycin is inactivated by surfactant — NEVER use for MRSA pneumonia.']},
+  mrsa_coverage:{title:'When to Add MRSA Coverage',category:'EMPIRIC / ICU',drugs:[
+    {label:'Always add Vancomycin / Linezolid / Daptomycin for:',options:[
+      {drug:'MRSA bacteremia, endocarditis, severe SSTI, septic shock',dose:'Vancomycin AUC-guided OR Daptomycin 6–10mg/kg IV q24h',covers:'MRSA — vancomycin via cell wall inhibition, daptomycin via membrane depolarization',why:'Bacteremia or endocarditis with MRSA confirmed or high suspicion: mandatory. Severe septic shock without identified source: add empirically.'}
+    ]},
+    {label:'Consider adding if (risk factors):',options:[
+      {drug:'MRSA risk factor present',dose:'Add Vancomycin to baseline regimen',covers:'MRSA — bridge until nasal swab or culture result',why:'Risk factors: prior MRSA infection/colonization, MRSA nasal swab positive, IV drug use, recurrent skin infections, recent hospital/healthcare exposure, failed beta-lactam therapy.'}
+    ]},
+    {label:'Do NOT add for:',options:[
+      {drug:'Routine addition without indication',dose:'Avoid empiric vancomycin for: uncomplicated CAP, non-purulent cellulitis, routine UTI',covers:'No MRSA coverage needed — these infections are caused by organisms susceptible to narrower agents',why:'Reflex vancomycin use drives VRE selection, increases nephrotoxicity risk (especially with pip-tazo), and creates false sense of security without improving outcomes.'}
+    ]}
+  ],pearls:['MRSA nasal swab: negative NPV ~95% for MRSA pneumonia → use to withhold coverage at 48h.','Vancomycin AUC/MIC monitoring (target 400–600) preferred over trough-only — less nephrotoxicity, better outcomes.','Linezolid PO bioavailability ~100% → preferred for oral step-down of MRSA coverage.','Daptomycin is INACTIVATED by pulmonary surfactant — NEVER use for MRSA pneumonia.']},
 
-  antifungal:{title:'When to Add Antifungal Coverage',severity:'High-risk hosts / persistent fever',drugs:[
-    {name:'Candida — Echinocandin (preferred)',dose:'Micafungin 100mg IV q24h  OR  Caspofungin 70mg loading → 50mg IV q24h  OR  Anidulafungin 200mg → 100mg IV q24h',note:'Echinocandin is first-line for invasive candidiasis. Step down to fluconazole if susceptible (non-krusei/glabrata).'},
-    {name:'Candida — Fluconazole (stable, fluconazole-susceptible)',dose:'Fluconazole 800mg loading → 400mg IV/PO q24h × 14d after last positive culture',note:'Only after species identified as susceptible. Not C. krusei or C. glabrata/auris.'},
-    {name:'Aspergillus / mold',dose:'Voriconazole 6mg/kg IV q12h × 2 doses → 4mg/kg IV/PO q12h  OR  Isavuconazole 372mg IV q8h × 6 doses → 372mg IV/PO q24h',note:'Check drug-drug interactions. Monitor voriconazole trough (target 1–5.5 mcg/mL).'},
-  ],pearls:['Risk factors for invasive candidiasis: TPN, prolonged broad-spectrum ABx, CVC, abdominal surgery, neutropenia, immunosuppression, prior Candida colonization.','Remove CVC for Candida fungemia when feasible.','Ophthalmology consult for all candidemia (r/o endophthalmitis).','Duration: 14 days after first negative blood culture and resolution of symptoms.']},
+  antifungal:{title:'When to Add Antifungal Coverage',category:'EMPIRIC / ICU',drugs:[
+    {label:'Invasive Candidiasis — First-line',options:[
+      {drug:'Micafungin',dose:'100mg IV q24h',covers:'Candida albicans, C. glabrata, C. krusei, C. parapsilosis, C. tropicalis — full Candida species coverage',why:'Echinocandin mechanism: inhibits (1,3)-β-D-glucan synthase → disrupts fungal cell wall. Fungicidal vs Candida (unlike fluconazole which is fungistatic). First-line for all invasive candidiasis per IDSA. Covers azole-resistant species.'},
+      {drug:'Caspofungin',dose:'70mg IV loading → 50mg IV q24h',covers:'Same Candida spectrum as micafungin',why:'Equivalent to micafungin. Some prefer for C. parapsilosis (slightly better PK data).'}
+    ]},
+    {label:'Step-down to Fluconazole (stable, susceptible)',options:[
+      {drug:'Fluconazole',dose:'800mg IV/PO loading → 400mg IV/PO q24h × 14 days after last positive culture',covers:'C. albicans, C. tropicalis, C. parapsilosis — NOT C. krusei (intrinsic resistance) or many C. glabrata strains',why:'Step down from echinocandin to fluconazole ONLY after: species confirmed susceptible, patient hemodynamically stable, negative follow-up cultures. PO fluconazole bioavailability ~90% — excellent oral step-down.'}
+    ]},
+    {label:'Aspergillus / Invasive Mold',options:[
+      {drug:'Voriconazole',dose:'6mg/kg IV q12h × 2 doses → 4mg/kg IV/PO q12h',covers:'Aspergillus fumigatus, A. flavus, A. terreus, most molds — does NOT cover Mucor/Rhizopus',why:'First-line for invasive aspergillosis (proven superior to amphotericin in landmark RCT). Monitor trough levels (target 1–5.5 mcg/mL) — highly variable metabolism (CYP2C19 polymorphisms).'},
+      {drug:'Isavuconazole',dose:'372mg IV/PO q8h × 6 doses → 372mg IV/PO q24h',covers:'Aspergillus + Mucor/Rhizopus — only approved azole with Mucorales activity',why:'Alternative to voriconazole for aspergillosis; preferred if Mucor suspected. Fewer drug interactions, no QTc prolongation, better tolerated.'}
+    ]}
+  ],pearls:['Invasive candidiasis risk: TPN >7 days, prolonged broad ABx, CVC, abdominal surgery, dialysis, immunosuppression.','Remove CVC for candidemia when feasible — dramatically reduces mortality.','Ophthalmology consult for ALL candidemia — rule out endophthalmitis (occurs in ~10–15%).','Duration: 14 days after first negative blood culture and symptom resolution.']},
 
-  pseudomonas:{title:'Pseudomonas / Double Gram-Negative Coverage',severity:'When and what to use',drugs:[
-    {name:'Anti-pseudomonal agents (single drug)',dose:'Pip-tazo 4.5g IV q6h (extended infusion)  |  Cefepime 2g IV q8h  |  Meropenem 1g IV q8h  |  Imipenem  |  Ceftazidime  |  Aztreonam (PCN allergy + gram-neg only)',note:''},
-    {name:'Double-coverage (when to add aminoglycoside or FQ)',dose:'Gentamicin 5–7mg/kg IV q24h  OR  Amikacin 15–20mg/kg IV q24h  OR  Ciprofloxacin 400mg IV q8h',note:'Double-coverage: controversial. Consider for: septic shock from Pseudomonas, high mortality, known resistant strain.'},
-  ],pearls:['Double gram-negative coverage does NOT improve mortality in most studies — use for empiric coverage in septic shock until cultures return.','Deescalate to monotherapy once susceptibilities known.','Pseudomonas risk factors: structural lung disease, bronchiectasis, cystic fibrosis, prolonged steroids, recent FQ/carbapenem use, healthcare-associated.','Extended infusion pip-tazo (4.5g over 4h q8h) achieves superior pharmacodynamic target attainment vs standard infusion.']},
+  pseudomonas:{title:'Pseudomonas — Coverage & Double Coverage',category:'EMPIRIC / ICU',drugs:[
+    {label:'Single-agent anti-pseudomonal options',options:[
+      {drug:'Piperacillin-Tazobactam (extended infusion)',dose:'4.5g IV over 4 hours q8h',covers:'Pseudomonas + gram-pos + anaerobes',why:'Extended infusion (4h) maximizes time above MIC — the pharmacodynamic driver of beta-lactam efficacy. Superior target attainment vs standard 30-min infusion, especially for resistant strains (MIC 8–16).'},
+      {drug:'Cefepime',dose:'2g IV q8h',covers:'Pseudomonas, gram-neg, gram-pos (not MRSA)',why:'4th-gen cephalosporin with strong Pseudomonas activity. More stable to AmpC beta-lactamases than ceftazidime. Choose over pip-tazo when anaerobic coverage not needed.'},
+      {drug:'Meropenem',dose:'1g IV q8h (2g q8h for carbapenem-resistant)',covers:'Pseudomonas, ESBL, most gram-neg (MDR strains may be resistant)',why:'Carbapenem — reserve for MDR Pseudomonas or ESBL. Extended infusion (3h) for resistant strains.'},
+      {drug:'Aztreonam',dose:'2g IV q8h',covers:'Gram-neg only — Pseudomonas, Enterobacteriaceae. NO gram-pos activity.',why:'Use for PCN-allergic patients where gram-neg coverage is needed and cefepime/carbapenems not options. Safe in IgE-mediated PCN allergy (monobactam — no cross-reactivity).'}
+    ]},
+    {label:'Double gram-neg coverage (when to add)',options:[
+      {drug:'Add Aminoglycoside or FQ',dose:'Gentamicin 5–7mg/kg IV q24h (once-daily preferred) OR Ciprofloxacin 400mg IV q8h',covers:'Second anti-pseudomonal agent via different mechanism — aminoglycoside (30S ribosomal inhibition), FQ (DNA gyrase/topoisomerase)',why:'Double coverage is NOT proven to improve mortality in most trials. Use empirically for: septic shock from suspected Pseudomonas, known MDR strain, immunocompromised host. Deescalate to monotherapy once cultures return.'}
+    ]}
+  ],pearls:['Pseudomonas risk factors: structural lung disease, bronchiectasis, CF, prolonged steroids, recent FQ/carbapenem use, ICU stay.','Extended infusion: 3–4h infusion per dose — requires pharmacy guidance on compatibility/stability.','ESBL vs Pseudomonas: ertapenem covers ESBL but NOT Pseudomonas. Meropenem/pip-tazo cover both.','Carbapenem-resistant Pseudomonas: ID consult. Options: ceftolozane-tazobactam, ceftazidime-avibactam.']},
 
-  drug_vancomycin:{title:'Vancomycin',severity:'Glycopeptide — MRSA workhorse',drugs:[
-    {name:'Dosing',dose:'25–30mg/kg IV q8–12h (actual body weight)',note:'AUC/MIC guided monitoring preferred. Target AUC 400–600 mg·h/L.'},
-    {name:'Monitoring',dose:'AUC-guided: Bayesian pharmacokinetic software (preferred) — or trough-only (target 15–20 for serious infections)',note:'Two-level PK sampling method or Bayesian software for AUC. Trough 10–15 mcg/mL for mild infections.'},
-  ],pearls:['AUC/MIC >400 associated with better outcomes and less nephrotoxicity vs trough-only dosing.','Red man syndrome (flushing, not allergy): infuse >60 min, pre-treat with antihistamine. Not a contraindication.','Vancomycin-resistant Enterococcus (VRE): use linezolid or daptomycin.','Never use for MRSA pneumonia monotherapy at low doses — ensure target AUC achieved.']},
+  drug_vancomycin:{title:'Vancomycin',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Vancomycin (Glycopeptide)',dose:'25–30mg/kg IV q8–12h actual body weight',covers:'MRSA, MSSA (inferior to beta-lactams), CoNS, Enterococcus, Streptococcus, Clostridium',why:'Mechanism: inhibits cell wall synthesis by binding D-Ala–D-Ala terminus of peptidoglycan precursor — different binding site from beta-lactams. Bactericidal vs Staph; bacteriostatic vs Enterococcus.'}
+    ]},
+    {label:'Monitoring',options:[
+      {drug:'AUC/MIC-guided dosing (preferred)',dose:'Target AUC 400–600 mg·h/L. Two-level Bayesian method or 2-point sampling.',covers:'Correlates better with efficacy and avoids nephrotoxicity vs trough-only',why:'ASHP/IDSA/SIDP 2020 guidelines recommend AUC-guided over trough-only monitoring. Trough ≥15 mg/L required for AUC target often leads to nephrotoxicity without added efficacy.'}
+    ]}
+  ],pearls:['Red man syndrome (flushing, erythema): not allergy — infusion rate reaction. Slow infusion to >60 min, antihistamine pre-treatment.','VRE: use linezolid or daptomycin.','MSSA bacteremia: switch to anti-staphylococcal penicillin (nafcillin or cefazolin) — vancomycin is inferior for MSSA.','Vancomycin + pip-tazo: synergistic nephrotoxicity — monitor Cr closely.']},
 
-  drug_pip_tazo:{title:'Piperacillin-Tazobactam (Pip-Tazo)',severity:'Broad-spectrum beta-lactam / beta-lactamase inhibitor',drugs:[
-    {name:'Standard dosing',dose:'3.375g IV q6h  OR  4.5g IV q6h (for Pseudomonas or severe infections)',note:'Extended infusion: 4.5g IV over 4h q8h — superior PK/PD target attainment for Pseudomonas.'},
-    {name:'Coverage',dose:'Gram-pos (not MRSA), gram-neg (incl. Pseudomonas), anaerobes',note:'Does NOT reliably cover MRSA or ESBL producers — combine with vancomycin or carbapenem respectively.'},
-  ],pearls:['Pip-tazo + vancomycin: increased nephrotoxicity compared to either alone — monitor creatinine closely.','Extended infusion: 3–4h infusion of each dose improves time above MIC — standard for Pseudomonas.','ESBL organisms: pip-tazo unreliable (inoculum effect) — use carbapenem instead.']},
+  drug_pip_tazo:{title:'Piperacillin-Tazobactam',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Pip-Tazo (Beta-lactam / Beta-lactamase inhibitor)',dose:'3.375g IV q6h (standard) or 4.5g IV q6h (Pseudomonas / severe). Extended infusion: 4.5g IV over 4h q8h.',covers:'Gram-pos (Strep, Enterococcus faecalis, MSSA — NOT MRSA), gram-neg including Pseudomonas, anaerobes (Bacteroides fragilis)',why:'Tazobactam inhibits many beta-lactamases → extends pip spectrum. Does NOT cover MRSA, ESBL (inoculum effect — may appear susceptible in vitro but fail clinically), or Stenotrophomonas.'}
+    ]}
+  ],pearls:['Pip-tazo + vancomycin: increased AKI risk vs either alone (~30% incidence in some series). Monitor creatinine every 24–48h.','ESBL organisms: pip-tazo unreliable despite in vitro susceptibility (inoculum effect) — use carbapenem.','Extended infusion (4h per dose): dramatically improves PD target attainment for Pseudomonas strains with MIC 8–16.']},
 
-  drug_meropenem:{title:'Meropenem',severity:'Carbapenem — broadest spectrum beta-lactam',drugs:[
-    {name:'Standard dosing',dose:'1g IV q8h  (2g IV q8h for CNS infections or resistant organisms)',note:'Extended infusion (3h) for MDR organisms to maximize time above MIC.'},
-    {name:'Coverage',dose:'Gram-pos (not MRSA/VRE), gram-neg (including ESBL, most Pseudomonas), anaerobes',note:'Reserve for MDR/ESBL — deescalate to narrower agent when possible.'},
-  ],pearls:['Does NOT cover MRSA — add vancomycin for gram-pos coverage if needed.','Carbapenem-resistant organisms (CRE/CRKP): consult ID. Consider ceftazidime-avibactam, meropenem-vaborbactam.','Lower seizure threshold than imipenem.','Stewardship: carbapenem use drives resistance — deescalate early.']},
+  drug_meropenem:{title:'Meropenem',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Meropenem (Carbapenem)',dose:'1g IV q8h standard; 2g IV q8h for CNS or highly resistant organisms. Extended infusion (3h) for MDR.',covers:'Gram-pos (not MRSA, VRE), gram-neg (ESBL, Pseudomonas, Acinetobacter, Enterobacter, Serratia), anaerobes — broadest beta-lactam spectrum',why:'Mechanism: inhibits penicillin-binding proteins (PBPs) → cell wall lysis. Stable to most beta-lactamases including ESBL. NOT stable to carbapenemases (KPC, NDM, OXA) → CRE/CRKP organisms may be resistant.'}
+    ]}
+  ],pearls:['Does NOT cover MRSA or VRE — add vancomycin if gram-pos coverage needed.','Lower seizure risk than imipenem (lacks central N-formimidoyl thienamycin group).','CRE (carbapenem-resistant Enterobacteriaceae): ID consult. Options: ceftazidime-avibactam, meropenem-vaborbactam, cefiderocol.','Stewardship: carbapenem use is the single biggest driver of CRE emergence — deescalate early.']},
 
-  drug_ceftriaxone:{title:'Ceftriaxone',severity:'3rd-gen cephalosporin — workhorse',drugs:[
-    {name:'Dosing',dose:'1–2g IV q24h (can use q12h for meningitis)',note:'Long half-life allows once-daily dosing. Excellent CNS penetration at 2g q12h.'},
-    {name:'Coverage',dose:'Gram-pos (Strep, not staph), gram-neg (not Pseudomonas), good MSSA but not MRSA',note:''},
-  ],pearls:['Does NOT cover Pseudomonas, MRSA, Enterococcus, anaerobes.','Biliary excretion can cause biliary sludge/pseudolithiasis with prolonged use.','Cross-reactivity with PCN allergy: <1% for 3rd-gen cephalosporins — ceftriaxone generally safe in PCN allergy if not anaphylaxis.','Step-down from IV to PO: switch to amoxicillin-clavulanate or an FQ for outpatient completion.']},
+  drug_ceftriaxone:{title:'Ceftriaxone',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Ceftriaxone (3rd-gen Cephalosporin)',dose:'1–2g IV q24h; 2g IV q12h for meningitis',covers:'Gram-pos: Streptococcus (excellent), MSSA (good), NOT MRSA or Enterococcus. Gram-neg: E. coli, Klebsiella, H. flu, Moraxella, Proteus, Neisseria — NOT Pseudomonas, NOT anaerobes.',why:'Long half-life (8h) enables once-daily dosing. Excellent CNS penetration at 2g q12h (use for meningitis). Biliary excretion.'}
+    ]}
+  ],pearls:['Does NOT cover: Pseudomonas, MRSA, Enterococcus, anaerobes, Listeria, MRSA.','Biliary sludge/pseudolithiasis with prolonged use — generally clinically insignificant.','PCN allergy: <1% cross-reactivity with 3rd-gen cephalosporins (avoid only with anaphylaxis history, even then ceftriaxone is low-risk by R1 side chain analysis).','MSSA: ceftriaxone is good but not as bactericidal as cefazolin or nafcillin — choose cefazolin for MSSA bacteremia.']},
 
-  drug_azithromycin:{title:'Azithromycin',severity:'Macrolide — atypical pathogen coverage',drugs:[
-    {name:'Dosing',dose:'500mg IV/PO q24h (IV) or 500mg PO day 1 → 250mg PO q24h × 4d (Z-pack)',note:'Tissue concentrations far exceed serum levels — long post-antibiotic effect.'},
-    {name:'Coverage',dose:'Atypicals (Mycoplasma, Chlamydophila, Legionella), Streptococcus (not reliable), H. influenzae (variable)',note:'Does NOT reliably cover S. pneumoniae in areas with high resistance.'},
-  ],pearls:['QTc prolongation: avoid in patients with baseline QTc >500ms or on other QT-prolonging agents.','Drug interactions: azithromycin is a CYP3A4 inhibitor — warfarin, statins, digoxin.','Macrolide prophylaxis in COPD: 250mg qd reduces exacerbations but increases resistance over time.','Never use as monotherapy for CAP in inpatient setting — combine with beta-lactam.']},
+  drug_azithromycin:{title:'Azithromycin',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Azithromycin (Macrolide)',dose:'500mg IV/PO q24h; Z-pack: 500mg day 1 → 250mg × 4 days',covers:'Atypicals: Legionella, Mycoplasma, Chlamydophila (excellent), Chlamydia trachomatis. Gram-pos: Strep (variable resistance). Gram-neg: H. flu, Moraxella.',why:'Mechanism: inhibits 50S ribosomal subunit → protein synthesis inhibition. Bacteriostatic. Concentrates in tissues and macrophages (tissue:serum ratio up to 300:1) — very long tissue half-life (68h) explains 5-day courses achieving weeks of tissue effect.'}
+    ]}
+  ],pearls:['QTc prolongation: avoid if baseline QTc >500ms or on other QT-prolonging agents. Risk is real but low in healthy patients.','Drug interactions: azithromycin is a CYP3A4 inhibitor — warfarin, digoxin, statins.','Macrolide resistance in S. pneumo: 25–30% in some regions — never use as monotherapy for inpatient CAP.','Never use as monotherapy for gonorrhea — high resistance.']},
 
-  drug_doxycycline:{title:'Doxycycline',severity:'Tetracycline — broad atypical/intracellular coverage',drugs:[
-    {name:'Dosing',dose:'100mg PO/IV BID (IV same dose as PO — excellent bioavailability)',note:'PO bioavailability ~93%. No dose adjustment needed for PO vs IV switch.'},
-    {name:'Coverage',dose:'Atypicals, MRSA (SSTI), Chlamydia, Lyme, Rickettsia, malaria prophylaxis, AECOPD',note:''},
-  ],pearls:['Avoid with antacids, calcium, iron — chelation reduces absorption.','Contraindicated in pregnancy (tooth/bone development) and children <8.','Phototoxicity — advise sunscreen.','Excellent choice for MRSA SSTI, Lyme disease, tick-borne illness, Rickettsia.','Take with full glass of water and stay upright 30 min — esophagitis risk.']},
+  drug_doxycycline:{title:'Doxycycline',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Doxycycline (Tetracycline)',dose:'100mg PO/IV BID. IV and PO doses are identical (bioavailability 93%).',covers:'Atypicals: Mycoplasma, Chlamydia, Chlamydophila, Legionella, Rickettsia, Anaplasma, Ehrlichia, Coxiella. MRSA (SSTI). Gram-neg: H. flu, some E. coli. Spirochetes: Lyme (Borrelia), Treponema (syphilis, PCN allergic). Protozoa: malaria prophylaxis.',why:'Mechanism: inhibits 30S ribosomal subunit → blocks aminoacyl-tRNA binding. Bacteriostatic. Lipophilic → excellent tissue penetration. Unique in breadth of intracellular pathogen coverage.'}
+    ]}
+  ],pearls:['Take with full glass of water + remain upright 30 min — esophageal ulceration risk (iron chelation also reduces absorption).','Contraindicated in pregnancy and children <8 (tooth discoloration, bone development).','Phototoxicity: counsel on sunscreen use.','No dose adjustment for renal impairment (unlike most ABx) — fecal elimination predominates.']},
 
-  drug_metronidazole:{title:'Metronidazole (Flagyl)',severity:'Anaerobic + antiprotozoal coverage',drugs:[
-    {name:'IV dosing',dose:'500mg IV q8h  OR  1g IV q12h (loading then 500mg q6–8h)',note:'Excellent CNS and tissue penetration.'},
-    {name:'PO dosing',dose:'500mg PO TID × 7–14d (depending on indication)',note:'PO bioavailability ~100% — preferred if tolerating PO.'},
-    {name:'Coverage',dose:'Anaerobes (gram-neg: Bacteroides, Fusobacterium), C. difficile (PO, NOT for C. diff treatment first-line), Trichomonas, Giardia, ameba',note:''},
-  ],pearls:['Avoid alcohol during treatment and 48h after — disulfiram-like reaction.','C. diff: oral metronidazole NO LONGER first-line (vancomycin or fidaxomicin now preferred per 2021 IDSA).','IV metronidazole used for fulminant C. diff (gets to colon via inflamed mucosa).','Drug interaction: warfarin (potentiates anticoagulation), lithium.','Metallic taste, peripheral neuropathy (prolonged use), neurotoxicity (high doses).']},
+  drug_metronidazole:{title:'Metronidazole',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Metronidazole (Nitroimidazole)',dose:'500mg IV q8h OR 500mg PO TID. PO bioavailability ~100%.',covers:'Obligate anaerobes (Bacteroides fragilis, Fusobacterium, Clostridium — but NOT first-line for C. diff). Protozoa: Trichomonas, Giardia, Entamoeba. Does NOT cover aerobic bacteria.',why:'Mechanism: enters anaerobic organisms where reducing environment activates metronidazole → forms free radicals that cause DNA strand breaks. Only works in obligate anaerobes (aerobes cannot reduce the drug). Excellent CNS penetration.'}
+    ]}
+  ],pearls:['Avoid alcohol during therapy and 48h after — disulfiram-like reaction (flushing, nausea, tachycardia).','C. diff: metronidazole NO LONGER first-line per 2021 IDSA guideline (vancomycin or fidaxomicin preferred). IV metronidazole used only in fulminant C. diff (accesses inflamed colon hematogenously).','Peripheral neuropathy with prolonged use (>3 months) — dose-dependent.','Warfarin interaction: potentiates anticoagulation (CYP2C9 inhibition).']},
 
-  drug_linezolid:{title:'Linezolid',severity:'Oxazolidinone — MRSA and VRE coverage',drugs:[
-    {name:'Dosing',dose:'600mg IV or PO q12h',note:'PO bioavailability ~100% — use for oral step-down of serious MRSA infections.'},
-    {name:'Coverage',dose:'MRSA, VRE (E. faecium and faecalis), drug-resistant Streptococcus, Nocardia',note:'Does NOT cover gram-negatives.'},
-  ],pearls:['MRSA pneumonia: linezolid may be superior to vancomycin (ZEPHYR trial) — achieves higher lung tissue levels.','Myelosuppression: weekly CBC for treatment >2 weeks — thrombocytopenia most common.','Serotonin syndrome: do NOT use with SSRIs/SNRIs, MAOIs, triptans without caution.','Weak MAO inhibitor — avoid tyramine-rich foods (aged cheese, wine) with prolonged use.','Daptomycin is inactivated by surfactant — linezolid is the preferred agent for MRSA pneumonia, NOT daptomycin.']},
+  drug_linezolid:{title:'Linezolid',category:'DRUG QUICK-REF',drugs:[
+    {label:'Mechanism & Spectrum',options:[
+      {drug:'Linezolid (Oxazolidinone)',dose:'600mg IV or PO q12h. PO bioavailability ~100%.',covers:'MRSA (excellent — superior lung penetration vs vancomycin), VRE (E. faecium and E. faecalis), Streptococcus, Nocardia, Mycobacteria (off-label). Does NOT cover gram-negatives.',why:'Mechanism: inhibits 50S ribosomal subunit at the 23S rRNA — unique binding site → no cross-resistance with other ribosomal inhibitors. Bacteriostatic vs most organisms, bactericidal vs Strep. MRSA pneumonia: linezolid superior (ZEPHYR trial) — higher lung tissue concentrations and antitoxin effect (inhibits toxin synthesis).'}
+    ]}
+  ],pearls:['Serotonin syndrome: do NOT combine with SSRIs, SNRIs, MAOIs, meperidine, tramadol without caution. Risk is real.','Myelosuppression: thrombocytopenia most common — weekly CBC if >2 weeks of therapy.','Weak MAO-A inhibitor: counsel on tyramine-containing foods (aged cheese, cured meats, red wine) with prolonged use.','Cost: significantly more expensive than vancomycin — use when PO step-down is the goal or renal failure precludes vancomycin.']}
+  ]},
 };
 
 function openAbxDrawer(key){
@@ -1809,42 +2013,50 @@ function openAbxDrawer(key){
   const d=ABX_DATA[key];
   if(!d) return;
 
-  const colorMap={
-    'RESPIRATORY':'var(--g)','URINARY TRACT':'var(--g2)','SKIN & SOFT TISSUE':'var(--g3)',
-    'INTRA-ABDOMINAL':'var(--g4)','CNS':'var(--g)','BACTEREMIA & ENDOCARDITIS':'var(--g2)',
-    'STI':'var(--g3)','EMPIRIC BROAD / ICU':'var(--g4)','DRUG QUICK-REF':'var(--g)'
-  };
-
-  let html=`<div style="padding:20px 20px 12px;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-      <div style="font-family:var(--mono);font-size:24px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${d.title}</div>
+  let html=`<div style="padding:20px 20px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+      <div style="font-family:var(--mono);font-size:15px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${d.title}</div>
       <button onclick="closeAbxDrawer()" style="background:transparent;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0;">×</button>
     </div>
-    <div style="font-family:var(--mono);font-size:20px;color:var(--t3);letter-spacing:.06em;margin-bottom:16px;">${d.severity}</div>`;
+    <div style="font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.1em;margin-bottom:18px;">${d.category}</div>
+  </div>`;
 
-  // Drugs table
-  html+=`<div style="margin-bottom:18px;">`;
-  d.drugs.forEach(drug=>{
-    html+=`<div style="border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;background:var(--s3);">
-      <div style="font-family:var(--mono);font-size:20px;color:var(--g);letter-spacing:.06em;margin-bottom:5px;">${drug.name}</div>
-      <div style="font-size:24px;color:var(--t);line-height:1.5;margin-bottom:${drug.note?'6px':'0'};">${drug.dose}</div>
-      ${drug.note?`<div style="font-size:22px;color:var(--t3);line-height:1.5;font-style:italic;">${drug.note}</div>`:''}
+  // Drug scenario cards
+  d.drugs.forEach(scenario=>{
+    html+=`<div style="margin:0 12px 12px;border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;">`;
+    // Situation label header
+    html+=`<div style="background:var(--s3);border-bottom:1px solid var(--b);padding:8px 14px;">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;">${scenario.label}</span>
     </div>`;
+    // Options with OR divider
+    scenario.options.forEach((opt,i)=>{
+      if(i>0){
+        html+=`<div style="display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--s2);">
+          <div style="flex:1;height:1px;background:var(--b);"></div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--t3);padding:6px 0;">— OR —</div>
+          <div style="flex:1;height:1px;background:var(--b);"></div>
+        </div>`;
+      }
+      html+=`<div style="padding:14px;background:var(--s2);">
+        <div style="font-family:var(--mono);font-size:13px;color:var(--g);font-weight:600;margin-bottom:6px;">${opt.drug}</div>
+        <div style="font-size:13px;color:var(--t);line-height:1.5;margin-bottom:8px;padding:8px 10px;background:var(--s3);border-radius:8px;border-left:2px solid var(--g);">${opt.dose}</div>
+        <div style="font-size:12px;color:var(--g2);margin-bottom:6px;"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--t3);">COVERS  </span>${opt.covers}</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6;font-style:italic;">${opt.why}</div>
+      </div>`;
+    });
+    html+=`</div>`;
   });
-  html+=`</div>`;
 
   // Pearls
   if(d.pearls && d.pearls.length){
-    html+=`<div style="background:rgba(127,255,110,0.04);border:1px solid rgba(127,255,110,0.12);border-radius:var(--r);padding:14px 16px;">
-      <div style="font-family:var(--mono);font-size:18px;color:var(--g);letter-spacing:.1em;margin-bottom:10px;">CLINICAL PEARLS</div>`;
+    html+=`<div style="margin:0 12px 24px;background:rgba(127,255,110,0.04);border:1px solid rgba(127,255,110,0.12);border-radius:var(--r);padding:14px 16px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.1em;margin-bottom:10px;">CLINICAL PEARLS</div>`;
     d.pearls.forEach(p=>{
-      html+=`<div style="font-size:22px;color:var(--t2);line-height:1.6;margin-bottom:7px;padding-left:14px;position:relative;">
-        <span style="position:absolute;left:0;color:var(--g);font-family:var(--mono);">›</span>${p}</div>`;
+      html+=`<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px;padding-left:16px;position:relative;">
+        <span style="position:absolute;left:0;color:var(--g);font-family:var(--mono);font-size:13px;">›</span>${p}</div>`;
     });
     html+=`</div>`;
   }
-
-  html+=`</div>`;
 
   const backdrop=document.createElement('div');
   backdrop.id='abx-drawer-backdrop';
@@ -1853,7 +2065,7 @@ function openAbxDrawer(key){
 
   const drawer=document.createElement('div');
   drawer.id='abx-drawer';
-  drawer.style.cssText='position:fixed;top:0;right:0;height:100%;width:min(460px,100%);background:var(--s2);border-left:1px solid var(--b2);z-index:201;transform:translateX(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 40px 0;';
+  drawer.style.cssText='position:fixed;top:0;right:0;height:100%;width:min(480px,100%);background:var(--s2);border-left:1px solid var(--b2);z-index:201;transform:translateX(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:40px;';
   drawer.innerHTML=html;
 
   document.body.appendChild(backdrop);
@@ -1868,6 +2080,7 @@ function closeAbxDrawer(){
   if(backdrop){ backdrop.style.opacity='0'; }
   setTimeout(()=>{ drawer&&drawer.remove(); backdrop&&backdrop.remove(); },300);
 }
+
 
 function togMore(){
   const tray=document.getElementById('more-tray');
