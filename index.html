@@ -29,6 +29,9 @@ body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:26px;
 .tabs::-webkit-scrollbar{display:none;}
 .tab{font-family:var(--mono);font-size:25px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
 .tab:hover{color:var(--t2);}.tab.on{color:var(--g);border-bottom:2px solid var(--g);}
+.clinic-pill{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.clinic-pill:hover{border-color:var(--g);color:var(--t);}
+.clinic-pill.on{background:var(--g);color:var(--bg);border-color:var(--g);font-weight:600;}
 .main{flex:1;padding:24px 32px;max-width:80%;width:100%;margin:0 auto;}
 .panel{display:none;}.panel.on{display:block;animation:fadeUp .25s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -408,6 +411,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <button class="tab" onclick="gT('mind',this)">MIND</button>
     <button class="tab" onclick="gT('tasks',this)">TASKS</button>
     <button class="tab" onclick="gT('abx',this)">ABX</button>
+    <button class="tab" onclick="gT('clinic',this)">CLINIC</button>
+    <button class="tab" onclick="gT('data',this)">DATA</button>
     <button class="tab" onclick="gT('settings',this)">SETTINGS</button>
   </div>
 </div>
@@ -994,6 +999,27 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<div id="panel-clinic" class="panel">
+  <div class="h1">Clinical <span>guide</span></div>
+  <div style="font-size:24px;color:var(--t3);margin-bottom:14px;">Complaint → Differential → Questions → Workup → SOAP</div>
+  <div style="position:relative;margin-bottom:12px;">
+    <input type="text" id="clinic-search" placeholder="Search complaint, diagnosis, symptom..." oninput="clinicFilter()" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 14px 10px 38px;font-family:var(--mono);font-size:13px;color:var(--t);outline:none;">
+    <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px;">⌕</span>
+  </div>
+  <div id="clinic-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
+  <div id="clinic-list"></div>
+</div>
+
+<div id="panel-data" class="panel">
+  <div class="h1">Objective <span>data</span></div>
+  <div style="font-size:24px;color:var(--t3);margin-bottom:14px;">Labs · EKG · Radiology · Micro · Vent · RHC</div>
+  <div style="position:relative;margin-bottom:12px;">
+    <input type="text" id="data-search" placeholder="Search lab, finding, value..." oninput="dataFilter()" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 14px 10px 38px;font-family:var(--mono);font-size:13px;color:var(--t);outline:none;">
+    <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px;">⌕</span>
+  </div>
+  <div id="data-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
+  <div id="data-list"></div>
+</div>
 <div id="panel-settings" class="panel">
   <div class="h1">Settings &amp; <span>sync</span></div>
   <div class="g2">
@@ -1332,6 +1358,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="more-item" id="mi-anki" onclick="gM('anki',null);togMore()"><span class="micon">A↓</span><span class="mlbl">Anki</span></div>
       <div class="more-item" id="mi-curriculum" onclick="gM('curriculum',null);togMore()"><span class="micon">Hx</span><span class="mlbl">Curr</span></div>
       <div class="more-item" id="mi-abx" onclick="gM('abx',null);togMore()"><span class="micon">Rx</span><span class="mlbl">ABX</span></div>
+      <div class="more-item" id="mi-clinic" onclick="gM('clinic',null);togMore()"><span class="micon">Hx</span><span class="mlbl">Clinic</span></div>
+      <div class="more-item" id="mi-data" onclick="gM('data',null);togMore()"><span class="micon">≡</span><span class="mlbl">Data</span></div>
       <div class="more-item" id="mi-settings" onclick="gM('settings',null);togMore()"><span class="micon">⚙</span><span class="mlbl">Settings</span></div>
     </div>
   </div>
@@ -2080,6 +2108,938 @@ function closeAbxDrawer(){
   setTimeout(()=>{ drawer&&drawer.remove(); backdrop&&backdrop.remove(); },300);
 }
 
+
+// ============================================================
+// CLINIC DATA (complaint-based)
+// ============================================================
+var CLINIC_DATA={
+  cardio:{name:'Cardiology',color:'var(--g4)',complaints:[
+    {id:'chest_pain',name:'Chest Pain',cantMiss:['ACS (STEMI/NSTEMI/UA)','Aortic dissection','Pulmonary embolism','Tension pneumothorax','Pericardial tamponade','Esophageal rupture (Boerhaave)'],
+      ddx:[
+        {dx:'ACS — STEMI/NSTEMI/Unstable angina',risk:'high',features:'Substernal pressure, radiation to L arm/jaw, diaphoresis, dyspnea. Exertional. Risk: age, DM, HTN, smoking, prior CAD. Women/diabetics/elderly often atypical.'},
+        {dx:'Aortic dissection',risk:'high',features:'Tearing/ripping pain radiating to BACK, max at onset. >20 mmHg SBP differential between arms. Widened mediastinum on CXR. HTN history or connective tissue disease (Marfan).'},
+        {dx:'Pulmonary embolism',risk:'high',features:'Pleuritic pain, dyspnea, tachycardia, hypoxia. Risk: immobility, malignancy, OCP, prior VTE, recent surgery. Often normal exam.'},
+        {dx:'Tension pneumothorax',risk:'high',features:'Sudden pleuritic pain, dyspnea, absent breath sounds + hyperresonance one side, tracheal deviation AWAY, hypotension/JVD. Clinical dx — do not wait for imaging.'},
+        {dx:'Pericarditis/tamponade',risk:'high',features:'Sharp pleuritic pain, BETTER leaning forward, worse supine. Friction rub. Diffuse ST elevation + PR depression. Tamponade: Beck triad (hypotension, JVD, muffled tones), pulsus paradoxus >10mmHg.'},
+        {dx:'Esophageal rupture (Boerhaave)',risk:'high',features:'Severe pain after forceful vomiting, subcutaneous emphysema, Hamman crunch. Mackler triad: vomiting, chest pain, subcutaneous emphysema.'},
+        {dx:'GERD / esophageal spasm',risk:'low',features:'Burning, postprandial, worse supine, relieved by antacids. Dx of exclusion — never assume in undifferentiated chest pain.'},
+        {dx:'Musculoskeletal / costochondritis',risk:'low',features:'Reproducible with palpation, positional, sharp/localized. Dx of exclusion.'}
+      ],
+      questions:[
+        {q:'Character — pressure/squeezing vs sharp vs tearing?',why:'Pressure favors ischemia; tearing radiating to back flags dissection; sharp pleuritic suggests PE/pericarditis/PTX.'},
+        {q:'Onset — gradual vs maximal at start (thunderclap)?',why:'Maximal-at-onset pain is the hallmark of aortic dissection and PE.'},
+        {q:'Radiation — arm, jaw, back?',why:'Arm/jaw → ACS. Interscapular/back → dissection.'},
+        {q:'Provoked by exertion, relieved by rest/nitro?',why:'Exertional pain relieved by rest is classic angina. Nitro response is NOT diagnostic of cardiac (also relieves esophageal spasm).'},
+        {q:'Pleuritic (worse with breathing) or positional?',why:'Pleuritic → PE, pericarditis, PTX, pneumonia. Better leaning forward → pericarditis.'},
+        {q:'Associated dyspnea, diaphoresis, nausea, syncope?',why:'Diaphoresis + nausea raises ACS probability substantially. Syncope with chest pain → PE or dissection.'},
+        {q:'Risk factors — DM, HTN, smoking, family hx CAD <55, prior MI/stent?',why:'Quantifies pretest probability of ACS; drives HEART score.'},
+        {q:'VTE risk — immobility, cancer, surgery, OCP, prior clot, leg swelling?',why:'Drives Wells/PERC for PE.'}
+      ],
+      workup:['EKG within 10 min of arrival (repeat if ongoing/changing pain) — compare to prior','Troponin at 0h and 1–3h (delta); high-sensitivity troponin protocol if available','CXR — mediastinal width, PTX, effusion, pneumonia','HEART score to risk-stratify (0–3 low, 4–6 moderate, ≥7 high)','If PE suspected: Wells/PERC → D-dimer (if low/intermediate) or CTPA','If dissection suspected: CT angiography chest; do not delay for D-dimer','CBC, BMP, magnesium; consider lipase if epigastric'],
+      management:['MONA is outdated — give ASA 162–325 mg chewed for suspected ACS','STEMI → activate cath lab, goal door-to-balloon <90 min; if no PCI <120 min, thrombolytics','NSTEMI/UA → antiplatelet, anticoagulation, risk stratify (TIMI/GRACE), cardiology consult','Nitro for ongoing ischemic pain (AVOID if RV infarct, severe AS, or PDE5 inhibitor use)','Dissection → control HR first (esmolol/labetalol to HR <60) THEN BP (SBP 100–120); emergent surgery for type A','PE → anticoagulate; thrombolytics if massive (hemodynamic instability)'],
+      soap:{subjective:['HPI: OLDCARTS — Onset (sudden vs gradual), Location, Duration, Character, Aggravating/Alleviating, Radiation, Timing, Severity (0–10)','Document pertinent positives AND negatives (no diaphoresis, no exertional component, etc.)','Cardiac risk factors, prior cardiac workup/caths, VTE risk factors','Response to interventions (ASA, nitro)'],objective:['Vitals incl. BP in BOTH arms if dissection considered, SpO2','Cardiac: rate/rhythm, murmurs, rubs, gallops; JVD','Pulm: breath sounds symmetry, crackles','Extremities: edema, pulses, calf tenderness','EKG interpretation documented; troponin values with times; CXR read']}},
+    {id:'palpitations',name:'Palpitations',cantMiss:['VT/VF','SVT with instability','WPW with AFib (pre-excited)','Long QT / torsades','Brugada','Electrolyte derangement (K/Mg)'],
+      ddx:[
+        {dx:'AFib / Aflutter',risk:'high',features:'Irregularly irregular, often rate-related symptoms. Stroke risk (CHA2DS2-VASc). Rate vs rhythm control decision.'},
+        {dx:'SVT (AVNRT/AVRT)',risk:'high',features:'Sudden onset/offset, regular, rate 150–250. Terminates with vagal maneuvers/adenosine.'},
+        {dx:'Ventricular tachycardia',risk:'high',features:'Wide complex, regular; assume VT in patient with structural heart disease/prior MI until proven otherwise.'},
+        {dx:'PVCs/PACs',risk:'low',features:'Skipped beats, isolated. Usually benign but quantify burden if frequent.'},
+        {dx:'Sinus tachycardia (secondary)',risk:'low',features:'Look for the cause: anemia, hyperthyroid, fever, hypovolemia, PE, anxiety, stimulants.'}
+      ],
+      questions:[
+        {q:'Regular vs irregular? Fast or slow? Can you tap the rhythm?',why:'Irregularly irregular → AFib. Regular fast → SVT/VT.'},
+        {q:'Sudden vs gradual onset and offset?',why:'Abrupt start/stop favors paroxysmal SVT; gradual favors sinus tach.'},
+        {q:'Associated syncope, chest pain, dyspnea?',why:'Syncope with palpitations is a RED FLAG for VT/structural disease — urgent.'},
+        {q:'Triggers — caffeine, alcohol (holiday heart), stimulants, exertion?',why:'Exertional onset raises concern for catecholaminergic VT/structural disease.'},
+        {q:'Family hx sudden cardiac death <40, known channelopathy?',why:'Flags Long QT, Brugada, HCM, ARVC.'},
+        {q:'Medications, OTC stimulants, thyroid symptoms?',why:'Identifies reversible/secondary causes.'}
+      ],
+      workup:['12-lead EKG during symptoms if possible; baseline EKG (QTc, delta wave, Brugada pattern, prior MI)','BMP + magnesium, CBC, TSH, troponin if chest pain/syncope','Ambulatory monitor (Holter 24–48h, or event/patch monitor) for intermittent symptoms','Echo if structural disease suspected','CHA2DS2-VASc + HAS-BLED if AFib confirmed'],
+      management:['Unstable (hypotension, AMS, ischemia, HF) → synchronized cardioversion','Stable SVT → vagal maneuvers → adenosine 6 mg then 12 mg','AFib with RVR → rate control (BB or non-DHP CCB); anticoagulate per CHA2DS2-VASc','WPW + AFib → AVOID AV nodal blockers (adenosine, CCB, BB, digoxin); use procainamide','Correct K (goal >4) and Mg (goal >2)'],
+      soap:{subjective:['Onset/offset pattern, regularity (patient tap-out), duration, frequency','Triggers, caffeine/alcohol/stimulant use, associated syncope/chest pain/dyspnea','Family hx of sudden death, prior arrhythmia, thyroid hx'],objective:['Vitals incl. orthostatics if relevant','Cardiac exam, signs of HF, thyroid exam','EKG rhythm interpretation with rate, regularity, QRS width, QTc','K, Mg, TSH, troponin values']}},
+    {id:'syncope',name:'Syncope',cantMiss:['Cardiac syncope (arrhythmia, structural)','PE','Aortic dissection','SAH','GI bleed/ruptured AAA (hypovolemic)','Aortic stenosis'],
+      ddx:[
+        {dx:'Cardiac — arrhythmic/structural',risk:'high',features:'EXERTIONAL syncope, no prodrome, palpitations preceding, hx structural disease, family hx SCD. AS triad: syncope, angina, HF.'},
+        {dx:'Pulmonary embolism',risk:'high',features:'Syncope can be sole presentation of massive PE — check for RV strain.'},
+        {dx:'Orthostatic hypotension',risk:'low',features:'Positional (standing), volume depletion, autonomic, medications. SBP drop ≥20 or DBP ≥10 within 3 min standing.'},
+        {dx:'Vasovagal (neurocardiogenic)',risk:'low',features:'Prodrome (warmth, nausea, tunnel vision), triggers (pain, prolonged standing, emotion). Most common; dx of exclusion in young.'}
+      ],
+      questions:[
+        {q:'Exertional or at rest? During or after activity?',why:'Exertional syncope is cardiac until proven otherwise — high mortality. Post-exertional more often vasovagal.'},
+        {q:'Prodrome — lightheaded, nausea, warmth, visual changes?',why:'Prodrome favors vasovagal/orthostatic. NO prodrome / sudden → arrhythmia.'},
+        {q:'Palpitations or chest pain before?',why:'Suggests arrhythmic or ischemic etiology.'},
+        {q:'Position when it happened (standing up, lying)?',why:'On standing → orthostatic. Supine syncope is concerning for cardiac.'},
+        {q:'Tongue biting, incontinence, post-ictal confusion?',why:'Distinguishes seizure from syncope (brief myoclonic jerks can occur in true syncope).'},
+        {q:'Family hx sudden death <40?',why:'Channelopathy/HCM risk.'},
+        {q:'Medications — antihypertensives, QT-prolonging, diuretics?',why:'Identifies iatrogenic orthostasis or torsades risk.'}
+      ],
+      workup:['EKG (mandatory in ALL syncope) — arrhythmia, ischemia, QTc, pre-excitation, Brugada, epsilon wave','Orthostatic vitals','CBC (occult bleed/anemia), BMP, glucose, troponin if cardiac suspicion, pregnancy test','Canadian Syncope Risk Score or San Francisco Syncope Rule for disposition','Telemetry/admit if high-risk; echo if structural suspected','CTPA only if PE suspected (do not reflex order)'],
+      management:['Risk-stratify cardiac vs non-cardiac — drives admission','Cardiac syncope or high-risk → admit, telemetry, cardiology','Reflex/orthostatic → counseling, volume, med review, compression stockings','Treat underlying cause (anemia → transfuse, arrhythmia → manage)'],
+      soap:{subjective:['Pre-syncope (prodrome/triggers/position), during event (witnessed? convulsion?), post-event (recovery time, confusion)','Exertional relationship, palpitations, chest pain, prior episodes','Family hx SCD, medications, cardiac/neuro history'],objective:['Orthostatic vitals documented','Cardiac exam (murmurs — AS, HCM), neuro exam, signs of trauma/bleed','EKG interpretation; troponin, H/H, glucose values','Risk score documented with disposition rationale']}}
+  ]},
+  pulm:{name:'Pulmonary',color:'var(--g2)',complaints:[
+    {id:'dyspnea',name:'Dyspnea',cantMiss:['PE','Tension pneumothorax','ACS/flash pulmonary edema','Anaphylaxis','Upper airway obstruction','DKA (Kussmaul)'],
+      ddx:[
+        {dx:'Acute pulmonary edema (CHF exacerbation)',risk:'high',features:'Orthopnea, PND, bilateral crackles, S3, JVD, edema. BNP elevated. Wet on CXR (cephalization, Kerley B, effusions).'},
+        {dx:'PE',risk:'high',features:'Pleuritic pain, tachycardia, hypoxia, clear lungs. Risk factors present. Wells/PERC.'},
+        {dx:'COPD/asthma exacerbation',risk:'high',features:'Wheezing, prolonged expiration, accessory muscle use, known disease, trigger. Watch for silent chest (impending failure).'},
+        {dx:'Pneumonia',risk:'high',features:'Fever, productive cough, focal crackles/consolidation, leukocytosis, infiltrate.'},
+        {dx:'Pneumothorax',risk:'high',features:'Sudden pleuritic pain, unilateral decreased breath sounds. Tall thin young (primary) or COPD (secondary).'},
+        {dx:'Anemia / metabolic acidosis',risk:'low',features:'Exertional dyspnea (anemia), Kussmaul (DKA/uremia). Check H/H, gas, anion gap.'}
+      ],
+      questions:[
+        {q:'Onset — sudden (seconds-minutes) vs gradual (days)?',why:'Sudden → PE, PTX, flash edema, anaphylaxis. Gradual → CHF, COPD, pneumonia, effusion.'},
+        {q:'Orthopnea / PND — how many pillows? Wake gasping?',why:'Specific for cardiogenic pulmonary edema/CHF.'},
+        {q:'Pleuritic pain, leg swelling, recent immobility?',why:'Drives PE probability.'},
+        {q:'Fever, productive cough, sick contacts?',why:'Points to pneumonia/infection.'},
+        {q:'Wheezing, known asthma/COPD, trigger exposure?',why:'Obstructive disease; quantify baseline (home O2, prior intubations).'},
+        {q:'Exertional tolerance change (how far can you walk now vs before)?',why:'Quantifies functional decline; tracks chronic vs acute.'}
+      ],
+      workup:['SpO2 + ABG/VBG if respiratory distress or AMS','CXR — edema, infiltrate, PTX, effusion','EKG, troponin, BNP (BNP <100 makes CHF unlikely; >400 likely)','CBC, BMP, lactate','D-dimer/CTPA per Wells/PERC if PE suspected','Bedside POCUS — B-lines (edema), lung sliding (PTX), RV strain (PE), IVC'],
+      management:['Oxygen to SpO2 ≥90% (88–92% if COPD CO2 retainer)','Flash pulmonary edema → NIPPV, IV nitro, diuresis','COPD/asthma → albuterol/ipratropium nebs, steroids, consider NIPPV','Pneumonia → antibiotics per ABX guide','PE → anticoagulate','Anaphylaxis → IM epinephrine 0.3–0.5 mg'],
+      soap:{subjective:['Onset/duration, orthopnea/PND quantified, exertional tolerance, associated cough/fever/pain','Pulmonary & cardiac history, home O2, prior intubations, baseline function','Medication adherence (diuretics, inhalers)'],objective:['Vitals incl. SpO2 on what FiO2, respiratory rate, work of breathing','Lung exam (crackles/wheeze/decreased BS location), cardiac (JVD, S3, edema)','CXR read, BNP/troponin/gas values, POCUS findings if done']}},
+    {id:'hemoptysis',name:'Hemoptysis',cantMiss:['Massive hemoptysis (airway compromise)','PE with infarction','Malignancy','TB','Diffuse alveolar hemorrhage / vasculitis','Aortobronchial fistula'],
+      ddx:[
+        {dx:'Bronchitis (most common, mild)',risk:'low',features:'Blood-streaked sputum with URI. Self-limited.'},
+        {dx:'Malignancy',risk:'high',features:'Smoker, weight loss, age >40, recurrent. Mass on imaging.'},
+        {dx:'PE with pulmonary infarction',risk:'high',features:'Pleuritic pain + hemoptysis + VTE risk.'},
+        {dx:'TB / infection',risk:'high',features:'Fever, night sweats, weight loss, exposure, cavitary lesion.'},
+        {dx:'Diffuse alveolar hemorrhage',risk:'high',features:'Vasculitis (GPA), anti-GBM. Hemoptysis + hematuria + dropping H/H + diffuse infiltrates.'}
+      ],
+      questions:[
+        {q:'How much — streaks vs cups? Quantify in mL/24h.',why:'Massive (>100–200 mL/24h or any airway compromise) is an emergency — asphyxiation, not exsanguination, kills.'},
+        {q:'True hemoptysis vs hematemesis vs pseudohemoptysis (nasopharyngeal)?',why:'Frothy/bright red + cough = airway; coffee-ground/food = GI; localize source.'},
+        {q:'Smoking history (pack-years), weight loss, fevers/night sweats?',why:'Malignancy and TB risk.'},
+        {q:'VTE risk factors, pleuritic pain, leg swelling?',why:'PE with infarction.'},
+        {q:'Hematuria, anticoagulants, bleeding elsewhere?',why:'DAH/vasculitis vs coagulopathy.'}
+      ],
+      workup:['CBC, coags, type & screen, BMP, urinalysis (pulmonary-renal syndrome)','CXR then CT chest (CT angiography if PE or massive)','Localize bleeding — bronchoscopy if massive/persistent','Sputum: AFB, cytology, culture','Vasculitis workup if DAH suspected (ANCA, anti-GBM)'],
+      management:['Massive → ABCs, position bleeding lung DOWN (protect good lung), large-bore IV, reverse coagulopathy, urgent IR (bronchial artery embolization) ± bronchoscopy, possible intubation with large ETT','Stable → treat underlying cause','Hold anticoagulation, correct coagulopathy'],
+      soap:{subjective:['Volume/duration/frequency, distinguish from hematemesis, color/consistency','Smoking pack-years, B symptoms, VTE risk, hematuria, anticoagulant use','Prior lung disease, TB exposure/travel'],objective:['Vitals, SpO2, signs of airway compromise/respiratory distress','Lung exam, oropharynx/nasopharynx inspection','CXR/CT read, H/H trend, coags, UA results']}},
+    {id:'cough',name:'Cough',cantMiss:['Pneumonia','PE','CHF','TB','Lung cancer','Foreign body / aspiration'],
+      ddx:[
+        {dx:'Acute viral URI / bronchitis',risk:'low',features:'<3 weeks, URI symptoms, self-limited. Antibiotics NOT indicated.'},
+        {dx:'Pneumonia',risk:'high',features:'Fever, focal findings, productive, infiltrate.'},
+        {dx:'Pertussis',risk:'high',features:'Paroxysmal cough, inspiratory whoop, post-tussive emesis, weeks.'},
+        {dx:'Chronic (>8 wk): UACS, asthma, GERD',risk:'low',features:'Upper airway cough syndrome (postnasal drip), cough-variant asthma, GERD — the big three for chronic cough.'},
+        {dx:'ACE-inhibitor cough',risk:'low',features:'Dry cough weeks-months after starting ACEi; resolves on discontinuation.'}
+      ],
+      questions:[
+        {q:'Duration — acute (<3 wk), subacute (3–8 wk), chronic (>8 wk)?',why:'Frames the entire differential and workup intensity.'},
+        {q:'Productive? Color/blood? Fever?',why:'Purulent + fever → pneumonia; blood → see hemoptysis pathway.'},
+        {q:'Postnasal drip, heartburn, wheeze?',why:'Targets the chronic cough triad (UACS, GERD, asthma).'},
+        {q:'On an ACE inhibitor? Smoking? Occupational exposure?',why:'ACEi cough, malignancy, occupational lung disease.'},
+        {q:'Sick contacts, TB exposure, immunocompromise?',why:'Infectious workup and isolation needs.'}
+      ],
+      workup:['Acute + well-appearing: clinical, no imaging needed','CXR if: fever, abnormal vitals, focal exam, hemoptysis, immunocompromise, age/risk','Chronic: CXR, spirometry, trial-based approach (treat UACS/GERD/asthma empirically)','Consider pertussis PCR, TB testing per risk'],
+      management:['Viral: supportive, no antibiotics (stewardship)','Pneumonia: antibiotics per CAP guide','UACS: intranasal steroid/antihistamine; GERD: PPI trial; asthma: ICS','Stop ACEi if suspected','Pertussis: macrolide (limits transmission)'],
+      soap:{subjective:['Duration/character/productive/triggers, associated fever/dyspnea/weight loss','Smoking, ACEi use, GERD/allergy symptoms, exposures','Prior pulmonary disease, immunization status'],objective:['Vitals incl. SpO2, lung exam findings (focal vs diffuse)','HEENT for postnasal drip, oropharynx','CXR read if obtained; spirometry if chronic']}}
+  ]},
+  gi:{name:'GI',color:'var(--g3)',complaints:[
+    {id:'abd_pain',name:'Abdominal Pain',cantMiss:['Ruptured AAA','Mesenteric ischemia','Perforated viscus','Ectopic pregnancy','Acute MI (inferior)','Bowel obstruction with strangulation','Ascending cholangitis'],
+      ddx:[
+        {dx:'Appendicitis',risk:'high',features:'Periumbilical → RLQ migration, anorexia, McBurney tenderness, fever. Alvarado score.'},
+        {dx:'Cholecystitis/cholangitis',risk:'high',features:'RUQ pain, Murphy sign, fever. Charcot triad (fever, jaundice, RUQ) = cholangitis = emergency.'},
+        {dx:'Bowel obstruction',risk:'high',features:'Crampy pain, distension, vomiting, no flatus/BM, prior surgery (adhesions). Air-fluid levels.'},
+        {dx:'Mesenteric ischemia',risk:'high',features:'PAIN OUT OF PROPORTION to exam, AFib/vascular disease, lactic acidosis. High mortality, often missed.'},
+        {dx:'Perforation',risk:'high',features:'Sudden severe pain, rigid abdomen, free air under diaphragm.'},
+        {dx:'Pancreatitis',risk:'high',features:'Epigastric → back, vomiting, lipase >3× ULN. Gallstones/alcohol.'},
+        {dx:'AAA rupture',risk:'high',features:'Older, pulsatile mass, hypotension, back/flank pain. Do not delay.'},
+        {dx:'Ectopic pregnancy',risk:'high',features:'ANY woman of childbearing age with abd pain — βhCG mandatory.'}
+      ],
+      questions:[
+        {q:'Location and migration (where started, where now)?',why:'Migration periumbilical→RLQ = appendicitis. Location maps to organ/quadrant differential.'},
+        {q:'Character — crampy/colicky vs constant vs tearing?',why:'Colicky → obstruction/stone; constant → inflammation/ischemia; tearing → AAA/dissection.'},
+        {q:'Pain out of proportion to exam?',why:'Cardinal feature of mesenteric ischemia — must actively elicit.'},
+        {q:'Relation to meals (better or worse)?',why:'Worse after fatty meal → biliary; better with food → duodenal ulcer; worse → gastric ulcer/mesenteric angina.'},
+        {q:'Vomiting — feculent? Bilious? Blood? Last BM/flatus?',why:'Feculent/no flatus → obstruction; bloody → see GI bleed.'},
+        {q:'Fever, urinary symptoms, vaginal bleeding, LMP?',why:'Infection, GU source, ectopic/PID in women.'},
+        {q:'Prior abdominal surgery? Vascular disease/AFib?',why:'Adhesive obstruction; embolic mesenteric ischemia.'}
+      ],
+      workup:['βhCG in ALL women of childbearing age','CBC, BMP, LFTs, lipase, lactate (ischemia/sepsis), UA','Type & screen if surgical/bleeding','Imaging: CT abd/pelvis with contrast (most causes); RUQ US (biliary); upright CXR (free air)','Lactate + CTA if mesenteric ischemia suspected','EKG if epigastric/older (inferior MI mimics)'],
+      management:['Resuscitate (IV fluids), analgesia (does NOT mask surgical abdomen — myth)','NPO, NG tube if obstruction/vomiting','Surgical consult for peritonitis, perforation, ischemia, obstruction with strangulation','Antibiotics for perforation/cholangitis/intra-abdominal sepsis','Serial exams if undifferentiated'],
+      soap:{subjective:['OLDCARTS, migration, relation to meals/BM, vomiting character, GU/GYN symptoms, LMP','Surgical history, vascular/AFib history, alcohol use','Pertinent negatives (no fever, normal BM, etc.)'],objective:['Vitals (fever, hemodynamics), general appearance (toxic? writhing vs still)','Abdominal exam: distension, bowel sounds, location of tenderness, peritoneal signs (rebound, guarding, rigidity), Murphy/McBurney, pulsatile mass, hernias','Rectal/pelvic if indicated','βhCG, labs, lactate, imaging read']}},
+    {id:'gi_bleed',name:'GI Bleed',cantMiss:['Variceal hemorrhage','Aortoenteric fistula','Massive bleed/shock','Ruptured AAA','Brisk lower GI bleed'],
+      ddx:[
+        {dx:'Upper GI — PUD',risk:'high',features:'Melena, hematemesis/coffee-ground, NSAID/H. pylori. Most common UGIB.'},
+        {dx:'Variceal bleed',risk:'high',features:'Cirrhosis/portal HTN, large-volume hematemesis. High mortality.'},
+        {dx:'Lower GI — diverticular',risk:'high',features:'Painless hematochezia, older. Most common LGIB; usually self-limited but can be brisk.'},
+        {dx:'Angiodysplasia',risk:'low',features:'Recurrent painless bleeding, older, AS/CKD association.'},
+        {dx:'Malignancy',risk:'high',features:'Weight loss, iron-deficiency anemia, change in bowel habits.'}
+      ],
+      questions:[
+        {q:'Hematemesis/coffee-ground vs melena vs hematochezia?',why:'Hematemesis/melena → upper; hematochezia → lower (but brisk upper can present as hematochezia).'},
+        {q:'How much and how many episodes?',why:'Estimates blood loss and acuity.'},
+        {q:'NSAID/aspirin/anticoagulant/antiplatelet use?',why:'PUD risk and reversal planning.'},
+        {q:'Liver disease, alcohol, known varices?',why:'Variceal source changes management (octreotide, antibiotics, urgent EGD).'},
+        {q:'Lightheaded, syncope, chest pain?',why:'Hemodynamic significance; demand ischemia.'},
+        {q:'Prior AAA repair (aortoenteric fistula)?',why:'Rare but catastrophic — herald bleed before massive.'}
+      ],
+      workup:['Two large-bore IVs (18g or larger), type & cross','CBC (Hgb may be normal early — equilibration takes hours), BMP (BUN/Cr ratio >30 suggests UGIB), LFTs, coags, lactate','Orthostatic vitals','Glasgow-Blatchford score (≤1 may be outpatient)','Rectal exam (melena vs hematochezia)','NG lavage not routinely recommended','Consult GI for endoscopy timing'],
+      management:['Resuscitate: crystalloid then blood; transfuse to Hgb ≥7 (restrictive — better outcomes; ≥8 if cardiac)','Reverse anticoagulation per agent; hold offending drugs','UGIB: IV PPI; if cirrhotic add octreotide + ceftriaxone (reduces mortality)','Massive transfusion protocol if shock','EGD within 24h (UGIB); colonoscopy for LGIB; IR/surgery if refractory'],
+      soap:{subjective:['Bleeding type/volume/frequency, NSAID/anticoagulant use, liver disease/alcohol, prior bleeds/scopes','Symptoms of hypovolemia (lightheaded, syncope), associated pain','AAA repair history'],objective:['Vitals incl. orthostatics, signs of shock/pallor','Abdominal exam, rectal exam (stool color/character/melena)','Stigmata of liver disease (ascites, spider angiomata, caput)','Hgb trend, BUN/Cr ratio, coags, lactate; Blatchford score']}},
+    {id:'nv',name:'Nausea / Vomiting',cantMiss:['Bowel obstruction','DKA','Increased ICP','MI','Pregnancy','Adrenal crisis','Toxic ingestion'],
+      ddx:[
+        {dx:'Gastroenteritis',risk:'low',features:'Diarrhea, sick contacts, self-limited, diffuse cramps.'},
+        {dx:'Bowel obstruction',risk:'high',features:'Bilious/feculent vomiting, distension, no flatus, prior surgery.'},
+        {dx:'DKA',risk:'high',features:'Diabetic, polyuria, abd pain, Kussmaul, anion gap acidosis.'},
+        {dx:'Increased ICP',risk:'high',features:'Morning vomiting, headache, focal deficits, papilledema; projectile.'},
+        {dx:'Inferior MI',risk:'high',features:'N/V with diaphoresis, especially diabetics/elderly/women — get an EKG.'},
+        {dx:'Pregnancy / hyperemesis',risk:'low',features:'Childbearing age — βhCG.'}
+      ],
+      questions:[
+        {q:'Bilious, feculent, or bloody vomitus?',why:'Bilious/feculent → obstruction distal to pylorus; bloody → UGIB.'},
+        {q:'Timing — morning (ICP, pregnancy), post-prandial (gastroparesis/obstruction)?',why:'Patterns localize cause.'},
+        {q:'Headache, vision changes, neuro symptoms?',why:'Flags raised ICP/central cause.'},
+        {q:'Abdominal pain, last BM/flatus, distension?',why:'Obstruction vs ileus.'},
+        {q:'Diabetic? Polyuria/polydipsia? Med changes (missed insulin)?',why:'DKA precipitant.'},
+        {q:'LMP, possibility of pregnancy?',why:'Always exclude pregnancy.'}
+      ],
+      workup:['βhCG (women), BMP (anion gap, K, renal), glucose, lipase, LFTs','CBC, lactate; consider VBG if acidosis','EKG if cardiac risk or epigastric','Abdominal imaging (obstruction series/CT) if surgical concern','CT/MRI head if neuro signs'],
+      management:['Antiemetics (ondansetron 4 mg — check QTc; metoclopramide if gastroparesis, avoid in obstruction)','IV fluids + electrolyte repletion (K, Mg)','Treat underlying cause (DKA protocol, decompress obstruction with NG)','NPO if surgical'],
+      soap:{subjective:['Onset/duration/frequency, vomitus character (bilious/bloody/feculent), timing pattern','Associated pain, headache/neuro symptoms, diabetic history, LMP','Med changes, sick contacts, dietary history'],objective:['Vitals, volume status (mucous membranes, skin turgor, orthostatics)','Abdominal exam (distension, tenderness, bowel sounds), neuro if indicated','Glucose, anion gap/BMP, βhCG, lipase, EKG if obtained']}},
+    {id:'diarrhea',name:'Diarrhea',cantMiss:['C. difficile / toxic megacolon','Severe dehydration/shock','GI bleed (bloody diarrhea/EHEC-HUS)','Ischemic colitis','Sepsis'],
+      ddx:[
+        {dx:'Viral gastroenteritis',risk:'low',features:'Watery, self-limited, sick contacts, no blood.'},
+        {dx:'C. difficile',risk:'high',features:'Recent antibiotics/hospitalization, watery, leukocytosis, can progress to toxic megacolon.'},
+        {dx:'Inflammatory/invasive bacterial',risk:'high',features:'Bloody/mucoid (dysentery), fever, tenesmus — Shigella, Salmonella, Campylobacter, EHEC.'},
+        {dx:'Inflammatory bowel disease',risk:'high',features:'Chronic, bloody, weight loss, extraintestinal signs.'},
+        {dx:'Ischemic colitis',risk:'high',features:'Older, vascular disease, pain then bloody diarrhea.'}
+      ],
+      questions:[
+        {q:'Acute (<14d) vs chronic (>4 wk)? Watery vs bloody?',why:'Bloody (dysentery) → invasive bacterial/IBD/ischemic; frames workup intensity.'},
+        {q:'Recent antibiotics or hospitalization?',why:'C. difficile risk.'},
+        {q:'Fever, tenesmus, abdominal pain?',why:'Invasive/inflammatory process.'},
+        {q:'Travel, sick contacts, food exposures, immunocompromise?',why:'Targets pathogens (traveler\'s, parasitic, opportunistic).'},
+        {q:'Signs of dehydration — urine output, dizziness?',why:'Severity and resuscitation needs.'}
+      ],
+      workup:['Most acute watery: clinical, no testing','Test if: bloody, fever, severe, immunocompromised, >7 days, recent abx → stool studies (culture, C. diff PCR/toxin, O&P if indicated)','CBC, BMP (K, HCO3, renal), lactate if ill','Avoid antimotility agents in bloody diarrhea/suspected EHEC (HUS risk)','Imaging if toxic megacolon suspected (KUB)'],
+      management:['Oral/IV rehydration is the cornerstone','C. diff: oral vancomycin or fidaxomicin (per ABX guide); stop offending antibiotic','Empiric antibiotics generally avoided; reserve for severe invasive disease (NOT EHEC)','Probiotics limited evidence','Loperamide ok for non-bloody, afebrile'],
+      soap:{subjective:['Duration, frequency, stool character (watery/bloody/mucoid), associated fever/pain/tenesmus','Antibiotic/hospitalization history, travel, sick contacts, food, immune status','Hydration symptoms, weight loss'],objective:['Vitals, volume status/orthostatics','Abdominal exam, rectal if bleeding','Stool studies, BMP (HCO3/K/renal), lactate, CBC, C. diff result']}}
+  ]}
+};
+Object.assign(CLINIC_DATA,{
+  neuro:{name:'Neurology',color:'var(--g)',complaints:[
+    {id:'headache',name:'Headache',cantMiss:['SAH (thunderclap)','Meningitis/encephalitis','Increased ICP / mass','Temporal arteritis','CVST','Carbon monoxide','Acute angle-closure glaucoma','Hypertensive emergency/PRES'],
+      ddx:[
+        {dx:'Subarachnoid hemorrhage',risk:'high',features:'Thunderclap (max in seconds), "worst of life," ± neck stiffness, LOC. Sentinel bleeds occur.'},
+        {dx:'Meningitis',risk:'high',features:'Fever, neck stiffness, photophobia, AMS. Jolt accentuation.'},
+        {dx:'Temporal (giant cell) arteritis',risk:'high',features:'Age >50, temporal tenderness, jaw claudication, vision changes, ESR/CRP high. Treat empirically to save vision.'},
+        {dx:'Mass / increased ICP',risk:'high',features:'Progressive, worse AM/Valsalva, focal deficits, papilledema, new in older patient.'},
+        {dx:'Migraine',risk:'low',features:'Unilateral, throbbing, photo/phonophobia, nausea, aura. Recurrent, stereotyped.'},
+        {dx:'Tension-type',risk:'low',features:'Bilateral band-like, non-disabling. Most common; dx of exclusion.'}
+      ],
+      questions:[
+        {q:'Onset — thunderclap (max within seconds) vs gradual?',why:'Thunderclap = SAH/CVST/dissection until excluded — mandatory workup.'},
+        {q:'"Worst headache of your life" or different from usual?',why:'Red flag for SAH/secondary cause.'},
+        {q:'Fever, neck stiffness, photophobia, rash?',why:'Meningitis/encephalitis.'},
+        {q:'Focal neuro symptoms, vision changes, weakness?',why:'Mass, stroke, GCA, PRES.'},
+        {q:'Age >50 new headache? Jaw claudication, scalp tenderness?',why:'Temporal arteritis — vision-threatening, treat before biopsy.'},
+        {q:'Worse with position/Valsalva, morning, awakening from sleep?',why:'Raised ICP pattern.'},
+        {q:'Immunocompromised, anticoagulated, pregnant/postpartum?',why:'Opportunistic infection, hemorrhage, CVST risk.'}
+      ],
+      workup:['SNNOOP10 red-flag screen drives imaging','Non-contrast CT head for thunderclap/red flags; if negative and SAH suspected, LP (xanthochromia) or CTA','LP for meningitis (do not delay antibiotics for LP)','ESR/CRP + temporal artery biopsy for suspected GCA','MRV/CTV if CVST suspected','BMP, CBC; consider CO level'],
+      management:['SAH → neurosurgery, BP control, nimodipine','Meningitis → empiric antibiotics ± dexamethasone immediately (per ABX guide)','GCA → high-dose steroids immediately (do not wait for biopsy)','Migraine → antiemetic (prochlorperazine/metoclopramide) + NSAID/triptan + IVF; avoid opioids','Primary headache: abortive + prevention counseling'],
+      soap:{subjective:['Onset (thunderclap?), severity vs usual, location/quality, associated fever/neck/vision/focal symptoms','Red flags (SNNOOP10), age, immune status, anticoagulation, pregnancy','Prior headache pattern, triggers, medication overuse'],objective:['Vitals incl. BP, fever','Full neuro exam (cranial nerves, motor, fundoscopy for papilledema), neck stiffness/Kernig/Brudzinski, temporal artery palpation','CT/LP/ESR results documented']}},
+    {id:'ams',name:'Altered Mental Status',cantMiss:['Hypoglycemia','Hypoxia','Stroke','Meningitis/encephalitis','Intracranial hemorrhage','Toxic ingestion/overdose','Seizure/status','Sepsis','Wernicke','Hypertensive emergency'],
+      ddx:[
+        {dx:'Metabolic (glucose, Na, Ca, NH3, uremia, CO2)',risk:'high',features:'Check glucose first always. Hyponatremia, hypercalcemia, hepatic encephalopathy, uremia.'},
+        {dx:'Toxic — drugs/withdrawal',risk:'high',features:'Opioids (pinpoint pupils, low RR), benzos, alcohol withdrawal, anticholinergic, serotonin syndrome.'},
+        {dx:'Infectious — sepsis/CNS',risk:'high',features:'Fever, leukocytosis; UTI/pneumonia common in elderly; meningitis/encephalitis.'},
+        {dx:'Structural — stroke/bleed/mass',risk:'high',features:'Focal deficits, trauma, anticoagulation.'},
+        {dx:'Hypoxia/hypercarbia',risk:'high',features:'Respiratory failure, CO2 narcosis.'}
+      ],
+      questions:[
+        {q:'(Collateral) Baseline mental status and time course?',why:'Distinguishes delirium (acute, fluctuating) from dementia (chronic); anchors deviation.'},
+        {q:'Medications, new meds, ingestion access, substance use?',why:'Toxic/withdrawal causes are common and reversible.'},
+        {q:'Recent illness, fever, infectious symptoms?',why:'Sepsis/CNS infection.'},
+        {q:'Trauma, fall, anticoagulation?',why:'Intracranial hemorrhage.'},
+        {q:'Diabetes/insulin, last meal?',why:'Hypoglycemia — instantly reversible, check immediately.'},
+        {q:'Alcohol use (withdrawal/Wernicke)?',why:'Give thiamine before glucose in malnourished.'}
+      ],
+      workup:['Fingerstick glucose IMMEDIATELY','VBG/ABG (oxygenation, CO2), BMP (Na, Ca, renal), CBC, LFTs + ammonia, TSH','UA/Ucx, blood cultures if febrile','Tox screen, acetaminophen/salicylate/ethanol levels','CT head (focal deficit, trauma, anticoagulated, no clear cause)','LP if CNS infection suspected; EEG if non-convulsive status considered'],
+      management:['ABCs; protect airway if GCS ≤8','Reversal/empiric: glucose (D50), thiamine before glucose if malnourished, naloxone if opioid suspected','Treat identified cause (sepsis, electrolytes, withdrawal)','Avoid restraints/sedation masking exam when possible'],
+      soap:{subjective:['Collateral history: baseline, time course, fluctuation, meds/ingestion, recent illness/trauma, substance use'],objective:['Vitals incl. glucose, SpO2, temp','GCS/mental status exam, pupils, focal deficits, signs of trauma, asterixis, track marks','Glucose, BMP, ammonia, tox, gas, CT/LP results']}},
+    {id:'weakness',name:'Focal Weakness / Stroke',cantMiss:['Ischemic stroke (tPA/thrombectomy window)','ICH','Spinal cord compression','Hypoglycemia (mimic)','Todd paralysis','Aortic dissection w/ stroke'],
+      ddx:[
+        {dx:'Ischemic stroke',risk:'high',features:'Sudden focal deficit, fits vascular territory. Time = brain. Last-known-well drives therapy.'},
+        {dx:'Intracerebral hemorrhage',risk:'high',features:'Sudden deficit + headache/vomiting/decreased consciousness; HTN, anticoagulation.'},
+        {dx:'Spinal cord compression',risk:'high',features:'Bilateral leg weakness, sensory level, bowel/bladder, back pain — emergency.'},
+        {dx:'Stroke mimics',risk:'low',features:'Hypoglycemia, seizure (Todd), migraine, conversion, Bell palsy. Treat reversibles.'},
+        {dx:'Peripheral (GBS, mononeuropathy)',risk:'high',features:'GBS: ascending symmetric weakness, areflexia, may threaten respiration.'}
+      ],
+      questions:[
+        {q:'Exact time last known well (not "found down" time)?',why:'Determines tPA (≤4.5h) and thrombectomy (≤24h selected) eligibility.'},
+        {q:'Sudden vs gradual? Maximal at onset?',why:'Sudden maximal = vascular; gradual/spreading = seizure/migraine/mass.'},
+        {q:'Unilateral vs bilateral? Face/arm/leg distribution?',why:'Localizes lesion; bilateral leg → cord; crossed signs → brainstem.'},
+        {q:'Headache, vomiting, decreased consciousness?',why:'Favors hemorrhage/raised ICP.'},
+        {q:'Bowel/bladder changes, back pain, sensory level?',why:'Cord compression — needs urgent MRI/decompression.'},
+        {q:'Anticoagulation, recent surgery/bleeding (tPA contraindications)?',why:'Determines thrombolytic safety.'}
+      ],
+      workup:['Glucose immediately (mimic)','STAT non-contrast CT head (exclude hemorrhage) ± CTA/CT perfusion','NIH Stroke Scale','CBC, coags/INR, BMP, troponin, EKG (AFib)','MRI if diagnosis uncertain or posterior circulation','MRI spine emergently if cord compression suspected'],
+      management:['Stroke code activation; neurology STAT','Ischemic: IV thrombolytics if eligible (≤4.5h, no contraindication); thrombectomy for LVO (≤24h selected)','BP: permissive hypertension in ischemic (treat if >185/110 for tPA, or >220/120); aggressive lowering in ICH','ICH: reverse anticoagulation, neurosurgery','Cord compression: high-dose steroids + neurosurgery/RT','NPO until swallow screen'],
+      soap:{subjective:['Last known well TIME, onset character, deficit distribution, associated headache/vomiting, bowel/bladder, tPA contraindication screen','Vascular risk factors, anticoagulation, prior stroke'],objective:['Vitals incl. BP (both arms), glucose','NIHSS documented, full neuro exam, sensory level/back exam if cord concern','CT/CTA read, INR/coags, EKG, troponin']}}
+  ]},
+  renal:{name:'Renal / Lytes',color:'var(--g2)',complaints:[
+    {id:'aki',name:'Acute Kidney Injury',cantMiss:['Obstruction (postrenal)','Hyperkalemia w/ EKG changes','Rapidly progressive GN','Rhabdomyolysis','TLS','Contrast/toxin','Cardiorenal/hepatorenal'],
+      ddx:[
+        {dx:'Prerenal',risk:'high',features:'Volume depletion, hypotension, HF, cirrhosis. FENa <1%, BUN/Cr >20, bland sediment. Responsive to volume.'},
+        {dx:'Intrinsic — ATN',risk:'high',features:'Ischemia/sepsis/nephrotoxin. FENa >2%, muddy brown casts. Most common inpatient intrinsic AKI.'},
+        {dx:'Intrinsic — AIN',risk:'high',features:'Drug-induced (PPI, NSAIDs, antibiotics), eosinophiluria, rash/fever/eosinophilia (classic triad uncommon).'},
+        {dx:'Intrinsic — GN',risk:'high',features:'Hematuria, RBC casts, proteinuria, HTN — RPGN is an emergency.'},
+        {dx:'Postrenal — obstruction',risk:'high',features:'BPH, stones, malignancy, neurogenic bladder. Hydronephrosis on US. Reversible — rule out early.'}
+      ],
+      questions:[
+        {q:'Urine output — anuria, oliguria, or preserved?',why:'Anuria suggests obstruction, severe ATN, or vascular catastrophe.'},
+        {q:'Volume status symptoms — thirst, dizziness, edema, orthopnea?',why:'Distinguishes prerenal (dry) from cardiorenal (wet).'},
+        {q:'New medications — NSAIDs, ACEi/ARB, contrast, antibiotics, PPI?',why:'Nephrotoxin/AIN/hemodynamic causes; often reversible.'},
+        {q:'Obstructive symptoms — hesitancy, retention, stream, stones?',why:'Postrenal — check bladder/US.'},
+        {q:'Muscle pain/immobilization (rhabdo)? Recent chemo (TLS)?',why:'Pigment nephropathy, tumor lysis.'},
+        {q:'Hematuria, foamy urine, recent infection, joint/skin signs?',why:'Glomerular/systemic disease.'}
+      ],
+      workup:['BMP (K, HCO3, Cr trend), CBC, urinalysis WITH microscopy (casts), urine electrolytes (FENa/FEUrea if on diuretics)','Renal US (hydronephrosis, size); bladder scan/post-void residual','Stage by KDIGO (Cr rise ≥0.3 in 48h, or ≥1.5× baseline, or UOP <0.5 mL/kg/h ×6h)','CK if rhabdo; uric acid/phos/K if TLS; serologies if GN (ANA, ANCA, complement, anti-GBM)','EKG if K elevated'],
+      management:['Treat the cause: volume for prerenal, relieve obstruction (catheter), stop nephrotoxins','Avoid further injury (contrast, NSAIDs, adjust renally-cleared drugs)','Manage hyperkalemia, acidosis, volume overload','Nephrology consult for RPGN, refractory, or dialysis need','Dialysis indications (AEIOU): Acidosis, Electrolytes (K), Ingestion, Overload, Uremia (pericarditis, encephalopathy)'],
+      soap:{subjective:['Urine output trend, volume symptoms, nephrotoxin/medication exposures, obstructive symptoms, rhabdo/TLS risk, GN symptoms','Baseline creatinine, CKD history'],objective:['Vitals, volume status (JVP, edema, mucous membranes, orthostatics, lungs)','Bladder exam/scan','Cr trend with baseline, K/HCO3, UA microscopy/casts, FENa, renal US']}},
+    {id:'hyperk',name:'Hyperkalemia',cantMiss:['EKG changes / arrhythmia (peaked T, widened QRS, sine wave → arrest)','Pseudohyperkalemia (hemolysis)','Adrenal crisis','TLS / rhabdo','AKI with oliguria'],
+      ddx:[
+        {dx:'Reduced excretion',risk:'high',features:'AKI/CKD, K-sparing diuretics, ACEi/ARB, hypoaldosteronism (type 4 RTA), adrenal insufficiency.'},
+        {dx:'Transcellular shift',risk:'high',features:'Acidosis, insulin deficiency (DKA), beta-blockade, tissue breakdown (rhabdo, TLS), digoxin toxicity.'},
+        {dx:'Pseudohyperkalemia',risk:'low',features:'Hemolyzed specimen, severe leukocytosis/thrombocytosis, fist clenching. Recheck before treating if no EKG changes.'}
+      ],
+      questions:[
+        {q:'Symptoms — weakness, palpitations, paresthesias?',why:'Severity, though many asymptomatic until dangerous.'},
+        {q:'Kidney disease, urine output?',why:'Most common driver; oliguria limits excretion.'},
+        {q:'Medications — ACEi/ARB, spironolactone, NSAIDs, trimethoprim, K supplements?',why:'Iatrogenic causes; stop them.'},
+        {q:'Missed dialysis?',why:'Common, immediately actionable.'},
+        {q:'Muscle injury, tumor/chemo, DKA?',why:'Cellular release.'}
+      ],
+      workup:['STAT EKG (do not wait for repeat K)','Repeat K (rule out hemolysis) if no EKG changes','BMP, glucose, CK, VBG; consider digoxin level, cortisol','Assess renal function/urine output'],
+      management:['EKG changes → IV calcium (gluconate or chloride) immediately to stabilize myocardium (does NOT lower K)','Shift: insulin + glucose (10 units regular + D50), albuterol nebs, bicarbonate if acidotic','Eliminate: loop diuretic if making urine, GI binders (patiromer/SZC — not for emergencies), DIALYSIS for refractory/severe','Stop all K-raising meds and K supplementation','Recheck K and EKG after treatment'],
+      soap:{subjective:['Symptoms (weakness/palpitations), renal history, dialysis schedule, culprit medications, K intake, tissue injury'],objective:['Vitals, EKG findings (peaked T, PR prolongation, QRS widening, sine wave)','K value (and repeat), renal function, glucose, pH, CK','Response to therapy documented with repeat K']}},
+    {id:'hypona',name:'Hyponatremia',cantMiss:['Severe symptomatic (seizure, coma) needing hypertonic saline','Osmotic demyelination from overcorrection','Adrenal crisis','Increased ICP'],
+      ddx:[
+        {dx:'Hypovolemic',risk:'high',features:'Volume loss (GI, diuretics, salt-wasting). Dry, UNa <20 (extrarenal) or >20 (renal/diuretic).'},
+        {dx:'Euvolemic — SIADH',risk:'high',features:'Urine osm >100, UNa >30, euvolemic, normal cortisol/thyroid. Causes: CNS, pulmonary, drugs, malignancy, pain/nausea.'},
+        {dx:'Hypervolemic',risk:'high',features:'HF, cirrhosis, nephrotic, renal failure — edematous, effective volume low.'},
+        {dx:'Pseudo/translocational',risk:'low',features:'Hyperglycemia (correct ~2.4 mEq Na per 100 glucose >100), hyperlipidemia/protein.'}
+      ],
+      questions:[
+        {q:'Acute symptoms — headache, confusion, seizure, vomiting?',why:'Severe symptomatic hyponatremia needs hypertonic saline urgently (cerebral edema).'},
+        {q:'Volume status symptoms — thirst/orthostasis vs edema/orthopnea?',why:'Drives the volume-based algorithm.'},
+        {q:'Diuretics (esp. thiazide), recent fluids, water intake?',why:'Thiazides classic; primary polydipsia; hospital hypotonic fluids.'},
+        {q:'Lung disease, CNS process, malignancy, nausea/pain?',why:'SIADH causes.'},
+        {q:'How quickly did it develop (acute <48h vs chronic)?',why:'Chronic requires SLOW correction to avoid osmotic demyelination.'}
+      ],
+      workup:['Serum osmolality (confirm true hypotonic), urine osmolality, urine sodium','Volume assessment (exam + labs)','TSH, AM cortisol (rule out hypothyroid/adrenal in euvolemic)','Glucose, lipids/protein (pseudohyponatremia)','BMP with baseline Na'],
+      management:['Severe symptomatic: 3% hypertonic saline bolus (100–150 mL), target ~4–6 mEq rise to stop seizures','Correction LIMIT: ≤6–8 mEq/L per 24h (≤8 in high-risk) — overcorrection causes osmotic demyelination','Hypovolemic: isotonic saline. SIADH: fluid restriction ± salt tabs/urea/vaptans. Hypervolemic: restrict + treat underlying','Frequent Na monitoring (q2–4h during active correction); be ready to re-lower with D5W/DDAVP if overcorrecting'],
+      soap:{subjective:['Neuro symptoms (severity), volume/intake history, diuretic/medication use, SIADH cause screen, chronicity'],objective:['Vitals, detailed volume status exam','Serum osm, urine osm, urine Na, TSH/cortisol, glucose','Na trend with explicit correction rate documented']}}
+  ]},
+  id:{name:'Infectious Disease',color:'var(--g4)',complaints:[
+    {id:'fever',name:'Fever',cantMiss:['Sepsis/septic shock','Meningitis','Neutropenic fever','Endocarditis','Necrotizing infection','Toxic shock','Malaria (travel)','Intra-abdominal source'],
+      ddx:[
+        {dx:'Common sources (pulm, urinary, skin, abdominal, line)',risk:'high',features:'Systematic source hunt: lungs, urine, skin/wound, abdomen, CNS, catheters, joints.'},
+        {dx:'Neutropenic fever',risk:'high',features:'ANC <500 + T ≥38.3 once or ≥38.0 sustained — EMERGENCY, antibiotics within 1h.'},
+        {dx:'Endocarditis',risk:'high',features:'Persistent bacteremia, murmur, IVDU, emboli, stigmata. Duke criteria.'},
+        {dx:'Non-infectious',risk:'low',features:'VTE/PE, drug fever, malignancy, adrenal, thyroid storm, transfusion.'}
+      ],
+      questions:[
+        {q:'Localizing symptoms — cough, dysuria, abd pain, headache/neck, rash, joint, line site?',why:'Targets the source; drives cultures and imaging.'},
+        {q:'Immunocompromised — chemo, transplant, steroids, HIV, asplenia?',why:'Neutropenic fever and opportunistic infections change urgency and coverage.'},
+        {q:'Recent travel, exposures, sick contacts, animal/insect?',why:'Malaria, zoonoses, regional pathogens.'},
+        {q:'Indwelling devices, recent procedures/surgery, IVDU?',why:'Line/device infections, endocarditis, surgical site.'},
+        {q:'Recent antibiotics, new medications?',why:'C. diff, partially-treated infection, drug fever.'}
+      ],
+      workup:['Vitals + qSOFA/SIRS; lactate (sepsis screen)','Blood cultures ×2 BEFORE antibiotics (do not delay >1h if septic), CBC w/ diff, BMP, UA/Ucx','CXR; source-directed imaging (CT abd if abdominal, LP if CNS)','Procalcitonin (adjunct), other cultures per suspicion (sputum, wound, CSF)','HIV/travel-specific tests as indicated'],
+      management:['Sepsis Hour-1 bundle: lactate, cultures, broad-spectrum antibiotics, 30 mL/kg crystalloid for hypotension/lactate ≥4, vasopressors for MAP <65','Neutropenic fever: empiric anti-pseudomonal beta-lactam within 1h (per ABX guide)','Source control (drain abscess, remove infected line)','De-escalate at 48–72h per cultures'],
+      soap:{subjective:['Fever pattern/Tmax, localizing symptoms by system, immune status, travel/exposures, devices/procedures, recent antibiotics'],objective:['Full vitals + qSOFA, complete exam targeting sources (lungs, abdomen, skin/lines, CVA, neck, joints, heart murmur)','Lactate, WBC w/ diff, culture results, imaging, procalcitonin']}},
+    {id:'sepsis',name:'Sepsis',cantMiss:['Septic shock','Source requiring control (abscess, obstruction, necrotizing, line)','Toxic shock','Adrenal crisis (mimic/cofactor)'],
+      ddx:[
+        {dx:'Pneumonia',risk:'high',features:'Most common sepsis source; cough, infiltrate, hypoxia.'},
+        {dx:'Urinary/pyelonephritis',risk:'high',features:'Dysuria/flank, pyuria; common in elderly/catheter.'},
+        {dx:'Intra-abdominal',risk:'high',features:'Pain, peritonitis, needs imaging + source control.'},
+        {dx:'Skin/soft tissue',risk:'high',features:'Cellulitis/abscess/necrotizing — exam the skin.'},
+        {dx:'CNS / line / endocarditis',risk:'high',features:'Don\'t miss meningitis, CLABSI, or endovascular source.'}
+      ],
+      questions:[
+        {q:'Source-localizing symptoms across all systems?',why:'Source identification is essential — undrained source = treatment failure.'},
+        {q:'Symptom onset and trajectory (hours)?',why:'Speed of deterioration guides aggressiveness.'},
+        {q:'Immunocompromise, devices, recent procedures?',why:'Atypical organisms and device source.'},
+        {q:'Baseline function, code status, comorbidities?',why:'Goals of care and resuscitation intensity.'},
+        {q:'Recent antibiotics / MDR risk factors?',why:'Empiric coverage breadth.'}
+      ],
+      workup:['Lactate (repeat if ≥2 to assess clearance), blood cultures ×2, CBC, BMP, LFTs, coags','UA/Ucx, CXR, source imaging','qSOFA (≥2: RR ≥22, SBP ≤100, AMS) / full SOFA for ICU','Type & screen if procedural/bleeding'],
+      management:['Hour-1 bundle: lactate → cultures → broad antibiotics (per suspected source, ABX guide) → 30 mL/kg crystalloid (lactate ≥4 or hypotension) → norepinephrine first-line for MAP <65','Source control ASAP (drainage, debridement, remove line/stent)','Reassess volume responsiveness (passive leg raise, IVC, dynamic measures)','Add vasopressin/steroids (hydrocortisone) for refractory shock','De-escalate antibiotics per cultures at 48–72h'],
+      soap:{subjective:['Source-localizing review of systems, onset/trajectory, immune status/devices, comorbidities, code status, antibiotic history'],objective:['Vitals + qSOFA/SOFA, MAP, perfusion (cap refill, mentation, urine output)','Full source-directed exam','Lactate trend, cultures, WBC, organ-function labs, imaging; fluids/pressors given documented']}}
+  ]},
+  heme:{name:'Heme',color:'var(--g3)',complaints:[
+    {id:'anemia',name:'Anemia',cantMiss:['Acute hemorrhage / GI bleed','Hemolysis (TTP/MAHA)','Aplastic crisis / pancytopenia / leukemia','Symptomatic anemia w/ demand ischemia'],
+      ddx:[
+        {dx:'Microcytic (MCV <80)',risk:'low',features:'Iron deficiency (most common — find the bleed), thalassemia, chronic disease, sideroblastic.'},
+        {dx:'Macrocytic (MCV >100)',risk:'low',features:'B12/folate deficiency, alcohol, liver, hypothyroid, MDS, drugs.'},
+        {dx:'Normocytic',risk:'high',features:'Acute blood loss, hemolysis, anemia of chronic disease, renal (low EPO), early mixed.'},
+        {dx:'Hemolysis',risk:'high',features:'High retic, high LDH/indirect bili, low haptoglobin. Schistocytes → MAHA/TTP (emergency).'}
+      ],
+      questions:[
+        {q:'Acute symptoms — fatigue, dyspnea, chest pain, lightheaded?',why:'Symptomatic/demand ischemia drives transfusion urgency more than the number.'},
+        {q:'Bleeding — GI (melena/hematochezia), menorrhagia, hematuria?',why:'Identifies source of loss; iron deficiency = occult bleed until proven otherwise in older adults.'},
+        {q:'Diet, alcohol, malabsorption?',why:'Nutritional (iron, B12, folate) causes.'},
+        {q:'Jaundice, dark urine, family hx (hemolysis)?',why:'Hemolytic anemia.'},
+        {q:'Other cell lines low (bruising, infections)?',why:'Pancytopenia → marrow process/leukemia.'}
+      ],
+      workup:['CBC with indices (MCV, RDW), peripheral smear, reticulocyte count','Iron studies (ferritin, TIBC, transferrin sat), B12/folate','Hemolysis panel: LDH, haptoglobin, indirect bilirubin, retic; Coombs if immune','Stool guaiac/source evaluation if bleeding; consider endoscopy','Renal function; hemoglobin electrophoresis if thalassemia'],
+      management:['Hemodynamically unstable bleed → resuscitate + transfuse','Transfusion threshold Hgb 7 (restrictive — improves outcomes); 8 if active cardiac disease/ACS','Iron deficiency: oral or IV iron + treat source','B12/folate: replace; alcohol/diet counseling','Hemolysis: identify cause; schistocytes + thrombocytopenia → emergent heme (suspect TTP → plasma exchange)'],
+      soap:{subjective:['Symptom severity (functional), bleeding sources, diet/alcohol, jaundice/dark urine, family hx, other cytopenias','Baseline Hgb, prior workup'],objective:['Vitals incl. orthostatics, pallor, jaundice, signs of bleeding, splenomegaly, petechiae','Hgb/MCV/RDW, retic, smear findings, iron studies, B12/folate, hemolysis labs']}},
+    {id:'thrombocytopenia',name:'Thrombocytopenia',cantMiss:['TTP / HUS','DIC','HIT','Acute leukemia','Active bleeding with severe thrombocytopenia'],
+      ddx:[
+        {dx:'Decreased production',risk:'high',features:'Marrow suppression/infiltration (chemo, leukemia, MDS, B12), alcohol, sepsis.'},
+        {dx:'Increased destruction — immune (ITP)',risk:'low',features:'Isolated low platelets, otherwise well; dx of exclusion.'},
+        {dx:'Consumptive — TTP/HUS/DIC',risk:'high',features:'TTP pentad (thrombocytopenia, MAHA, neuro, renal, fever); DIC (bleeding+clotting, low fibrinogen, high D-dimer).'},
+        {dx:'HIT',risk:'high',features:'Platelet fall >50% at 5–10 days of heparin, thrombosis. 4Ts score.'},
+        {dx:'Pseudothrombocytopenia',risk:'low',features:'EDTA clumping — recheck citrate tube.'}
+      ],
+      questions:[
+        {q:'Bleeding (mucosal, petechiae) or clotting (new thrombosis)?',why:'Bleeding → severity; clotting → HIT/TTP/DIC consumptive process.'},
+        {q:'Heparin exposure (incl. flushes) and timing?',why:'HIT — calculate 4Ts; stop all heparin if suspected.'},
+        {q:'Neuro changes, fever, dark urine, renal symptoms?',why:'TTP/HUS — medical emergency requiring plasma exchange.'},
+        {q:'New drugs (quinine, sulfa, vancomycin), alcohol?',why:'Drug-induced thrombocytopenia.'},
+        {q:'Other cytopenias, weight loss, lymphadenopathy?',why:'Marrow/malignant process.'}
+      ],
+      workup:['CBC + smear (schistocytes → MAHA; blasts → leukemia; clumping → pseudo)','Reticulocyte, LDH, haptoglobin, bilirubin (hemolysis)','Coags + fibrinogen + D-dimer (DIC)','4Ts score + HIT antibody if heparin exposure','Renal function, peripheral blood flow/heme consult if blasts'],
+      management:['TTP suspected → emergent plasma exchange + heme (do NOT wait for ADAMTS13); avoid platelet transfusion unless life-threatening bleed','HIT → stop ALL heparin, start non-heparin anticoagulant (argatroban/bivalirudin), do not transfuse platelets','DIC → treat underlying cause, support with products if bleeding','ITP → steroids ± IVIG if bleeding/very low','Platelet transfusion thresholds: <10 prophylactic, <20 w/ risk, <50 for procedures/active bleed'],
+      soap:{subjective:['Bleeding vs clotting symptoms, heparin exposure/timing, neuro/renal/fever (TTP), new drugs/alcohol, other cytopenias'],objective:['Vitals, bleeding signs (petechiae, purpura, mucosal), thrombosis signs, splenomegaly, adenopathy','Platelet count/trend, smear, hemolysis labs, coags/fibrinogen/D-dimer, 4Ts score']}}
+  ]},
+  endo:{name:'Endocrine',color:'var(--g)',complaints:[
+    {id:'hyperglycemia',name:'Hyperglycemia / DKA / HHS',cantMiss:['DKA','HHS','Cerebral edema (peds/overcorrection)','Precipitating sepsis/MI','Severe hypokalemia with insulin'],
+      ddx:[
+        {dx:'DKA',risk:'high',features:'Glucose >250, anion gap acidosis (pH <7.3, HCO3 <18), ketones. Often T1DM, infection/missed insulin. Abd pain, Kussmaul.'},
+        {dx:'HHS',risk:'high',features:'Glucose >600, osm >320, minimal ketones, profound dehydration, AMS. T2DM, higher mortality.'},
+        {dx:'Hyperglycemia w/o crisis',risk:'low',features:'Elevated glucose, no acidosis/hyperosm; medication/dietary/stress.'},
+        {dx:'Euglycemic DKA',risk:'high',features:'SGLT2 inhibitors — DKA with near-normal glucose. Don\'t be falsely reassured.'}
+      ],
+      questions:[
+        {q:'Polyuria, polydipsia, weight loss, fatigue?',why:'Hyperglycemia symptoms and chronicity.'},
+        {q:'Insulin adherence / missed doses / pump failure?',why:'Most common DKA precipitant.'},
+        {q:'Infection symptoms, chest pain (precipitants)?',why:'Infection and MI are top DKA/HHS triggers — must find/treat.'},
+        {q:'Abdominal pain, nausea, vomiting?',why:'Common in DKA; also screen for precipitating abdominal process.'},
+        {q:'SGLT2 inhibitor use?',why:'Euglycemic DKA risk.'},
+        {q:'Mental status changes?',why:'HHS hallmark; severity marker.'}
+      ],
+      workup:['Glucose, VBG (pH), BMP (anion gap, K — critical), serum/urine ketones (beta-hydroxybutyrate), serum osm','CBC, cultures/CXR/EKG/troponin (find precipitant)','Phosphate, magnesium','Calculate anion gap and corrected Na; track gap closure'],
+      management:['DKA: IV fluids first (NS), then insulin infusion 0.1 u/kg/h — but CHECK K FIRST','Potassium rule: if K <3.3, HOLD insulin and replete K first (insulin drives K into cells → fatal hypokalemia); if K 3.3–5.3 add K to fluids; if >5.3 hold K','Transition fluids to D5-containing when glucose ~200 to continue insulin until gap closes','Overlap SC insulin 1–2h before stopping infusion (prevents rebound)','HHS: aggressive fluids (deficit often 8–10L), insulin, careful osm correction','Treat precipitant; monitor K/glucose q1–2h'],
+      soap:{subjective:['Hyperglycemia symptoms, insulin adherence, precipitant screen (infection/MI/missed dose), GI symptoms, SGLT2 use, mental status'],objective:['Vitals, volume status, mental status, signs of infection','Glucose, pH, anion gap, K (and trend), ketones, osm, precipitant workup (EKG, CXR, cultures)','Gap closure and K trend documented']}}
+  ]}
+});
+Object.assign(CLINIC_DATA,{
+  msk:{name:'MSK / Rheum',color:'var(--g2)',complaints:[
+    {id:'back_pain',name:'Back Pain',cantMiss:['Cauda equina','Spinal epidural abscess','Cord compression/malignancy','Vertebral osteomyelitis','AAA','Spinal fracture'],
+      ddx:[
+        {dx:'Mechanical/musculoligamentous',risk:'low',features:'Most common (>90%), no red flags, improves with rest, no neuro deficit. No imaging needed early.'},
+        {dx:'Cauda equina syndrome',risk:'high',features:'Saddle anesthesia, urinary retention/incontinence, bilateral leg weakness, decreased rectal tone — SURGICAL EMERGENCY.'},
+        {dx:'Spinal epidural abscess',risk:'high',features:'Fever + back pain + neuro deficit (classic triad, often incomplete), IVDU, recent infection/procedure, immunocompromise.'},
+        {dx:'Malignancy/cord compression',risk:'high',features:'Age >50, hx cancer, weight loss, night pain, no relief with rest, progressive.'},
+        {dx:'Vertebral osteomyelitis',risk:'high',features:'Fever, focal tenderness, IVDU/bacteremia, elevated ESR/CRP.'},
+        {dx:'Radiculopathy/herniated disc',risk:'low',features:'Dermatomal radiation, positive straight leg raise, may have motor/sensory deficit.'}
+      ],
+      questions:[
+        {q:'Bowel/bladder dysfunction, saddle numbness, leg weakness?',why:'Cauda equina red flags — emergent MRI and surgery.'},
+        {q:'Fever, IVDU, recent infection/spinal procedure, immunocompromise?',why:'Epidural abscess/osteomyelitis.'},
+        {q:'History of cancer, weight loss, night pain, age >50?',why:'Malignant/metastatic disease.'},
+        {q:'Trauma or osteoporosis/steroid use?',why:'Fracture.'},
+        {q:'Radiation down leg, numbness/weakness in a pattern?',why:'Radiculopathy localization.'},
+        {q:'Pulsatile abdominal sensation, vascular risk (older)?',why:'AAA can present as back pain.'}
+      ],
+      workup:['No red flags → no imaging, conservative care 4–6 weeks','Red flags → MRI (cauda equina, abscess, cord compression, malignancy emergently)','Fever/infection → ESR, CRP, CBC, blood cultures','Suspected fracture → plain films/CT','Neuro exam including rectal tone, post-void residual, saddle sensation'],
+      management:['Mechanical: NSAIDs, activity as tolerated (bed rest harmful), PT, avoid opioids','Cauda equina/cord compression → emergent neurosurgery ± steroids','Epidural abscess/osteomyelitis → antibiotics + drainage/surgery','Malignancy → steroids, oncology/RT/neurosurgery','Radiculopathy: conservative; surgery if progressive deficit'],
+      soap:{subjective:['Onset/mechanism, red flags (bowel/bladder, saddle, weakness, fever, cancer, weight loss, night pain, trauma), radiation pattern, function','Cancer/IVDU/immune history'],objective:['Vitals incl. fever','Focused neuro: motor/sensory by myotome/dermatome, reflexes, straight leg raise, rectal tone, saddle sensation, post-void residual','Spine palpation, gait; imaging/inflammatory markers if obtained']}},
+    {id:'monoarthritis',name:'Acute Monoarthritis',cantMiss:['Septic arthritis','Disseminated gonococcal','Crystal + concurrent infection','Lyme (regional)'],
+      ddx:[
+        {dx:'Septic arthritis',risk:'high',features:'Hot, swollen, painful joint, fever, decreased ROM. Joint destruction in hours — aspirate before antibiotics. WBC often >50k (can be lower).'},
+        {dx:'Gout',risk:'low',features:'Sudden, 1st MTP (podagra) or knee, hyperuricemia history, negatively birefringent needle crystals.'},
+        {dx:'Pseudogout (CPPD)',risk:'low',features:'Knee/wrist, positively birefringent rhomboid crystals, chondrocalcinosis.'},
+        {dx:'Disseminated gonococcal',risk:'high',features:'Young sexually active, migratory arthralgia → arthritis, tenosynovitis, pustular rash.'},
+        {dx:'Trauma/hemarthrosis',risk:'low',features:'Injury history, anticoagulation, bloody aspirate.'}
+      ],
+      questions:[
+        {q:'Fever, rapid onset, single hot swollen joint?',why:'Septic arthritis must be excluded first — it is a joint-destroying emergency.'},
+        {q:'Prior gout/pseudogout attacks, similar episodes?',why:'Crystal disease recurs in stereotyped pattern (but can coexist with infection).'},
+        {q:'Sexual history, urethral symptoms, rash, migratory pattern (young)?',why:'Disseminated gonococcal infection.'},
+        {q:'Trauma, anticoagulation, bleeding disorder?',why:'Hemarthrosis.'},
+        {q:'Tick exposure / endemic area, prior knee swelling?',why:'Lyme arthritis.'},
+        {q:'Immunocompromise, prosthetic joint, recent injection?',why:'Increased septic risk and atypical organisms.'}
+      ],
+      workup:['ARTHROCENTESIS is the key test: cell count + diff, Gram stain + culture, crystals','Synovial WBC >50k (esp >100k) suggests septic; crystals do NOT exclude concurrent infection','CBC, ESR, CRP, uric acid (often normal during acute gout — not diagnostic), blood cultures','Imaging for effusion/chondrocalcinosis/fracture','Gonococcal testing (urethral/cervical NAAT) if suspected'],
+      management:['Septic arthritis → empiric antibiotics AFTER aspiration (vancomycin ± ceftriaxone) + joint drainage/washout, ortho consult','Gout: NSAIDs, colchicine, or steroids (intra-articular or systemic)','Pseudogout: NSAIDs/steroids','Gonococcal: ceftriaxone + drainage','Do not assume crystal disease without excluding infection in a hot joint'],
+      soap:{subjective:['Onset/duration, prior attacks, fever, sexual/tick history, trauma, anticoagulation, immune status, prosthetic joint'],objective:['Vitals incl. fever','Joint exam: effusion, warmth, erythema, ROM, surrounding skin; rash; other joints','Synovial fluid analysis (cell count, crystals, Gram/culture), ESR/CRP, uric acid, imaging']}}
+  ]},
+  tox:{name:'Tox / Emergency',color:'var(--g4)',complaints:[
+    {id:'overdose',name:'Poisoning / Overdose',cantMiss:['Acetaminophen (silent early)','Salicylate','TCA (wide QRS)','Opioid (respiratory depression)','Toxic alcohols','CO/cyanide','Beta-blocker/CCB','Serotonin syndrome / NMS'],
+      ddx:[
+        {dx:'Acetaminophen',risk:'high',features:'Asymptomatic early then hepatic failure. Level at 4h post-ingestion → Rumack-Matthew nomogram. NAC saves lives.'},
+        {dx:'Salicylate',risk:'high',features:'Tinnitus, mixed respiratory alkalosis + anion gap metabolic acidosis, fever, AMS.'},
+        {dx:'TCA',risk:'high',features:'Anticholinergic, seizures, wide QRS (>100 ms), terminal R in aVR → sodium bicarbonate.'},
+        {dx:'Opioid',risk:'high',features:'Miosis, respiratory depression, decreased consciousness → naloxone.'},
+        {dx:'Toxic alcohols (methanol/ethylene glycol)',risk:'high',features:'High osmolar gap then high anion gap, vision changes (methanol), oxalate crystals/renal failure (EG) → fomepizole.'},
+        {dx:'Sympathomimetic / anticholinergic / cholinergic toxidromes',risk:'high',features:'Recognize the toxidrome to guide therapy.'}
+      ],
+      questions:[
+        {q:'What substance(s), how much, what time, co-ingestants?',why:'Drives specific antidotes and level timing (e.g., 4h acetaminophen level).'},
+        {q:'Intentional vs accidental? Access to other meds?',why:'Co-ingestion is common; psych risk assessment needed.'},
+        {q:'Symptoms — vision changes, tinnitus, palpitations, seizures?',why:'Points to specific toxin (methanol, salicylate, TCA).'},
+        {q:'Chronic medications (serotonergic, QT-prolonging)?',why:'Serotonin syndrome, baseline risk.'},
+        {q:'Alcohol/substance use history?',why:'Withdrawal and toxic alcohol risk.'}
+      ],
+      workup:['Fingerstick glucose, acetaminophen + salicylate levels (screen ALL intentional ODs), EKG (QRS/QTc)','VBG, BMP (anion gap), serum osm (osmolar gap for toxic alcohols), lactate','Co-oximetry (CO), specific levels (lithium, digoxin, valproate) per history','Pregnancy test; consider extended tox if unclear','Call Poison Control'],
+      management:['ABCs first; supportive care is the mainstay','Decontamination: activated charcoal if <1h and airway protected (not for caustics/hydrocarbons)','Antidotes: NAC (acetaminophen), naloxone (opioid), bicarbonate (TCA/salicylate), fomepizole (toxic alcohols), glucagon/high-dose insulin (BB/CCB), O2 ± hydroxocobalamin (CO/cyanide)','Enhanced elimination: urine alkalinization (salicylate), dialysis (toxic alcohols, salicylate, lithium, valproate)','Psychiatry for intentional ingestion once medically stable'],
+      soap:{subjective:['Substance/amount/time/co-ingestants, intent, symptom review, chronic meds, substance history, psych history'],objective:['Vitals (toxidrome pattern), mental status, pupils, skin (diaphoresis/dry), bowel sounds','Glucose, acetaminophen/salicylate levels, EKG (QRS/QTc), gas, anion/osmolar gap, specific levels','Poison Control recommendations documented']}},
+    {id:'agitation',name:'Acute Agitation / Delirium',cantMiss:['Hypoxia/hypoglycemia','CNS infection/bleed','Withdrawal (alcohol/benzo) — DTs','Toxic ingestion','Wernicke','Thyroid storm','Serotonin syndrome/NMS'],
+      ddx:[
+        {dx:'Delirium (medical cause)',risk:'high',features:'Acute, fluctuating, inattention. Hunt the cause: infection, drugs, metabolic, hypoxia, retention, pain.'},
+        {dx:'Alcohol/benzo withdrawal',risk:'high',features:'Tremor, tachycardia, hypertension, hallucinations, seizures, DTs (48–96h, high mortality).'},
+        {dx:'Substance intoxication',risk:'high',features:'Stimulants, hallucinogens, anticholinergics — toxidrome.'},
+        {dx:'Primary psychiatric',risk:'low',features:'Known history, clear sensorium, no medical cause — dx of exclusion.'}
+      ],
+      questions:[
+        {q:'(Collateral) Baseline cognition, onset, fluctuation?',why:'Delirium vs dementia vs psychiatric.'},
+        {q:'Alcohol/benzo use and time of last use?',why:'Withdrawal timeline — DTs are lethal if missed.'},
+        {q:'Medications, ingestion, substance use?',why:'Toxic/iatrogenic causes.'},
+        {q:'Infection symptoms, recent procedures, pain, constipation/retention?',why:'Common reversible delirium triggers, especially in elderly.'},
+        {q:'Head trauma, focal neuro symptoms?',why:'Structural cause.'}
+      ],
+      workup:['Glucose, SpO2, vitals, focused neuro exam','BMP, CBC, LFTs/ammonia, TSH, UA/Ucx, blood cultures if febrile','Tox screen, alcohol level; CT head if trauma/focal/unexplained','CIWA protocol scoring if alcohol withdrawal','Bladder scan (retention), review med list'],
+      management:['Treat underlying cause; nonpharmacologic de-escalation first (reorient, environment, sitter)','Withdrawal → benzodiazepines (CIWA-driven); thiamine before glucose','Hyperactive delirium with safety risk → low-dose antipsychotic (haloperidol/quetiapine) — avoid benzos in non-withdrawal delirium (worsens it)','Wernicke → IV thiamine','Avoid restraints when possible; minimize deliriogenic meds'],
+      soap:{subjective:['Collateral: baseline, onset/fluctuation, alcohol/benzo/substance use + timing, medications, infection/pain/retention, trauma'],objective:['Vitals incl. glucose/SpO2, mental status/attention (e.g., months backward), neuro exam, signs of withdrawal/trauma','Metabolic panel, ammonia, tox, cultures, CT if done; CIWA score if applicable']}}
+  ]}
+});
+// ============================================================
+// DATA (objective findings)
+// ============================================================
+var DATA_DATA={
+  labs:{name:'Labs',color:'var(--g)',items:[
+    {id:'wbc',name:'WBC / Leukocytosis',normal:'4.5–11 ×10³/µL',
+      thresholds:[
+        {range:'WBC 11–15k',meaning:'Mild leukocytosis. Common, nonspecific — stress/demargination (catecholamines, steroids, exercise), early infection, smoking, pain.',action:'Get a DIFFERENTIAL — neutrophil predominance + bands (left shift) points to bacterial infection. Correlate with vitals/exam. Not alarming in isolation if patient looks well.',evidence:'Steroids and acute stress can raise WBC to ~15k by demargination alone (no infection). Always interpret with the differential, not the total.'},
+        {range:'WBC > 15k',meaning:'Significant leukocytosis — bacterial infection becomes substantially more likely; also consider abscess, C. diff, tissue necrosis.',action:'Actively look for a source: full infectious workup if febrile/ill (blood cultures, UA, CXR, lactate, exam every system). In abdominal pain, raises concern for appendicitis/cholecystitis/abscess. Check C. diff if diarrhea + recent antibiotics.',evidence:'WBC >15k has higher specificity for bacterial infection; in suspected appendicitis it is part of the Alvarado score. The higher the count, the more aggressively a source should be pursued.'},
+        {range:'WBC > 25k (leukemoid reaction)',meaning:'Leukemoid reaction — severe infection (C. diff colitis classically), tissue necrosis, severe inflammation, or malignancy. By definition >50k from a benign/reactive cause.',action:'Aggressive source hunt + consider C. diff (can drive WBC into the 30–50k range and predicts severe/fulminant disease), abscess, ischemic bowel. Check peripheral smear. If left shift with toxic granulation → reactive; if blasts → heme malignancy.',evidence:'Marked leukocytosis in C. difficile (WBC >15k is a severity criterion; >25k associated with worse outcomes) flags severe colitis warranting oral vancomycin and surgical awareness.'},
+        {range:'WBC > 50k',meaning:'Either leukemoid reaction (severe reactive) or leukemia/myeloproliferative. Hyperleukocytosis (>100k, esp. blasts) → leukostasis risk.',action:'STAT peripheral smear + heme consult. Look for blasts. If blasts + symptoms (dyspnea, AMS, visual changes) → leukostasis emergency. Check for tumor lysis (K, phos, uric acid, LDH). LAP score / flow cytometry to distinguish reactive vs malignant.',evidence:'Hyperleukocytosis with blasts >100k risks leukostasis (microvascular occlusion) — an oncologic emergency requiring urgent cytoreduction.'},
+        {range:'WBC < 4k (leukopenia)',meaning:'Look at the ANC. Neutropenia (ANC <1500) from marrow suppression (chemo, drugs, viral), sepsis (consumption — ominous), B12/folate, autoimmune.',action:'Calculate ANC = WBC × (%neutrophils + %bands). ANC <500 = severe neutropenia. Fever + ANC <500 = neutropenic fever EMERGENCY → antibiotics within 1h. Leukopenia in sepsis is a poor prognostic sign.',evidence:'Febrile neutropenia (ANC <500 + T ≥38.3 or sustained ≥38.0) mandates empiric anti-pseudomonal antibiotics within 60 minutes (IDSA).'}
+      ],
+      trend:'TREND MATTERS: A rapidly rising WBC (e.g., doubling over hours-to-a-day) signals an evolving or uncontrolled infectious/inflammatory process — look harder for an undrained source, fevers, and obtain/repeat cultures. A WBC that fails to fall on appropriate antibiotics suggests inadequate source control (abscess needing drainage), wrong coverage, or resistant organism. A falling WBC with clinical improvement supports treatment response.',
+      pearls:['Always interpret with the differential and the patient — total WBC alone is weak.','Left shift (bands >10%, toxic granulation) supports active bacterial infection.','Bandemia can occur even with a normal total WBC in early sepsis.','Steroids cause demargination leukocytosis WITHOUT left shift — do not chase as infection.','Neutropenic fever is the count that turns leukopenia into an emergency.']},
+    {id:'lactate',name:'Lactate',normal:'0.5–2.0 mmol/L',
+      thresholds:[
+        {range:'2–4 mmol/L',meaning:'Elevated — tissue hypoperfusion/hypoxia (type A) or non-hypoxic (type B: beta-agonists, metformin, liver dysfunction, malignancy, thiamine deficiency).',action:'In suspected infection, lactate ≥2 meets a sepsis marker — start resuscitation. Recheck to assess clearance. Look for hypoperfusion (cap refill, mentation, urine output).',evidence:'Sepsis-3 / Surviving Sepsis: lactate >2 mmol/L despite adequate fluid resuscitation (with vasopressors needed for MAP ≥65) defines septic shock.'},
+        {range:'> 4 mmol/L',meaning:'Marked elevation — significant hypoperfusion; strong predictor of mortality in sepsis and shock.',action:'Aggressive resuscitation: 30 mL/kg crystalloid (per Surviving Sepsis) + source control + early antibiotics. Recheck lactate to guide resuscitation (lactate clearance).',evidence:'Surviving Sepsis Campaign uses lactate ≥4 to trigger the resuscitation bundle; serial lactate clearance is a recommended resuscitation target.'},
+        {range:'Failure to clear',meaning:'Persistent or rising lactate despite resuscitation indicates ongoing shock, inadequate source control, or alternative cause (mesenteric ischemia, compartment syndrome, toxin).',action:'Reassess source control and perfusion; consider mesenteric ischemia (pain out of proportion), occult bleeding, missed source.',evidence:'Lactate clearance >10% correlates with improved survival; non-clearance warrants escalation.'}
+      ],
+      trend:'Serial lactate (q2–4h during resuscitation) is more useful than a single value. Downtrend = responding; flat/rising = ongoing shock or missed/uncontrolled source.',
+      pearls:['Not all lactate is hypoperfusion — type B (metformin, albuterol, liver failure, thiamine deficiency, malignancy) is common.','A single normal lactate does not exclude early sepsis.','Use lactate clearance as a resuscitation endpoint alongside MAP and urine output.']},
+    {id:'troponin',name:'Troponin',normal:'Assay-specific; hs-troponin reported in ng/L',
+      thresholds:[
+        {range:'Above 99th percentile URL',meaning:'Myocardial injury. A rise/fall pattern with ischemic symptoms/EKG/imaging = acute MI. Stable elevation = chronic injury (CKD, HF, structural disease).',action:'Interpret with the clinical picture and a DELTA (serial values). One elevated troponin ≠ MI. Apply the 0/1h or 0/3h hs-troponin algorithm. Get serial EKGs.',evidence:'4th Universal Definition of MI: requires a rise and/or fall of troponin with at least one value >99th percentile PLUS ischemia evidence (symptoms, EKG changes, imaging).'},
+        {range:'Dynamic rise/fall (significant delta)',meaning:'Acute myocardial injury — supports acute MI in the right context. Type 1 (plaque rupture) vs Type 2 (supply-demand mismatch: sepsis, tachyarrhythmia, anemia, hypoxia).',action:'Distinguish Type 1 (needs antiplatelet/anticoagulation/cath) from Type 2 (treat the underlying stressor). Cardiology involvement for true ACS.',evidence:'hs-troponin 0/1h algorithms (ESC) rule in/out MI rapidly using absolute delta thresholds specific to each assay.'},
+        {range:'Markedly elevated, stable',meaning:'Often chronic (renal failure, chronic HF, infiltrative disease) if no dynamic change and no ischemic features.',action:'Compare to prior values; flat trend without symptoms argues against acute MI. Avoid reflex cath for nonspecific elevation.',evidence:'Chronic kidney disease commonly elevates hs-troponin at baseline; the delta, not the absolute, drives the MI diagnosis.'}
+      ],
+      trend:'The DELTA is everything. Serial troponins (0 and 1–3h) distinguish acute injury (rising/falling) from chronic elevation (flat). Always anchor to a prior baseline if available.',
+      pearls:['Type 2 MI (demand) is common in hospitalized patients — treat the stressor, not necessarily the coronary.','Non-ACS causes of elevation: PE, myocarditis, sepsis, tachyarrhythmia, renal failure, HF.','Never interpret a single troponin in isolation.']},
+    {id:'bnp',name:'BNP / NT-proBNP',normal:'BNP <100 pg/mL; NT-proBNP age-dependent',
+      thresholds:[
+        {range:'BNP < 100 pg/mL',meaning:'Heart failure as the cause of dyspnea is UNLIKELY (high negative predictive value).',action:'Look for non-cardiac causes of dyspnea (PE, pneumonia, COPD).',evidence:'Breathing Not Properly study: BNP <100 has high NPV for excluding acute decompensated HF as the dyspnea cause.'},
+        {range:'BNP 100–400',meaning:'Indeterminate "gray zone" — possible HF but consider confounders (PE, cor pulmonale, renal dysfunction, age).',action:'Use echo and clinical judgment; do not rely on BNP alone.',evidence:'Intermediate values overlap with non-HF cardiopulmonary disease.'},
+        {range:'BNP > 400',meaning:'Heart failure likely the cause of dyspnea.',action:'Treat decompensated HF (diuresis, etc.) if clinical picture fits; echo for EF/structure.',evidence:'BNP >400 has high positive predictive value for acute HF in dyspneic patients.'}
+      ],
+      trend:'Use a patient\'s own baseline/"dry" BNP for comparison. Trends help titrate diuresis, but treat the patient, not the number.',
+      pearls:['Obesity falsely LOWERS BNP; renal failure and age RAISE it.','NT-proBNP cutoffs are age-stratified (<450 <50yo, <900 50–75yo, <1800 >75yo to exclude HF).','Not useful to repeat frequently within a single admission.']},
+    {id:'aki_stage',name:'Creatinine / AKI Staging',normal:'~0.6–1.2 mg/dL (varies with muscle mass)',
+      thresholds:[
+        {range:'KDIGO Stage 1',meaning:'Cr rise ≥0.3 mg/dL within 48h, OR 1.5–1.9× baseline, OR urine output <0.5 mL/kg/h for 6–12h.',action:'Identify prerenal vs intrinsic vs postrenal. Stop nephrotoxins, optimize volume/perfusion, renal US if obstruction possible, check urine microscopy + FENa.',evidence:'KDIGO 2012 AKI staging — even a 0.3 mg/dL rise is clinically significant and associated with worse outcomes.'},
+        {range:'KDIGO Stage 2',meaning:'Cr 2.0–2.9× baseline, OR urine output <0.5 mL/kg/h for ≥12h.',action:'Intensify workup, nephrology if unclear/progressive, careful fluid and electrolyte management, renally dose all drugs.',evidence:'KDIGO Stage 2.'},
+        {range:'KDIGO Stage 3',meaning:'Cr ≥3× baseline, OR Cr ≥4.0 mg/dL, OR initiation of RRT, OR urine output <0.3 mL/kg/h ≥24h or anuria ≥12h.',action:'Nephrology consult; assess dialysis indications (AEIOU). Aggressive search for reversible causes.',evidence:'KDIGO Stage 3; dialysis indications — Acidosis, Electrolytes (refractory K), Ingestions, Overload, Uremia.'}
+      ],
+      trend:'Creatinine LAGS injury by 24–48h — a "normal" Cr early does not exclude evolving AKI; watch the trajectory and urine output (often the earliest sign). A rapidly rising Cr or oliguria signals ongoing injury.',
+      pearls:['BUN:Cr >20:1 suggests prerenal (or GI bleed).','Muddy brown casts → ATN; RBC casts → GN; WBC casts/eosinophils → AIN.','FENa <1% prerenal, >2% ATN (unreliable on diuretics — use FEUrea <35% for prerenal).']},
+    {id:'anion_gap',name:'Anion Gap / Acid-Base',normal:'AG 8–12 mEq/L (Na − Cl − HCO3)',
+      thresholds:[
+        {range:'High anion gap metabolic acidosis',meaning:'Unmeasured anions. GOLD-MARK: Glycols (ethylene/propylene), Oxoproline, L-lactate, D-lactate, Methanol, Aspirin, Renal failure (uremia), Ketoacidosis (DKA/alcoholic/starvation).',action:'Identify the cause; check lactate, ketones, glucose, renal function, osmolar gap (toxic alcohols), salicylate level. Correct for albumin (add 2.5 to AG per 1 g/dL albumin below 4).',evidence:'GOLD-MARK mnemonic (replaces MUDPILES) for HAGMA differential.'},
+        {range:'Normal anion gap acidosis',meaning:'HCO3 loss or failure to excrete acid. HARDASS: Hyperalimentation, Acetazolamide, RTA, Diarrhea, Ammonium chloride, Spironolactone, Saline (dilutional).',action:'Distinguish GI loss (diarrhea — negative urine anion gap) from renal (RTA — positive urine anion gap).',evidence:'Urine anion gap differentiates renal vs GI causes of NAGMA.'},
+        {range:'Check for mixed disorders',meaning:'Use the delta-delta and expected compensation to detect concurrent processes.',action:'Winter formula: expected PaCO2 = 1.5×HCO3 + 8 (±2). Delta ratio: ΔAG/ΔHCO3 (<1 concurrent NAGMA; >2 concurrent metabolic alkalosis).',evidence:'Winter formula for expected respiratory compensation of metabolic acidosis.'}
+      ],
+      trend:'In DKA, track GAP CLOSURE (not glucose) as the marker of resolution — continue insulin until the gap normalizes, switching to dextrose-containing fluids once glucose ~200.',
+      pearls:['Always correct AG for albumin — hypoalbuminemia masks a gap.','A normal pH does not exclude a mixed disorder.','Osmolar gap >10 with HAGMA → suspect toxic alcohol.']},
+    {id:'lfts',name:'LFTs / Transaminases',normal:'AST/ALT ~10–40 U/L; Alk phos 40–130; bili <1.2',
+      thresholds:[
+        {range:'Hepatocellular (ALT/AST predominant)',meaning:'ALT > AST → viral hepatitis, NAFLD, drugs, ischemia. AST:ALT >2:1 → alcoholic hepatitis (rarely >300). AST/ALT >1000 → ischemic ("shock liver"), acetaminophen, acute viral.',action:'Acute hepatitis panel, acetaminophen level, med review, imaging; assess synthetic function (INR, albumin) and for acute liver failure (INR ↑ + encephalopathy = emergency).',evidence:'AST:ALT ratio >2 with values typically <300 U/L is characteristic of alcoholic hepatitis; transaminases >1000 narrow to ischemia, toxins, or acute viral.'},
+        {range:'Cholestatic (Alk phos / bili predominant)',meaning:'Biliary obstruction, drug-induced, infiltrative. Confirm hepatic origin of alk phos with GGT.',action:'RUQ ultrasound (ducts, stones), then MRCP/ERCP as indicated; consider cholangitis if fever + jaundice + RUQ pain (emergency).',evidence:'Elevated GGT confirms hepatobiliary (vs bone) source of alkaline phosphatase.'},
+        {range:'Synthetic dysfunction',meaning:'Elevated INR + low albumin + hyperbilirubinemia reflect impaired liver function/severity.',action:'Assess for acute liver failure (coagulopathy + encephalopathy without prior cirrhosis) — transplant-center emergency.',evidence:'INR and bilirubin are core to MELD scoring of liver disease severity.'}
+      ],
+      trend:'In acetaminophen toxicity, transaminases can be normal early then peak at 72–96h — trend them and the INR. A falling transaminase with rising INR/bilirubin can signal worsening (massive necrosis), not improvement.',
+      pearls:['Pattern (hepatocellular vs cholestatic) narrows the differential fast — compute R-factor if needed.','Synthetic function (INR, albumin), not transaminase magnitude, reflects true liver function.','Fever + jaundice + RUQ pain (Charcot) = cholangitis = urgent biliary drainage.']},
+    {id:'procalcitonin',name:'Procalcitonin',normal:'<0.10 ng/mL (low bacterial likelihood)',
+      thresholds:[
+        {range:'< 0.25 ng/mL',meaning:'Bacterial infection less likely (esp. lower respiratory tract); supports withholding/stopping antibiotics in the right context.',action:'Use as an adjunct to clinical judgment — consider not starting or de-escalating antibiotics in lower respiratory infection.',evidence:'PCT-guided antibiotic algorithms (e.g., ProHOSP) reduced antibiotic exposure without increased adverse outcomes in respiratory infections.'},
+        {range:'> 0.5 ng/mL',meaning:'Bacterial infection/sepsis more likely; higher levels track with severity.',action:'Supports bacterial etiology — correlate with cultures and clinical picture; trend to guide duration/de-escalation.',evidence:'Higher PCT correlates with bacterial sepsis; falling PCT supports antibiotic de-escalation.'},
+        {range:'Caveats',meaning:'False positives: major surgery/trauma, burns, cardiogenic shock, ESRD. False negatives: early/localized infection.',action:'Never start/stop antibiotics on PCT alone in an unstable patient.',evidence:'PCT is an adjunct, not a substitute for clinical assessment and cultures.'}
+      ],
+      trend:'Serial PCT (e.g., declining ≥80% from peak) supports antibiotic discontinuation; a rising PCT suggests ongoing/worsening bacterial infection.',
+      pearls:['Most useful for respiratory infections and antibiotic stewardship/duration.','Do not use to overrule clinical sepsis suspicion.']},
+    {id:'dimer',name:'D-dimer',normal:'<500 ng/mL (or age×10 if >50yo)',
+      thresholds:[
+        {range:'Below threshold + low pretest probability',meaning:'VTE effectively excluded — high negative predictive value.',action:'In low/intermediate Wells (or PERC-negative), a normal D-dimer excludes PE/DVT without imaging.',evidence:'Use age-adjusted cutoff (age×10 ng/mL for >50yo) to improve specificity without losing sensitivity (ADJUST-PE).'},
+        {range:'Elevated',meaning:'Nonspecific — VTE possible, but also infection, malignancy, pregnancy, surgery, trauma, inflammation, age.',action:'Does NOT confirm VTE — proceed to imaging (CTPA or US) if clinically warranted. Do not order in high pretest probability (image directly).',evidence:'D-dimer has high sensitivity but poor specificity; only useful to RULE OUT in low/intermediate probability.'}
+      ],
+      trend:'Single-use test for ruling out — trending is not clinically useful for VTE.',
+      pearls:['Only order when pretest probability is low/intermediate (Wells/PERC) — otherwise it misleads.','Age-adjusted cutoff reduces unnecessary CTPAs in older patients.','High probability → skip D-dimer, image directly.']}
+  ]}
+};
+Object.assign(DATA_DATA,{
+  ekg:{name:'EKG',color:'var(--g4)',items:[
+    {id:'stemi',name:'ST Elevation / STEMI Criteria',normal:'Isoelectric ST segment',
+      thresholds:[
+        {range:'STEMI criteria (J-point elevation)',meaning:'New ST elevation at the J point in ≥2 contiguous leads: ≥1 mm in all leads EXCEPT V2–V3; in V2–V3 ≥2 mm (men ≥40), ≥2.5 mm (men <40), ≥1.5 mm (women).',action:'Activate cath lab. Goal door-to-balloon <90 min (or transfer for PCI <120 min, else thrombolytics). ASA + anticoagulation per protocol.',evidence:'4th Universal Definition of MI / ACC-AHA STEMI criteria with sex- and age-specific V2–V3 thresholds.'},
+        {range:'Territory localization',meaning:'Inferior: II, III, aVF (get RIGHT-sided leads V4R for RV infarct). Anterior/septal: V1–V4. Lateral: I, aVL, V5–V6. Posterior: tall R + ST depression V1–V3 (confirm with V7–V9).',action:'Inferior MI → check V4R; if RV involved, AVOID nitroglycerin (preload-dependent → hypotension). Localize culprit vessel.',evidence:'Reciprocal changes increase specificity; RV infarction complicates ~40% of inferior MIs.'},
+        {range:'STEMI mimics',meaning:'Pericarditis (diffuse STE + PR depression, no reciprocal), early repolarization, LBBB, LVH, Brugada, hyperkalemia, Takotsubo.',action:'Use Sgarbossa criteria in LBBB/paced rhythm to diagnose MI. Don\'t reflexively activate for benign early repol.',evidence:'Modified Sgarbossa criteria diagnose acute MI in the presence of LBBB.'}
+      ],
+      trend:'Repeat EKG every 10–15 min if symptoms persist and initial is nondiagnostic — STEMI can evolve. Compare to prior EKGs to establish "new."',
+      pearls:['Reciprocal ST depression strongly supports true STEMI over mimic.','Posterior MI is easy to miss — tall R waves + ST depression in V1–V3.','New LBBB with ischemic symptoms → treat as STEMI-equivalent (use Sgarbossa).']},
+    {id:'qtc',name:'QTc Prolongation',normal:'Men <450 ms, Women <460 ms',
+      thresholds:[
+        {range:'QTc 450/460–500 ms',meaning:'Prolonged — increased torsades risk; review QT-prolonging drugs and electrolytes.',action:'Stop/avoid QT-prolonging meds (many antiemetics, antipsychotics, fluoroquinolones, methadone, azoles); reprete K (goal >4) and Mg (goal >2).',evidence:'Risk of torsades rises with QTc; correction of K/Mg is foundational prevention.'},
+        {range:'QTc > 500 ms',meaning:'High risk for torsades de pointes/polymorphic VT.',action:'Aggressively remove offending agents, aggressively reprete electrolytes (Mg even if normal), telemetry. Treat torsades with IV magnesium.',evidence:'QTc >500 ms is the threshold most associated with markedly increased torsades risk.'}
+      ],
+      trend:'Recheck QTc after starting QT-prolonging drugs and after electrolyte shifts; effects are additive.',
+      pearls:['Use Bazett (QT/√RR) but it over-corrects at high rates — Fridericia is better when tachycardic.','Magnesium is first-line for torsades even with normal Mg level.','Multiple QT drugs are additive — review the full med list.']},
+    {id:'ekg_k',name:'EKG in Hyperkalemia',normal:'Normal T waves, narrow QRS',
+      thresholds:[
+        {range:'Peaked T waves (~5.5–6.5)',meaning:'Earliest change — tall, narrow, symmetric, "tented" T waves.',action:'Recheck K, look for cause, prepare to treat; correlate with serum K.',evidence:'EKG changes progress with rising K but correlation is imperfect — treat the patient.'},
+        {range:'PR prolongation / P-wave flattening / QRS widening (~6.5–8)',meaning:'Progressive conduction slowing — increasingly dangerous.',action:'IV calcium to stabilize myocardium NOW + shift therapies (insulin/glucose, albuterol) + elimination.',evidence:'QRS widening signals imminent risk of malignant arrhythmia.'},
+        {range:'Sine wave (>8–9)',meaning:'Pre-terminal — sinusoidal merging of QRS and T precedes VF/asystole.',action:'IMMEDIATE IV calcium, all shift therapies, emergent dialysis; this is peri-arrest.',evidence:'Sine-wave pattern is a peri-arrest finding requiring immediate myocardial stabilization.'}
+      ],
+      trend:'EKG changes can lag or be absent even with dangerous K — never use a normal EKG to defer treatment of severe hyperkalemia.',
+      pearls:['IV calcium stabilizes the membrane but does NOT lower K — still need shift + elimination.','Calcium chloride (central) vs gluconate (peripheral).','Any EKG change with hyperkalemia = give calcium immediately.']},
+    {id:'blocks',name:'AV Blocks',normal:'PR 120–200 ms, 1:1 conduction',
+      thresholds:[
+        {range:'1st degree (PR >200 ms)',meaning:'Prolonged PR, every P conducts. Usually benign.',action:'Observe; review nodal-blocking drugs.',evidence:'Benign in isolation.'},
+        {range:'2nd degree Mobitz I (Wenckebach)',meaning:'Progressive PR lengthening until a dropped beat. Usually AV-node level, often benign.',action:'Observe; treat if symptomatic bradycardia (atropine). Hold nodal blockers.',evidence:'Typically does not progress to complete block.'},
+        {range:'2nd degree Mobitz II',meaning:'Constant PR with sudden dropped beats. Infranodal — risk of progression to complete heart block.',action:'Pacing pads on, cardiology/EP; usually needs pacemaker. Atropine often ineffective (infranodal).',evidence:'Mobitz II frequently progresses to complete heart block — pacing indicated.'},
+        {range:'3rd degree (complete) heart block',meaning:'AV dissociation — P waves and QRS independent. Escape rhythm determines stability.',action:'Transcutaneous/transvenous pacing, treat reversible causes, urgent EP for permanent pacemaker.',evidence:'Complete heart block with symptoms/unstable escape requires pacing.'}
+      ],
+      trend:'Continuous telemetry to catch progression (Mobitz II → complete block) and assess escape reliability.',
+      pearls:['Mobitz I = node, usually benign; Mobitz II = below node, dangerous.','New block + inferior MI → often vagally mediated/transient; anterior MI + block → ominous (large infarct).','Atropine helps nodal (Mobitz I) but not infranodal (Mobitz II) blocks.']}
+  ]},
+  rad:{name:'Radiology',color:'var(--g2)',items:[
+    {id:'cxr',name:'Chest X-ray Patterns',normal:'Clear lungs, normal cardiac silhouette/mediastinum',
+      thresholds:[
+        {range:'Airspace opacity / consolidation',meaning:'Alveolar filling — pneumonia (focal, ± air bronchograms), aspiration (dependent), hemorrhage, or edema (if bilateral).',action:'Correlate with fever/WBC/symptoms for pneumonia; treat per CAP/HAP. Lobar consolidation = bacterial pneumonia until proven otherwise.',evidence:'Air bronchograms indicate alveolar (not interstitial) process.'},
+        {range:'Pulmonary edema',meaning:'Cardiogenic: cephalization, Kerley B lines, perihilar "bat-wing," effusions, cardiomegaly. Non-cardiogenic (ARDS): bilateral patchy without cardiomegaly.',action:'Cardiogenic → diurese/afterload reduce; correlate BNP/echo. ARDS → lung-protective ventilation, treat underlying.',evidence:'ARDS (Berlin) requires bilateral opacities not fully explained by effusions/cardiac failure with P/F ≤300.'},
+        {range:'Pneumothorax',meaning:'Visceral pleural line with absent lung markings peripherally. Tension: mediastinal shift AWAY, depressed hemidiaphragm.',action:'Tension PTX is CLINICAL — decompress immediately (needle then chest tube), do not wait for CXR. Simple PTX → chest tube vs observation by size.',evidence:'Tension pneumothorax is a clinical diagnosis; treatment must precede imaging.'},
+        {range:'Pleural effusion',meaning:'Blunting of costophrenic angle (≥200–300 mL to see on upright; lateral decub more sensitive). Layering vs loculated.',action:'Thoracentesis if diagnostic/therapeutic need; apply Light criteria (exudate vs transudate).',evidence:'Light criteria classify exudate (protein or LDH ratios) vs transudate.'},
+        {range:'Widened mediastinum',meaning:'>8 cm on supine AP — consider aortic dissection/aneurysm, traumatic injury, mass, lymphadenopathy.',action:'If dissection suspected → CT angiography; do not anchor on CXR alone (insensitive).',evidence:'A normal mediastinum does not exclude dissection — CTA if clinical suspicion.'}
+      ],
+      trend:'Compare with prior films — a "new" infiltrate or enlarging effusion changes management. Post-line/tube placement, always check positioning and for iatrogenic PTX.',
+      pearls:['Always verify ETT (3–5 cm above carina), central line, NG tube positions on CXR.','Bilateral edema pattern → think cardiac vs ARDS using cardiomegaly + clinical context.','Lordotic/rotated/AP films distort the cardiac silhouette and mediastinum — assess technique.']},
+    {id:'ct_head',name:'CT Head (Non-contrast)',normal:'No hemorrhage, mass effect, or midline shift',
+      thresholds:[
+        {range:'Acute blood (hyperdense)',meaning:'Epidural (lens/biconvex, arterial, may have lucid interval), subdural (crescent, crosses sutures, often venous/elderly/anticoag), subarachnoid (blood in sulci/cisterns), intraparenchymal (HTN: basal ganglia/thalamus/pons/cerebellum).',action:'Neurosurgery consult; reverse anticoagulation; BP control; manage ICP if mass effect/herniation signs.',evidence:'Hemorrhage location suggests etiology (e.g., lobar → amyloid in elderly; deep → hypertensive).'},
+        {range:'Early ischemic signs',meaning:'CT is often NORMAL in the first hours of ischemic stroke. Subtle: loss of gray-white differentiation, insular ribbon sign, hyperdense MCA sign, sulcal effacement.',action:'A normal CT does NOT exclude ischemic stroke — it excludes hemorrhage to permit thrombolysis. Proceed with stroke pathway/CTA/perfusion.',evidence:'Non-contrast CT\'s main acute role is excluding hemorrhage before thrombolytics.'},
+        {range:'Mass effect / herniation',meaning:'Midline shift, effaced ventricles/cisterns, uncal/subfalcine herniation.',action:'Emergent neurosurgery; ICP measures (head of bed up, hyperosmolar therapy, controlled ventilation).',evidence:'Effaced basal cisterns indicate dangerously elevated ICP.'}
+      ],
+      trend:'Repeat/delayed CT to assess hematoma expansion (esp. first 24h) or evolving infarct/edema.',
+      pearls:['CT is to RULE OUT BLEED in acute stroke — not to confirm ischemia early.','Subdural in elderly/anticoagulated can be subtle and isodense if subacute.','Always correlate with the neuro exam and time course.']}
+  ]},
+  micro:{name:'Micro',color:'var(--g3)',items:[
+    {id:'bcx',name:'Blood Culture / Gram Stain',normal:'No growth',
+      thresholds:[
+        {range:'Gram-positive cocci in clusters',meaning:'Staphylococcus. Clusters → S. aureus (if coagulase +) vs coagulase-negative staph (often contaminant, but pathogenic on lines/prosthetics).',action:'S. aureus bacteremia is NEVER a contaminant — get TEE (endocarditis), repeat cultures to document clearance, ID consult, source control, ≥14 days IV.',evidence:'S. aureus bacteremia mandates echo and source evaluation; minimum 2 weeks therapy even if uncomplicated.'},
+        {range:'Gram-positive cocci in chains/pairs',meaning:'Streptococcus/Enterococcus. Pairs (lancet) → S. pneumoniae; chains → strep; enterococci.',action:'Identify source; Strep bovis (gallolyticus) → colonoscopy (colon cancer association); viridans strep → consider endocarditis.',evidence:'S. gallolyticus bacteremia is associated with colorectal neoplasia.'},
+        {range:'Gram-negative rods',meaning:'Enterobacterales (E. coli, Klebsiella), Pseudomonas. Source often urinary, abdominal, biliary, or line.',action:'Source control + appropriate gram-negative coverage; consider ESBL/Pseudomonas risk; de-escalate on sensitivities.',evidence:'Empiric coverage tailored to source and local resistance; carbapenem if ESBL risk.'},
+        {range:'Likely contaminant clues',meaning:'1 of multiple bottles positive, coag-negative staph/Cutibacterium/diphtheroids, no clinical sepsis.',action:'Correlate clinically; repeat cultures rather than treating a single contaminant in a well patient.',evidence:'Single-bottle CoNS in a stable patient without hardware is usually contamination.'}
+      ],
+      trend:'Time-to-positivity (<24h suggests high burden/true infection), number of positive bottles/sets, and clearance on repeat cultures all guide significance and duration.',
+      pearls:['Always draw 2 sets from separate sites BEFORE antibiotics.','S. aureus, S. pneumoniae, Candida in blood are essentially never contaminants.','Repeat cultures to document clearance for S. aureus and Candida.']},
+    {id:'ucx',name:'Urinalysis / Urine Culture',normal:'No growth; UA without pyuria/nitrites',
+      thresholds:[
+        {range:'Pyuria + bacteriuria + symptoms',meaning:'UTI likely when symptoms (dysuria, frequency, suprapubic/flank pain) accompany pyuria (WBC) ± positive nitrites/leukocyte esterase.',action:'Treat as UTI/pyelonephritis per ABX guide; obtain culture in complicated/pyelo cases.',evidence:'Nitrites are specific (Enterobacterales reduce nitrate); leukocyte esterase indicates pyuria.'},
+        {range:'Significant bacteriuria thresholds',meaning:'≥10⁵ CFU/mL clean-catch (or ≥10² in symptomatic women/catheter) supports true infection.',action:'Interpret with symptoms and collection method; mixed flora suggests contamination — recollect.',evidence:'IDSA quantitative thresholds vary by sex, symptoms, and collection.'},
+        {range:'Asymptomatic bacteriuria',meaning:'Positive culture WITHOUT urinary symptoms.',action:'Do NOT treat — EXCEPT in pregnancy or before urologic procedures with mucosal trauma. Treating otherwise drives resistance and C. diff.',evidence:'IDSA: screen/treat asymptomatic bacteriuria only in pregnancy and pre-urologic intervention.'}
+      ],
+      trend:'Re-culture only to confirm cure when clinically indicated (e.g., pregnancy); routine test-of-cure is not recommended.',
+      pearls:['Pyuria alone is not a UTI — treat the patient, not the dipstick.','In delirious elderly, a positive UA does not prove the UTI is the cause — exclude other sources first.','Catheter-associated: change/remove catheter and treat only if symptomatic.']}
+  ]},
+  vent:{name:'Ventilator',color:'var(--g)',items:[
+    {id:'pf',name:'P/F Ratio (Oxygenation)',normal:'PaO2/FiO2 >400',
+      thresholds:[
+        {range:'P/F 200–300',meaning:'Mild ARDS (with bilateral opacities, not fully explained by cardiac/volume, within 1 week of insult, on PEEP ≥5).',action:'Lung-protective ventilation; treat underlying cause; conservative fluids.',evidence:'Berlin Definition: mild ARDS P/F 200–300 on PEEP/CPAP ≥5.'},
+        {range:'P/F 100–200',meaning:'Moderate ARDS.',action:'Low tidal volume (6 mL/kg PBW), plateau <30, consider prone positioning, higher PEEP strategy.',evidence:'Berlin moderate ARDS; proning reduces mortality (PROSEVA) in moderate–severe.'},
+        {range:'P/F < 100',meaning:'Severe ARDS — high mortality.',action:'Proning ≥16h/day, consider neuromuscular blockade, evaluate for ECMO at experienced center.',evidence:'PROSEVA: prone positioning for ≥16h/day improved survival in severe ARDS (P/F <150).'}
+      ],
+      trend:'Track P/F with FiO2/PEEP changes; improving P/F at stable/lower support indicates recovery. Worsening despite optimization → escalate (proning, paralysis, ECMO eval).',
+      pearls:['Calculate PBW from HEIGHT (not actual weight) for tidal volume.','ARDS tidal volume target 6 mL/kg PBW reduces mortality (ARMA/ARDSnet).','Proning is a mortality intervention in moderate–severe ARDS, not a last resort.']},
+    {id:'plateau',name:'Plateau & Driving Pressure',normal:'Plateau <30 cmH2O; driving pressure <15',
+      thresholds:[
+        {range:'Plateau pressure > 30 cmH2O',meaning:'Excessive alveolar distending pressure → ventilator-induced lung injury risk.',action:'Reduce tidal volume (toward 4–6 mL/kg PBW), reassess; differentiate lung (compliance) vs chest wall/abdominal causes.',evidence:'ARDSnet targets plateau ≤30 cmH2O to limit VILI.'},
+        {range:'Driving pressure (Plateau − PEEP) > 15 cmH2O',meaning:'Strong predictor of mortality in ARDS — reflects strain relative to aerated lung.',action:'Lower tidal volume and/or optimize PEEP to reduce driving pressure.',evidence:'Amato et al. (NEJM 2015): driving pressure was the ventilator variable most associated with ARDS survival.'},
+        {range:'Rising peak with normal plateau',meaning:'Increased airways RESISTANCE (bronchospasm, secretions, kinked/biting tube, mucus plug) rather than compliance problem.',action:'Suction, bronchodilators, check tube; peak−plateau gap localizes resistance vs compliance.',evidence:'High peak with normal plateau = resistance; high both = compliance/distension.'}
+      ],
+      trend:'Trend plateau and driving pressure with each ventilator change; falling driving pressure suggests improving compliance/recruitment.',
+      pearls:['Driving pressure may be the single best ventilator target in ARDS.','Always check plateau with an inspiratory hold in a passive patient.','Peak−plateau separation distinguishes resistance from compliance problems.']},
+    {id:'peep',name:'PEEP & Auto-PEEP',normal:'Set PEEP typically 5 cmH2O baseline',
+      thresholds:[
+        {range:'Higher PEEP strategy',meaning:'Recruits collapsed alveoli in ARDS, improves oxygenation, reduces atelectrauma — balanced against overdistension and hemodynamic compromise.',action:'Titrate using ARDSnet PEEP/FiO2 tables; assess oxygenation, compliance, and hemodynamics.',evidence:'ARDSnet PEEP/FiO2 ladder; higher PEEP benefits moderate–severe ARDS.'},
+        {range:'Auto-PEEP (breath stacking)',meaning:'Incomplete exhalation (obstructive disease, high rate, short expiratory time) → dynamic hyperinflation, hypotension, barotrauma.',action:'Reduce respiratory rate, increase expiratory time, treat bronchospasm; if hypotension/PEA → disconnect circuit to allow full exhalation.',evidence:'Dynamic hyperinflation can cause obstructive shock; circuit disconnection is diagnostic/therapeutic.'},
+        {range:'PEEP and hemodynamics',meaning:'High PEEP raises intrathoracic pressure → decreased venous return → hypotension, esp. if hypovolemic.',action:'Assess volume status; high PEEP-induced hypotension may need volume or PEEP reduction.',evidence:'PEEP reduces preload; effect magnified in hypovolemia.'}
+      ],
+      trend:'When weaning, reduce FiO2 and PEEP stepwise; readiness for SBT when on low support (FiO2 ≤40%, PEEP ≤5–8) with adequate oxygenation.',
+      pearls:['Sudden hypotension in a ventilated obstructive patient → think auto-PEEP (and tension PTX) → disconnect to test.','Daily spontaneous awakening + breathing trials reduce ventilator days.','Balance recruitment vs overdistension/hemodynamics when setting PEEP.']}
+  ]},
+  rhc:{name:'Right Heart Cath / Hemo',color:'var(--g2)',items:[
+    {id:'shock_profiles',name:'Shock Profiles (PCWP / CO / SVR)',normal:'PCWP 6–12; CI 2.5–4.0; SVR 800–1200',
+      thresholds:[
+        {range:'Cardiogenic shock',meaning:'High PCWP (>18), LOW cardiac index (<2.2), HIGH SVR (compensatory vasoconstriction). Cold and wet.',action:'Inotropes (dobutamine/milrinone), treat cause (revascularize MI), consider mechanical support (IABP/Impella); diurese congestion.',evidence:'Classic cardiogenic profile: ↑filling pressure, ↓CO, ↑SVR.'},
+        {range:'Hypovolemic shock',meaning:'LOW PCWP (<6), low CO, HIGH SVR. Cold and dry.',action:'Volume resuscitation (blood if hemorrhagic); find and stop losses.',evidence:'Low preload + compensatory vasoconstriction.'},
+        {range:'Distributive (septic) shock',meaning:'LOW/normal PCWP, HIGH or normal CO, LOW SVR (vasodilation). Warm and (often) wet from resuscitation.',action:'Fluids + norepinephrine (first-line vasopressor); source control/antibiotics; add vasopressin if refractory.',evidence:'Distributive shock: pathologic vasodilation (low SVR) with preserved/elevated CO.'},
+        {range:'Obstructive shock',meaning:'Tamponade (equalized diastolic pressures, pulsus paradoxus), massive PE (high RA/PA, RV strain), tension PTX. Hemodynamics depend on lesion.',action:'Relieve the obstruction: pericardiocentesis, thrombolysis/embolectomy, needle/chest tube decompression.',evidence:'Obstruction to filling or output; treatment is mechanical relief.'}
+      ],
+      trend:'Mixed venous O2 saturation (ScvO2/SvO2): LOW (<65%) in cardiogenic/hypovolemic (high extraction); HIGH in distributive (impaired extraction/shunt). Trend with resuscitation to assess oxygen delivery vs demand.',
+      pearls:['SVR = 80 × (MAP − CVP)/CO — high SVR = vasoconstriction (cardiogenic/hypovolemic), low SVR = vasodilation (septic).','PCWP estimates left atrial/LVEDP — high in cardiogenic, low in hypovolemic.','Shock is often mixed (e.g., septic + cardiogenic) — interpret the full profile, not one number.']},
+    {id:'rhc_numbers',name:'Key RHC Pressures',normal:'RA 2–6; RV 15–25/2–8; PA 15–25/8–15; PCWP 6–12',
+      thresholds:[
+        {range:'Pulmonary hypertension',meaning:'Mean PA pressure ≥20 mmHg at rest (updated threshold).',action:'Classify pre- vs post-capillary using PCWP and PVR; manage by WHO group.',evidence:'2022 ESC/ERS: mPAP >20 mmHg defines PH (was ≥25).'},
+        {range:'Pre-capillary PH',meaning:'mPAP ≥20, PCWP ≤15, PVR >2 WU — pulmonary arterial disease (Group 1), chronic lung/PE (Groups 3/4).',action:'PH-specific workup; PAH therapy only at expert centers; do NOT give pulmonary vasodilators in Group 2.',evidence:'Low PCWP + high PVR localizes disease to the pulmonary vasculature.'},
+        {range:'Post-capillary PH',meaning:'mPAP ≥20, PCWP >15 — left heart disease (Group 2), the most common cause.',action:'Treat left heart disease (HF, valve); avoid pulmonary vasodilators (can precipitate pulmonary edema).',evidence:'Elevated PCWP indicates left-sided/post-capillary etiology.'},
+        {range:'Elevated RA / RA≈PCWP',meaning:'High RA pressure → RV failure/volume overload; equalization of diastolic pressures → tamponade/constriction.',action:'Assess RV function/volume; pericardial disease workup if equalization + pulsus paradoxus.',evidence:'Diastolic equalization is characteristic of tamponade and constrictive physiology.'}
+      ],
+      trend:'Track filling pressures and CO/CI in response to diuresis, fluids, inotropes, and vasodilators to guide titration.',
+      pearls:['PCWP is the key fork: high = left heart (post-capillary); low = pulmonary vascular (pre-capillary).','Cardiac index (CO/BSA) personalizes output — CI <2.2 defines low-output states.','PVR = (mPAP − PCWP)/CO (Wood units) separates pulmonary vascular disease from left heart disease.']}
+  ]}
+});
+// ============================================================
+// CLINIC + DATA RENDERING
+// ============================================================
+var clinicActiveSys='all';
+var dataActiveCat='all';
+
+function clinicRender(){
+  // pills
+  const pills=document.getElementById('clinic-pills');
+  if(pills){
+    let h=`<button class="clinic-pill${clinicActiveSys==='all'?' on':''}" onclick="clinicSetSys('all')">ALL</button>`;
+    Object.keys(CLINIC_DATA).forEach(k=>{
+      h+=`<button class="clinic-pill${clinicActiveSys===k?' on':''}" onclick="clinicSetSys('${k}')">${CLINIC_DATA[k].name}</button>`;
+    });
+    pills.innerHTML=h;
+  }
+  const q=(document.getElementById('clinic-search')||{}).value||'';
+  clinicBuildList(q.toLowerCase());
+}
+function clinicSetSys(k){ clinicActiveSys=k; clinicRender(); }
+function clinicFilter(){ const q=(document.getElementById('clinic-search')||{}).value||''; clinicBuildList(q.toLowerCase()); }
+function clinicBuildList(q){
+  const list=document.getElementById('clinic-list');
+  if(!list) return;
+  let h='';
+  Object.keys(CLINIC_DATA).forEach(sk=>{
+    if(clinicActiveSys!=='all' && clinicActiveSys!==sk) return;
+    const sys=CLINIC_DATA[sk];
+    const matches=sys.complaints.filter(c=>{
+      if(!q) return true;
+      const hay=(c.name+' '+(c.cantMiss||[]).join(' ')+' '+(c.ddx||[]).map(d=>d.dx).join(' ')).toLowerCase();
+      return hay.indexOf(q)>=0;
+    });
+    if(!matches.length) return;
+    h+=`<div class="card" style="margin-bottom:14px;">
+      <div style="font-family:var(--mono);font-size:11px;color:${sys.color};letter-spacing:.1em;margin-bottom:10px;">${sys.name.toUpperCase()}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+    matches.forEach(c=>{
+      h+=`<button class="btn bs" onclick="openClinicDrawer('${sk}','${c.id}')" style="font-size:22px;padding:8px 14px;">${c.name}</button>`;
+    });
+    h+=`</div></div>`;
+  });
+  if(!h) h='<div style="font-size:24px;color:var(--t3);font-style:italic;padding:20px 0;">No matching complaints.</div>';
+  list.innerHTML=h;
+}
+
+function riskTag(risk){
+  if(risk==='high') return '<span style="font-family:var(--mono);font-size:9px;background:rgba(239,83,80,.15);color:var(--red);padding:2px 6px;border-radius:5px;letter-spacing:.05em;margin-left:6px;vertical-align:middle;">CAN\'T MISS</span>';
+  return '';
+}
+
+function openClinicDrawer(sk,cid){
+  closeAnyDrawer();
+  const sys=CLINIC_DATA[sk];
+  const c=sys.complaints.find(x=>x.id===cid);
+  if(!c) return;
+  let html=`<div style="padding:20px 20px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+      <div style="font-family:var(--mono);font-size:16px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${c.name}</div>
+      <button onclick="closeAnyDrawer()" style="background:transparent;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0;">×</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:${sys.color};letter-spacing:.1em;margin-bottom:18px;">${sys.name.toUpperCase()}</div>
+  </div>`;
+
+  // Can't miss banner
+  if(c.cantMiss&&c.cantMiss.length){
+    html+=`<div style="margin:0 12px 14px;background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.25);border-radius:var(--r);padding:12px 14px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.1em;margin-bottom:8px;">⚠ CAN'T-MISS DIAGNOSES</div>
+      <div style="font-size:13px;color:var(--t);line-height:1.7;">${c.cantMiss.join(' · ')}</div>
+    </div>`;
+  }
+
+  // Differential
+  html+=secHeader('DIFFERENTIAL');
+  c.ddx.forEach(d=>{
+    const bord=d.risk==='high'?'var(--red)':'var(--b2)';
+    html+=`<div style="margin:0 12px 8px;border:1px solid var(--b2);border-left:2px solid ${bord};border-radius:var(--r);padding:11px 14px;background:var(--s2);">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--t);font-weight:600;margin-bottom:4px;">${d.dx}${riskTag(d.risk)}</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6;">${d.features}</div>
+    </div>`;
+  });
+
+  // Questions to ask
+  html+=secHeader('QUESTIONS TO ASK');
+  c.questions.forEach(qq=>{
+    html+=`<div style="margin:0 12px 8px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:11px 14px;">
+      <div style="font-size:13px;color:var(--g2);font-weight:500;margin-bottom:4px;line-height:1.4;">${qq.q}</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.6;font-style:italic;"><span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;font-style:normal;">WHY  </span>${qq.why}</div>
+    </div>`;
+  });
+
+  // Workup
+  html+=secHeader('WORKUP');
+  html+=listBlock(c.workup,'var(--g3)');
+
+  // Management
+  html+=secHeader('MANAGEMENT');
+  html+=listBlock(c.management,'var(--g)');
+
+  // SOAP
+  html+=secHeader('SOAP DOCUMENTATION');
+  html+=`<div style="margin:0 12px 8px;background:var(--s3);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--g2);letter-spacing:.08em;margin-bottom:8px;">SUBJECTIVE</div>`;
+  c.soap.subjective.forEach(s=>{ html+=`<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:6px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--g2);">›</span>${s}</div>`; });
+  html+=`<div style="font-family:var(--mono);font-size:10px;color:var(--g3);letter-spacing:.08em;margin:12px 0 8px;">OBJECTIVE</div>`;
+  c.soap.objective.forEach(s=>{ html+=`<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:6px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--g3);">›</span>${s}</div>`; });
+  html+=`</div>`;
+  html+=`<div style="height:30px;"></div>`;
+
+  buildDrawer(html);
+}
+
+// ---------- DATA tab ----------
+function dataRender(){
+  const pills=document.getElementById('data-pills');
+  if(pills){
+    let h=`<button class="clinic-pill${dataActiveCat==='all'?' on':''}" onclick="dataSetCat('all')">ALL</button>`;
+    Object.keys(DATA_DATA).forEach(k=>{
+      h+=`<button class="clinic-pill${dataActiveCat===k?' on':''}" onclick="dataSetCat('${k}')">${DATA_DATA[k].name}</button>`;
+    });
+    pills.innerHTML=h;
+  }
+  const q=(document.getElementById('data-search')||{}).value||'';
+  dataBuildList(q.toLowerCase());
+}
+function dataSetCat(k){ dataActiveCat=k; dataRender(); }
+function dataFilter(){ const q=(document.getElementById('data-search')||{}).value||''; dataBuildList(q.toLowerCase()); }
+function dataBuildList(q){
+  const list=document.getElementById('data-list');
+  if(!list) return;
+  let h='';
+  Object.keys(DATA_DATA).forEach(ck=>{
+    if(dataActiveCat!=='all' && dataActiveCat!==ck) return;
+    const cat=DATA_DATA[ck];
+    const matches=cat.items.filter(it=>{
+      if(!q) return true;
+      const hay=(it.name+' '+(it.thresholds||[]).map(t=>t.range+' '+t.meaning).join(' ')).toLowerCase();
+      return hay.indexOf(q)>=0;
+    });
+    if(!matches.length) return;
+    h+=`<div class="card" style="margin-bottom:14px;">
+      <div style="font-family:var(--mono);font-size:11px;color:${cat.color};letter-spacing:.1em;margin-bottom:10px;">${cat.name.toUpperCase()}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+    matches.forEach(it=>{
+      h+=`<button class="btn bs" onclick="openDataDrawer('${ck}','${it.id}')" style="font-size:22px;padding:8px 14px;">${it.name}</button>`;
+    });
+    h+=`</div></div>`;
+  });
+  if(!h) h='<div style="font-size:24px;color:var(--t3);font-style:italic;padding:20px 0;">No matching data.</div>';
+  list.innerHTML=h;
+}
+
+function openDataDrawer(ck,iid){
+  closeAnyDrawer();
+  const cat=DATA_DATA[ck];
+  const it=cat.items.find(x=>x.id===iid);
+  if(!it) return;
+  let html=`<div style="padding:20px 20px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+      <div style="font-family:var(--mono);font-size:16px;color:var(--t);font-weight:600;line-height:1.3;flex:1;padding-right:12px;">${it.name}</div>
+      <button onclick="closeAnyDrawer()" style="background:transparent;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0;">×</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:${cat.color};letter-spacing:.1em;margin-bottom:4px;">${cat.name.toUpperCase()}</div>`;
+  if(it.normal){ html+=`<div style="font-size:12px;color:var(--t3);margin-bottom:16px;"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.06em;">NORMAL  </span>${it.normal}</div>`; }
+  html+=`</div>`;
+
+  // Thresholds
+  it.thresholds.forEach(t=>{
+    html+=`<div style="margin:0 12px 10px;border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;">
+      <div style="background:var(--s3);border-bottom:1px solid var(--b);padding:9px 14px;">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--g);font-weight:600;">${t.range}</span>
+      </div>
+      <div style="padding:12px 14px;background:var(--s2);">
+        <div style="font-size:12px;color:var(--t);line-height:1.6;margin-bottom:8px;">${t.meaning}</div>
+        <div style="font-size:12px;color:var(--t);line-height:1.6;margin-bottom:8px;padding:8px 10px;background:var(--s3);border-radius:8px;border-left:2px solid var(--g3);"><span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;">DO  </span>${t.action}</div>
+        <div style="font-size:11px;color:var(--g2);line-height:1.6;font-style:italic;"><span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;font-style:normal;">EVIDENCE  </span>${t.evidence}</div>
+      </div>
+    </div>`;
+  });
+
+  // Trend
+  if(it.trend){
+    html+=`<div style="margin:14px 12px 8px;background:rgba(79,195,247,.05);border:1px solid rgba(79,195,247,.18);border-radius:var(--r);padding:13px 15px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--g2);letter-spacing:.1em;margin-bottom:8px;">↗ TREND / TRAJECTORY</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.7;">${it.trend}</div>
+    </div>`;
+  }
+
+  // Pearls
+  if(it.pearls&&it.pearls.length){
+    html+=`<div style="margin:0 12px 8px;background:rgba(127,255,110,0.04);border:1px solid rgba(127,255,110,0.12);border-radius:var(--r);padding:13px 15px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:.1em;margin-bottom:9px;">PEARLS</div>`;
+    it.pearls.forEach(p=>{ html+=`<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:7px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--g);">›</span>${p}</div>`; });
+    html+=`</div>`;
+  }
+  html+=`<div style="height:30px;"></div>`;
+  buildDrawer(html);
+}
+
+// ---------- shared drawer helpers ----------
+function secHeader(t){ return `<div style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.12em;margin:18px 12px 9px;">${t}</div>`; }
+function listBlock(arr,color){
+  let h='<div style="margin:0 12px 8px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;">';
+  arr.forEach(x=>{ h+=`<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:7px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:${color};">›</span>${x}</div>`; });
+  return h+'</div>';
+}
+function buildDrawer(html){
+  const backdrop=document.createElement('div');
+  backdrop.id='cd-backdrop';
+  backdrop.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;opacity:0;transition:opacity 0.28s ease;';
+  backdrop.addEventListener('click',closeAnyDrawer);
+  const drawer=document.createElement('div');
+  drawer.id='cd-drawer';
+  drawer.style.cssText='position:fixed;top:0;right:0;height:100%;width:min(500px,100%);background:var(--s2);border-left:1px solid var(--b2);z-index:201;transform:translateX(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:40px;';
+  drawer.innerHTML=html;
+  document.body.appendChild(backdrop);
+  document.body.appendChild(drawer);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{backdrop.style.opacity='1';drawer.style.transform='translateX(0)';}));
+}
+function closeAnyDrawer(){
+  const drawer=document.getElementById('cd-drawer');
+  const backdrop=document.getElementById('cd-backdrop');
+  if(drawer){ drawer.style.transform='translateX(100%)'; }
+  if(backdrop){ backdrop.style.opacity='0'; }
+  setTimeout(()=>{ drawer&&drawer.remove(); backdrop&&backdrop.remove(); },300);
+}
+
+// init
+try{ clinicRender(); dataRender(); }catch(e){ console.error('clinic/data init',e); }
 
 function togMore(){
   const tray=document.getElementById('more-tray');
