@@ -40,7 +40,7 @@ This ensures you are working from the current canonical state.
 - Never touch `data.json` directly
 - No `!important` anywhere in CSS
 - No dead code — audit before deleting any function
-- `showTab(name)` is the single nav function
+- Nav is `gT(name, el)` (desktop tab bar) and `gM(name, el)` (mobile bottom nav + More tray); both just toggle `panel-<name>`
 
 ## Zero Dead Code Policy
 Before deleting any function, confirm it has zero call sites.
@@ -71,18 +71,26 @@ Use conventional commit format:
 ---
 
 ## Current Tabs
-TODAY · THIS WEEK · UWORLD · READING · ROTATIONS · NARRATIVE · INTERVIEW · APPLICATION · MILESTONES · SETTINGS
+Tab-bar order (`panel-<name>`): TODAY · SCHEDULE · UWORLD · READING · ROTATION · PROCEDURES · NARRATIVE · INTERVIEW · APPLICATION · MILESTONES · ROADMAP · ANKI · CURRICULUM · MIND · TASKS · SETTINGS
+Mobile bottom nav pins: TODAY · SCHEDULE · UWORLD · MIND · TASKS (rest live in the More tray).
+(ABX/CLINIC/DATA panels were removed — moved to the internguide app.)
 
 ## Tab Roles
-- **TODAY**: Daily mode selector (NORMAL/CALL/POST-CALL/RECOVERY/REST) + energy/sleep/motivation sliders + burnout risk indicator + AI coach output
-- **THIS WEEK**: 7-day grid with rotation-specific study focus per day, color-coded rest days
+- **TODAY**: Daily mode selector (NORMAL/CALL/POST-CALL/RECOVERY/REST) + energy/sleep/motivation sliders + burnout risk indicator + AI coach output. Also shows a current-rotation banner + schedule-aware study plan (`buildTodayRotation`).
+- **SCHEDULE**: Full PGY-1 block calendar from the `SCHED` array — current-block banner, monthly calendar view, schedule-aware study plan. Canonical source of "what rotation am I on."
 - **UWORLD**: Question bank session logger (date, questions, score %, topic, mode, notes) + domain performance breakdown + streak counter + progress toward 3,500 Q target
 - **READING**: Pre-built reading list with 5 foundational articles, mark-read tracking, PubMed links
-- **ROTATIONS**: Active rotation selector + rotation-specific clinical priorities, UWorld topic order, anesthesia-bridge objectives
+- **ROTATION**: Schedule-driven hub (`buildRotations`). Auto-detects the current block from `SCHED` (no manual rotation field): current-block banner with week count + next block, real per-day week strip, schedule-aware study plan (shared `ROT_STUDY` engine), clinical priorities + anesthesia-bridge objectives (`RI`, keyed by the 12 block types), optional preview selector to look ahead at other rotations, weekly progress tracker, rest-day toggles, DO/NEVER hidden-curriculum card, and cross-tab jump buttons. (Merged the former THIS WEEK panel into this tab.)
+- **PROCEDURES**: Procedures & skills logbook
 - **NARRATIVE**: Personal statement themes, language upgrade examples, phrases to retire, monthly journal prompts
 - **INTERVIEW**: Pre-written answers to 3 core reapplication questions + AI interview answer evaluator
 - **APPLICATION**: LOR status tracking, mentor cadence, personal statement draft progression, anesthesia exposure log, counters
 - **MILESTONES**: Timeline from match (May 2026) through anesthesia match day (Mar 2028), Step 3 phases, open task checklist
+- **ROADMAP**: 6-phase sequential checklist from Anki setup to Match Day 2028
+- **ANKI**: Card generator, settings diagnosis, daily targets, FSRS advisor
+- **CURRICULUM**: Hidden curriculum — unwritten rules, rotation tips, situation coach
+- **MIND**: Burnout support, mood tracking, perspective anchors, AI coach with persistent history
+- **TASKS**: Universal capture, AI smart-add, category filtering, persistent log
 - **SETTINGS**: GitHub config, API key, field migration tool, data export
 
 ---
@@ -218,9 +226,17 @@ Color-coded output:
 | RECOVERY   | Podcast only         |
 | REST       | No UWorld            |
 
-## Rotation Map
-Pre-defined guidance for: MICU · CCU · Nephrology · Pulm · General IM · Outpatient
-Each rotation carries: clinical priorities, UWorld topic order, anesthesia-bridge objectives, LOR opportunities.
+## Rotation / Schedule Engine
+The current rotation is **derived from the real schedule, not a manual field.**
+- `SCHED[]` — the full PGY-1 block calendar: `['YYYY-MM-DD','CODE']` pairs (week starts).
+- `getCurrentSched()` — returns the active block for today `{i,code,start,week,meta}` (or a pre-residency pseudo-block before `SCHED[0]`).
+- `getRotMeta(code)` — maps a block code (e.g. `E-CARD`, `ICU-2A`) → `ROT_META` entry with a `type` and display colors. 12 types: boot · icu · cards · adm · nf · wards · clinic · ed · vac · pc · id · pom.
+- `schedForDate(date)` — per-day block lookup used by the ROTATION tab's week strip.
+- `ROT_STUDY[type]` — schedule-aware study plan per type (UWorld topics, landmark paper + PubMed, procedures). Shared by the TODAY, SCHEDULE, and ROTATION tabs.
+- `RI[type]` — clinical priorities + anesthesia-bridge objectives per type (keyed by the same 12 types).
+- `ROT_LABELS[type]` — human-readable rotation names for the ROTATION tab's preview selector and AI guidance.
+- Removed: the old manual `RM` study map and `showRot()` (replaced by the schedule-driven `buildRotations()` / `buildWkGrid()`).
+- The `rotation` field in `data.json` is now only passed as fallback context to two AI prompts (`genToday`, `genJnlP`); it no longer drives any UI.
 
 ## Step 3 Study Phases
 - Phase 1: Jun–Dec 2026 — 15–20 Qs/day
