@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-17",
+  "lastUpdated": "2026-06-22",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -95,5 +95,11 @@
       "ts": 1781216726615,
       "doneDate": "2026-06-17"
     }
-  ]
+  ],
+  "weekProgress": {
+    "2026-06": {
+      "qs": 0,
+      "articles": 0
+    }
+  }
 }
