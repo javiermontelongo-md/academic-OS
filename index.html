@@ -394,7 +394,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="tabs">
     <button class="tab on" onclick="gT('today',this)">TODAY</button>
     <button class="tab" onclick="gT('schedule',this)">SCHEDULE</button>
-    <button class="tab" onclick="gT('week',this)">THIS WEEK</button>
     <button class="tab" onclick="gT('uworld',this)">UWORLD</button>
     <button class="tab" onclick="gT('reading',this)">READING</button>
     <button class="tab" onclick="gT('rotations',this)">ROTATIONS</button>
@@ -489,38 +488,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 
 <!-- v2026-05-17 19:25:02 -->
-<div id="panel-week" class="panel">
-  <div class="h1">This <span>week</span></div>
-  <div class="g2">
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
-      <div class="ig"><label>Rotation</label>
-        <select id="wk-rot" onchange="buildWk()">
-          <option value="pre">Pre-residency</option><option value="gen">General medicine</option><option value="micu">MICU / ICU</option><option value="ccu">CCU</option><option value="cards">Cardiology</option><option value="neph">Nephrology</option><option value="pulm">Pulmonology</option><option value="periop">Periop / elective</option><option value="clinic">Outpatient</option>
-        </select>
-      </div>
-      <div class="lbl">rest days</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;" id="rchips">
-        <span class="chip" onclick="togRest(this,'Sun')">SUN</span><span class="chip on" onclick="togRest(this,'Sat')">SAT</span><span class="chip" onclick="togRest(this,'Mon')">MON</span><span class="chip" onclick="togRest(this,'Tue')">TUE</span><span class="chip" onclick="togRest(this,'Wed')">WED</span><span class="chip" onclick="togRest(this,'Thu')">THU</span><span class="chip" onclick="togRest(this,'Fri')">FRI</span>
-      </div>
-    </div>
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
-      <div class="lbl">weekly progress</div>
-      <div class="pbw"><div class="pbl"><span>UWorld Qs</span><span id="wqv">0 / 105</span></div><div class="pbb"><div class="pbf" id="wqb" style="width:0%;"></div></div></div>
-      <div class="pbw"><div class="pbl"><span>Articles</span><span id="wav">0 / 5</span></div><div class="pbb"><div class="pbf" id="wab" style="width:0%;background:var(--g2);"></div></div></div>
-      <div class="dvdr" style="margin:10px 0;"></div>
-      <div class="lbl">update</div>
-      <div class="g2 k2" style="gap:8px;">
-        <input type="number" id="iwq" placeholder="UWorld Qs" min="0" oninput="upWkB()">
-        <input type="number" id="iwa" placeholder="Articles" min="0" oninput="upWkB()">
-      </div>
-      <div class="smsg" id="smsg-chk" style="margin-top:6px;"></div>
-    </div>
-  </div>
-  <div class="wkg" id="wk-grid"></div>
-  <div class="card"><div class="lbl">rotation guidance</div><div id="wk-guid" class="air"><div class="al">COACH</div><p>Select rotation above.</p></div><div class="brow"><button class="btn bs bi" onclick="genRotG()">AI guidance</button></div></div>
-</div>
-
-<!-- v2026-05-17 19:25:02 -->
+<!-- panel-week merged into panel-rotations (schedule-driven) -->
 <div id="panel-uworld" class="panel">
   <div class="h1">UWorld <span>log</span></div>
   <div class="g4 k2" style="margin-bottom:14px;">
@@ -575,11 +543,76 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <!-- v2026-05-17 19:25:02 -->
 <div id="panel-rotations" class="panel">
-  <div class="h1">Rotation <span>priorities</span></div>
-  <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;" id="rot-chips">
-    <span class="chip on" onclick="showRot(this,'micu')">MICU/ICU</span><span class="chip" onclick="showRot(this,'ccu')">CCU</span><span class="chip" onclick="showRot(this,'neph')">Nephrology</span><span class="chip" onclick="showRot(this,'pulm')">Pulm</span><span class="chip" onclick="showRot(this,'gen')">General IM</span><span class="chip" onclick="showRot(this,'clinic')">Outpatient</span>
+  <div class="h1">Rotation <span>command</span></div>
+
+  <!-- current block — auto-detected from your real schedule -->
+  <div class="card" id="rot-cur-banner" style="border-left:3px solid var(--g);"></div>
+
+  <!-- this week, pulled from the real block schedule -->
+  <div class="lbl">this week</div>
+  <div class="wkg" id="wk-grid"></div>
+
+  <!-- which block's priorities + study plan to show -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <span class="lbl" style="margin:0;">priorities &amp; study for</span>
+    <select id="rot-prev-sel" onchange="setRotPreview(this.value)" style="max-width:260px;">
+      <option value="boot">Bootcamp</option>
+      <option value="icu">ICU / MICU</option>
+      <option value="cards">Cardiology</option>
+      <option value="wards">Wards</option>
+      <option value="adm">Day Admitting</option>
+      <option value="nf">Night Float</option>
+      <option value="ed">Emergency Dept</option>
+      <option value="clinic">Ambulatory clinic</option>
+      <option value="pc">Palliative Care</option>
+      <option value="id">Infectious Disease</option>
+      <option value="pom">Periop Medicine ★</option>
+      <option value="vac">Vacation</option>
+    </select>
+    <button class="btn bs bi" id="rot-reset" style="display:none;font-size:24px;padding:5px 10px;" onclick="resetRotPreview()">↺ Back to current</button>
   </div>
+
+  <!-- study focus for this block — same engine as the Schedule tab -->
+  <div class="card">
+    <div class="lbl" style="color:var(--g);">study focus this block</div>
+    <div id="rot-study-body"></div>
+    <div class="brow" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn bs bi" onclick="gT('uworld',null)">Log UWorld →</button>
+      <button class="btn bs bi" onclick="gT('reading',null)">Reading →</button>
+      <button class="btn bs bi" onclick="gT('procedures',null)">Procedures →</button>
+    </div>
+  </div>
+
+  <!-- clinical priorities + anesthesia bridge for this block -->
   <div id="rot-content"></div>
+
+  <!-- AI deep-dive on this block -->
+  <div class="card"><div class="lbl">AI rotation guidance</div><div id="wk-guid" class="air"><div class="al">COACH</div><p>Tap AI guidance for a deeper brief on this block — topic order, evaluation focus, and how it builds the anesthesia narrative.</p></div><div class="brow"><button class="btn bs bi" onclick="genRotG()">AI guidance</button></div></div>
+
+  <!-- weekly progress + rest days + full-schedule jump -->
+  <div class="g2">
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
+      <div class="lbl">weekly progress</div>
+      <div class="pbw"><div class="pbl"><span>UWorld Qs</span><span id="wqv">0 / 105</span></div><div class="pbb"><div class="pbf" id="wqb" style="width:0%;"></div></div></div>
+      <div class="pbw"><div class="pbl"><span>Articles</span><span id="wav">0 / 5</span></div><div class="pbb"><div class="pbf" id="wab" style="width:0%;background:var(--g2);"></div></div></div>
+      <div class="dvdr" style="margin:10px 0;"></div>
+      <div class="lbl">update</div>
+      <div class="g2 k2" style="gap:8px;">
+        <input type="number" id="iwq" placeholder="UWorld Qs" min="0" oninput="upWkB()">
+        <input type="number" id="iwa" placeholder="Articles" min="0" oninput="upWkB()">
+      </div>
+      <div class="smsg" id="smsg-chk" style="margin-top:6px;"></div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;">
+      <div class="lbl">rest days</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;" id="rchips">
+        <span class="chip" onclick="togRest(this,'Sun')">SUN</span><span class="chip on" onclick="togRest(this,'Sat')">SAT</span><span class="chip" onclick="togRest(this,'Mon')">MON</span><span class="chip" onclick="togRest(this,'Tue')">TUE</span><span class="chip" onclick="togRest(this,'Wed')">WED</span><span class="chip" onclick="togRest(this,'Thu')">THU</span><span class="chip" onclick="togRest(this,'Fri')">FRI</span>
+      </div>
+      <div class="lbl" style="margin-top:14px;">full year</div>
+      <button class="btn bs" style="font-size:24px;padding:5px 10px;margin-top:5px;" onclick="gT('schedule',null);document.querySelector('.tab[onclick*=schedule]')&&document.querySelector('.tab[onclick*=schedule]').classList.add('on')">Open Schedule tab →</button>
+    </div>
+  </div>
+
   <div class="dvdr"></div>
   <div class="g2">
     <div class="card"><div class="lbl" style="color:var(--g);">DO THIS</div><div style="font-size:26px;color:var(--t2);line-height:2.0;"><div>Pre-round before everyone. Know everything first.</div><div>One-liner + assessment + plan. Not data dump.</div><div>Look things up and return same day -- always.</div><div>Anticipate: K+ low -- already ordered recheck at 4pm.</div><div>Ask specific feedback at rotation end.</div><div>Flag deteriorating patients early. Flagging is not weakness.</div></div></div>
@@ -1212,9 +1245,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="more-hdl"></div>
     <div style="font-family:var(--mono);font-size:10px;color:var(--t3);text-align:center;letter-spacing:.08em;margin-bottom:4px;">ALL SECTIONS</div>
     <div class="more-grid">
-      <div class="more-item" id="mi-week" onclick="gM('week',null);togMore()"><span class="micon">W</span><span class="mlbl">Week</span></div>
       <div class="more-item" id="mi-reading" onclick="gM('reading',null);togMore()"><span class="micon">R</span><span class="mlbl">Read</span></div>
-      <div class="more-item" id="mi-rotations" onclick="gM('rotations',null);togMore()"><span class="micon">Rx</span><span class="mlbl">Rotations</span></div>
+      <div class="more-item" id="mi-rotations" onclick="gM('rotations',null);togMore()"><span class="micon">Rx</span><span class="mlbl">Rotation</span></div>
       <div class="more-item" id="mi-procedures" onclick="gM('procedures',null);togMore()"><span class="micon">⚕</span><span class="mlbl">Procs</span></div>
       <div class="more-item" id="mi-narrative" onclick="gM('narrative',null);togMore()"><span class="micon">N</span><span class="mlbl">Narrative</span></div>
       <div class="more-item" id="mi-interview" onclick="gM('interview',null);togMore()"><span class="micon">IV</span><span class="mlbl">Interview</span></div>
@@ -1231,8 +1263,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <script>
 var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-var RM={pre:{uw:'Cardiology -> Pulm -> Nephrology',rd:'Foundation: hemodynamics, vents, acid-base'},gen:{uw:'IM core: Cardiology, Nephrology, GI',rd:'Clinical reasoning and management'},micu:{uw:'Pulm + Nephrology + Shock physiology',rd:'Critical care: vents, vasopressors'},ccu:{uw:'Cardiology: HF, ACS, arrhythmias',rd:'Hemodynamics, echo, cardiac physiology'},cards:{uw:'Cardiology all blocks',rd:'Landmark cardiac trials'},neph:{uw:'Nephrology + acid-base (your research)',rd:'AKI, CKD, periop renal protection'},pulm:{uw:'Pulm + critical care: ARDS, PE',rd:'Lung-protective ventilation'},periop:{uw:'Surgery / Anesthesia / Periop',rd:'Periop medicine: anesthesia bridge'},clinic:{uw:'Mixed: outpatient, preventive',rd:'Chronic disease + periop risk'}};
-var RI={micu:{title:'MICU / ICU',tag:'Highest priority',items:['Ventilator modes, PEEP, driving pressure -- know cold','Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi','Shock: MAP targets, fluid responsiveness, ScvO2, lactate','For every case: how would periop risk look going to the OR?','Ask to observe intubations, central lines, bronchoscopy']},ccu:{title:'CCU / Cardiology',tag:'Cardiac anesthesia foundation',items:['Read every EKG yourself before the attending. Build speed.','HFrEF vs HFpEF: congestion vs perfusion, GDMT cold','ACS: STEMI vs NSTEMI, antiplatelet risk perioperatively','Valvular disease: which lesions carry highest periop risk','Echo: learn to interpret reports, ask to observe TTE/TEE']},neph:{title:'Nephrology',tag:'Periop physiology bridge',items:['AKI: prerenal vs intrinsic vs postrenal -- mechanistically','Periop AKI -- you understand this at a deep level from prior research. Own it on rounds.','Electrolytes: K+, Na+, Ca2+, Mg2+ -- all OR emergencies','Acid-base: 5-step approach, mixed disorders cold','Connect every AKI case to surgical risk in your notes']},pulm:{title:'Pulmonology',tag:'Ventilator mastery',items:['ARDS: Berlin criteria, prone positioning, lung protection','COPD/asthma: NIV vs intubation thresholds','Interpret every ABG before the attending','PFTs: obstructive vs restrictive with clinical context','PE: risk stratify, anticoag vs thrombolytics']},gen:{title:'General medicine',tag:'Evaluation foundation',items:['Pre-round before everyone. Know everything first.','One-liner + assessment + plan every time -- not data dump.','Anticipate: K+ low -- I already ordered a recheck.','Make sure every attending knows your name by week 2.','Ask specific feedback at rotation end.']},clinic:{title:'Outpatient',tag:'Longitudinal thinking',items:['DM, HTN, HLD: how chronic disease accumulates periop risk','Preop clearance: what does surgery need from IM?','Preventive medicine screening -- Step 3 high-yield','Lighter days = deeper UWorld + reading.']}};
+var ROT_LABELS={boot:'Bootcamp',icu:'ICU / MICU',cards:'Cardiology',adm:'Day Admitting',nf:'Night Float',wards:'Wards',clinic:'Ambulatory clinic',ed:'Emergency Dept',vac:'Vacation',pc:'Palliative Care',id:'Infectious Disease',pom:'Periop Medicine ★'};
+var RI={
+  boot:{title:'Bootcamp',tag:'Set the tone',items:['Learn the EHR cold -- orders, notes, results, where everything lives.','Memorize your workflow: pre-round, write, run the list, sign out.','Master sign-out (IPASS). A clean handoff is the first thing seniors judge.','Meet your co-interns and seniors. The people matter as much as the medicine.','Build the habit now: one clinical question looked up and answered every day.']},
+  icu:{title:'ICU / MICU',tag:'Highest priority',items:['Ventilator modes, PEEP, driving pressure -- know cold','Vasopressor pharmacology: NE, epi, vasopressin, phenylephrine, push-dose epi','Shock: MAP targets, fluid responsiveness, ScvO2, lactate','For every case: how would periop risk look going to the OR?','Ask to observe intubations, central lines, bronchoscopy -- this is your airway/lines bridge']},
+  cards:{title:'Cardiology',tag:'Cardiac anesthesia foundation',items:['Read every EKG yourself before the attending. Build speed.','HFrEF vs HFpEF: congestion vs perfusion, GDMT cold','ACS: STEMI vs NSTEMI, antiplatelet risk perioperatively','Valvular disease: which lesions carry highest periop risk','Echo: learn to interpret reports, ask to observe TTE/TEE','This elective is a direct anesthesia bridge -- ask for the LOR if it clicks']},
+  wards:{title:'Wards',tag:'Evaluation foundation',items:['Pre-round before everyone. Know everything first.','One-liner + assessment + plan every time -- not a data dump.','Anticipate: K+ low -- I already ordered a recheck.','Make sure every attending knows your name by week 2.','Ask for specific feedback at the midpoint, not just the end.']},
+  adm:{title:'Day Admitting',tag:'Volume + triage',items:['Build a fast, reliable admission template -- HPI, problem list, plan.','RCRI on every surgical/cardiac admit -- know all 6 criteria from memory.','Triage sick vs not-sick in the first 5 minutes. Escalate early.','Anticipate the overnight team: anticipate questions, document clearly.','High volume = high reps on clinical reasoning. Track patterns you miss.']},
+  nf:{title:'Night Float',tag:'Autonomy under pressure',items:['Cross-cover calls: have a mental algorithm for the top 10 (CP, SOB, low UOP, fever, K, glucose, fall, agitation, hypotension, desat).','Sepsis at 2am -- know your resuscitation evidence (ProCESS) and act.','See the patient. Do not manage numbers from the workroom.','Crisp sign-out back to the day team -- what you did and what is pending.','Protect daytime sleep ruthlessly. This is where burnout starts.']},
+  ed:{title:'Emergency Department',tag:'Acuity + dispo',items:['Every chest pain: ACS workup + when to give vs hold antiplatelets for surgery (CURE).','Think disposition from minute one: admit, obs, or discharge.','Undifferentiated patient -- broad differential, then narrow fast.','Procedures are everywhere here: ask for the next IV, ABG, suture, intubation.','Practice the concise verbal presentation to the attending under time pressure.']},
+  clinic:{title:'Ambulatory clinic',tag:'Longitudinal thinking',items:['DM, HTN, HLD: how chronic disease accumulates perioperative risk.','Preop clearance: what does surgery actually need from IM?','Preventive medicine screening -- Step 3 high-yield.','Functional capacity (METs/DASI) -- the question every anesthesiologist asks.','Lighter days = deeper UWorld + reading. Use the time.']},
+  pc:{title:'Palliative Care',tag:'Communication mastery',items:['Goals-of-care conversations -- REMAP framework, practice out loud.','Symptom management: opioids, dyspnea, nausea -- dosing and rotation.','Prognostication -- communicate uncertainty without false hope.','This is where you build the empathy that interviewers remember.','Early palliative care changes outcomes (Temel) -- know the evidence.']},
+  id:{title:'Infectious Disease',tag:'Stewardship',items:['Antibiotic stewardship: narrow as soon as cultures allow.','Build the bug-drug map -- empiric vs targeted, common syndromes.','When steroids help vs harm in infection (RECOVERY) -- translates to sepsis/ICU.','Source control mindset: drain it, remove the line, fix the cause.','Connect resistance + perioperative prophylaxis to surgical patients.']},
+  pom:{title:'Periop Medicine ★',tag:'Your anesthesia bridge',items:['Know POISE cold -- the numbers, the controversy, what it changed.','RCRI + DASI on every patient -- risk-stratify like a consultant.','Anticoagulation bridging protocols -- when to hold, when to resume.','Multimodal postoperative pain -- the anesthesia overlap is total.','This is THE block to secure an anesthesia-adjacent LOR. Be exceptional.']},
+  vac:{title:'Vacation',tag:'Recover deliberately',items:['Sleep is the priority. Protect it.','Keep the streak alive: 10-15 mixed UWorld Qs max, no pressure.','Pick one topic you have been avoiding and chip at it lightly.','Step back and look at the narrative arc -- where are you vs the plan?','Come back rested. Burnout compounds; so does recovery.']}
+};
 var RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, Prevention',journal:'NEJM',day:'MON',why:'Periop AKI is the intersection of IM and anesthesia. You understand this territory -- read the current literature and own it on rounds.',q:'perioperative acute kidney injury prevention 2024'},{title:'Hemodynamic Monitoring in Critically Ill Patients -- Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility -- the spine of ICU and anesthesia both.',q:'hemodynamic monitoring critically ill framework 2023'},{title:'Lung-Protective Ventilation -- Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',q:'lung protective ventilation ARDS driving pressure 2023'},{title:'Acid-Base Interpretation -- A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',q:'acid base systematic approach mixed disorders 2022'},{title:'Vasopressors and Inotropes in Shock -- Mechanism, Selection, Dosing',journal:'Crit Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine -- used on every ICU rotation and intraoperatively by anesthesiologists.',q:'vasopressors inotropes shock mechanism selection 2023'}];
 // ============================================================
 // SCHEDULE — full PGY-1 year
@@ -1410,7 +1455,7 @@ function onLoad(){
       if(D.restDays.includes(c.textContent)) c.classList.add('on'); else c.classList.remove('on');
     });
   }
-  renderUWstats(); renderUWhist(); buildWk(); showRot(null,'micu'); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread(); renderPastSessions(); buildTodayRotation(); renderSchedPanel(); buildCal(); renderProcLog();
+  renderUWstats(); renderUWhist(); buildRotations(); renderJhist(); renderExpStats(); calcMomentum(); renderRoadmap(); renderMindHistory(); renderMoodTrend(); renderTasks(); loadChatThread(); renderChatThread(); renderPastSessions(); buildTodayRotation(); renderSchedPanel(); buildCal(); renderProcLog();
   // Restore weekly progress inputs
   if(D.weekProgress){
     const wk=new Date().toISOString().split('T')[0].substring(0,7);
@@ -1607,24 +1652,117 @@ function renderExpStats(){ if(!D) return; const s=document.getElementById('sh-h'
 // ============================================================
 // WEEK GRID
 // ============================================================
-function buildWk(){
-  const rot=document.getElementById('wk-rot').value,rd=RM[rot]||RM.gen,today=new Date(),dow=today.getDay(),grid=document.getElementById('wk-grid'),restDays=D?D.restDays:['Sat'];
+// Pre-residency pseudo-rotation meta (dates before the schedule starts)
+var PRE_META={type:'boot',label:'Pre-residency',bg:'rgba(127,255,110,.08)',border:'rgba(127,255,110,.25)',text:'var(--g)'};
+var _rotPreview=null;
+function curRotType(){const c=getCurrentSched();return c?(c.meta.type||'wards'):'wards';}
+function activeRotType(){return _rotPreview||curRotType();}
+// Which rotation block covers a given date (real schedule)
+function schedForDate(dt){
+  const t=new Date(dt);t.setHours(12,0,0,0);
+  if(t<new Date(SCHED[0][0]+'T12:00:00'))return{code:'PRE',meta:PRE_META};
+  for(let i=0;i<SCHED.length;i++){
+    const s=new Date(SCHED[i][0]+'T12:00:00');
+    const e=i<SCHED.length-1?new Date(SCHED[i+1][0]+'T12:00:00'):new Date(s.getTime()+7*86400000);
+    if(t>=s&&t<e)return{code:SCHED[i][1],meta:getRotMeta(SCHED[i][1])};
+  }
+  return null;
+}
+function setRotPreview(v){_rotPreview=(v===curRotType())?null:v;buildRotations();}
+function resetRotPreview(){_rotPreview=null;buildRotations();}
+// This-week strip, pulled day-by-day from the real block schedule
+function buildWkGrid(){
+  const grid=document.getElementById('wk-grid');if(!grid)return;
+  const today=new Date();today.setHours(12,0,0,0);
+  const dow=today.getDay(),restDays=D&&D.restDays?D.restDays:['Sat'];
   grid.innerHTML='';
   for(let i=0;i<7;i++){
     const d=new Date(today);d.setDate(today.getDate()-dow+i);
-    const dn=DAYS[i],isT=i===dow,isR=restDays.includes(dn);
+    const dn=DAYS[i],isT=i===dow,isR=restDays.includes(dn),sf=schedForDate(d);
     const col=document.createElement('div');col.className='dc'+(isT?' today':'')+(isR?' rest':'');
     let h=`<div class="dn">${dn.toUpperCase()}</div><div class="dd">${d.getDate()}</div>`;
-    if(isR) h+=`<div class="dt rt">REST</div>`;
-    else h+=`<div class="dt uw">${rd.uw.split('->')[0].trim().substring(0,16)}</div><div class="dt rd">${rd.rd.substring(0,16)}...</div>`;
-    col.innerHTML=h; grid.appendChild(col);
+    if(isR)h+=`<div class="dt rt">REST</div>`;
+    else if(sf)h+=`<div class="dt" style="border-left:2px solid ${sf.meta.text};color:${sf.meta.text};">${escHtml(sf.code)}</div>`;
+    else h+=`<div class="dt">&mdash;</div>`;
+    col.innerHTML=h;grid.appendChild(col);
   }
-  document.getElementById('wk-guid').innerHTML=`<div class="al">ROTATION -- ${rot.toUpperCase()}</div><p><strong>UWorld:</strong> ${rd.uw}.</p><p><strong>Reading:</strong> ${rd.rd}. One article per clinical day. Saturday protected.</p><p><strong>Anesthesia bridge:</strong> How does today's learning affect a patient going to the OR?</p>`;
+}
+// Merged Rotation tab: current block banner + week strip + study plan + priorities
+function buildRotations(){
+  const cur=getCurrentSched(),type=activeRotType(),isPrev=!!_rotPreview&&_rotPreview!==curRotType();
+  // Current-block banner (always reflects the real schedule, not the preview)
+  const bn=document.getElementById('rot-cur-banner');
+  if(bn){
+    if(!cur){
+      bn.style.borderLeftColor='var(--g)';
+      bn.innerHTML='<div class="lbl">current rotation</div><div style="font-family:var(--serif);font-size:29px;font-weight:300;color:var(--g);">Schedule complete</div><div style="font-family:var(--mono);font-size:24px;color:var(--t3);">PGY-1 year finished — congratulations</div>';
+    }else{
+      const m=cur.meta,total=SCHED.length;
+      const nextIdx=cur.i<0?0:cur.i+1;
+      let nextStr='';
+      if(nextIdx<SCHED.length){const nm=getRotMeta(SCHED[nextIdx][1]);nextStr=`Up next: <span style="color:${nm.text};">${escHtml(SCHED[nextIdx][1])}</span> — ${escHtml(nm.label)} (${escHtml(SCHED[nextIdx][0])})`;}
+      const wkStr=cur.week>0?`Week ${cur.week} of ${total} · ${total-cur.week} weeks remaining`:'Before intern year begins';
+      bn.style.borderLeftColor=m.text||'var(--g)';
+      bn.innerHTML=`<div class="lbl">current rotation</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+          <span style="font-family:var(--mono);font-size:26px;padding:4px 12px;border-radius:6px;background:${m.bg};border:1px solid ${m.border};color:${m.text};font-weight:500;">${escHtml(cur.code)}</span>
+          <span style="font-family:var(--serif);font-size:27px;font-weight:300;color:${m.text};">${escHtml(m.label)}</span>
+        </div>
+        <div style="font-family:var(--mono);font-size:24px;color:var(--t3);">${wkStr}${cur.start?` · starts ${escHtml(cur.start)}`:''}</div>
+        ${nextStr?`<div style="font-family:var(--mono);font-size:24px;color:var(--t3);margin-top:4px;">${nextStr}</div>`:''}`;
+    }
+  }
+  // This-week strip
+  buildWkGrid();
+  // Study focus (same ROT_STUDY engine as the Schedule tab)
+  const sb=document.getElementById('rot-study-body');
+  if(sb){
+    const st=ROT_STUDY[type]||ROT_STUDY.wards,dow=new Date().getDay();
+    const todayUW=st.uw[dow%st.uw.length]||st.uw[0];
+    const pmUrl=st.paper.pm?'https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent(st.paper.pm):'';
+    const procList=st.proc.length?st.proc.map(p=>`<span class="bdg gr" style="margin:2px 4px 2px 0;display:inline-block;">${escHtml(p)}</span>`).join(''):'<span style="color:var(--t3);">Rest week — maintenance only</span>';
+    const prevNote=isPrev?`<div class="splan-why" style="color:var(--g3);margin-bottom:8px;">Previewing ${escHtml(ROT_LABELS[type]||type)} — not your current block.</div>`:'';
+    sb.innerHTML=prevNote+`
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g);">Q</div>
+        <div class="splan-body">
+          <div class="splan-lbl">UWORLD TODAY</div>
+          <div class="splan-val" style="color:var(--g);">${escHtml(todayUW)}</div>
+          <div class="splan-why">15-20 questions, timed tutor mode. Rotate through: ${escHtml(st.uw.join(' → '))}</div>
+        </div>
+      </div>
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g2);">📄</div>
+        <div class="splan-body">
+          <div class="splan-lbl">LANDMARK PAPER</div>
+          <div class="splan-val">${escHtml(st.paper.t)}</div>
+          <div class="splan-why">${escHtml(st.paper.why)}</div>
+          ${pmUrl?`<div style="margin-top:6px;"><button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="window.open('${pmUrl}','_blank')">PubMed →</button></div>`:''}
+        </div>
+      </div>
+      <div class="splan-row">
+        <div class="splan-icon" style="color:var(--g3);">⚕</div>
+        <div class="splan-body">
+          <div class="splan-lbl">PROCEDURES TO ASK ABOUT</div>
+          <div class="splan-val">${procList}</div>
+          <div class="splan-why">Ask your senior or attending. "Can I do the next one?" is how you get there.</div>
+        </div>
+      </div>`;
+  }
+  // Clinical priorities + anesthesia bridge
+  const d=RI[type]||RI.wards,rc=document.getElementById('rot-content');
+  if(rc&&d)rc.innerHTML=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;"><span class="bdg g">${escHtml(d.tag)}</span><div style="font-size:26px;font-weight:500;color:var(--t);">${escHtml(d.title)}</div></div><ul style="padding-left:16px;">${d.items.map(i=>`<li style="font-size:26px;color:var(--t2);margin-bottom:5px;line-height:1.5;">${i}</li>`).join('')}</ul></div>`;
+  // Sync controls
+  const sel=document.getElementById('rot-prev-sel');if(sel)sel.value=type;
+  const rb=document.getElementById('rot-reset');if(rb)rb.style.display=isPrev?'inline-block':'none';
+  // Sync rest-day chips to saved state
+  const rest=D&&D.restDays?D.restDays:['Sat'];
+  document.querySelectorAll('#rchips .chip').forEach(c=>{const map={SUN:'Sun',MON:'Mon',TUE:'Tue',WED:'Wed',THU:'Thu',FRI:'Fri',SAT:'Sat'},f=map[c.textContent.trim()];if(f)c.classList.toggle('on',rest.includes(f));});
 }
 function togRest(el,day){
   el.classList.toggle('on');if(!D) return;if(!D.restDays)D.restDays=[];
   if(D.restDays.includes(day))D.restDays=D.restDays.filter(d=>d!==day);else D.restDays.push(day);
-  buildWk(); push(null,'smsg-chk');
+  buildWkGrid(); push(null,'smsg-chk');
 }
 let _wkbTimer=null;
 window.addEventListener('beforeunload',e=>{if(_wkbTimer){e.preventDefault();e.returnValue='';} });
@@ -1643,11 +1781,6 @@ function upWkB(){
 // ============================================================
 // ROTATIONS
 // ============================================================
-function showRot(el,key){
-  if(el){document.querySelectorAll('#rot-chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
-  const d=RI[key];if(!d)return;
-  document.getElementById('rot-content').innerHTML=`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="bdg g">${d.tag}</span><div style="font-size:26px;font-weight:500;color:var(--t);">${d.title}</div></div><ul style="padding-left:16px;">${d.items.map(i=>`<li style="font-size:26px;color:var(--t2);margin-bottom:5px;line-height:1.5;">${i}</li>`).join('')}</ul></div>`;
-}
 
 // ============================================================
 // READING LIST
@@ -1726,7 +1859,7 @@ async function ai(prompt){
 function fai(t,id){document.getElementById(id).innerHTML=t?`<div class="air"><div class="al">AI COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`:`<div class="air"><div class="al">NOTE</div><p>Add your Anthropic API key in Settings -- paste key and click Save key. Or check browser console (F12) for error details.</p></div>`;}
 
 async function genToday(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'today-out');return;}const rot=D?D.rotation:'pre';spin('today-out');fai(await ai(`Daily plan. Mode: ${document.getElementById('mode-sel').value}. Energy: ${document.getElementById('sle').value}/10. Sleep: ${document.getElementById('sls').value}h. Rotation: ${rot}. Give UWorld topic recommendation with anesthesia rationale, whether to read today, one non-study priority.`),'today-out');}
-async function genRotG(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('wk-guid').innerHTML='<div class="al">NOTE</div><p>Add API key in Settings.</p>';return;}spin('wk-guid');const t=await ai(`Weekly guidance for ${document.getElementById('wk-rot').value} rotation. UWorld topic order, clinical focus for evaluations and LOR potential, hidden curriculum priority, how this rotation builds the anesthesia reapplication narrative.`);document.getElementById('wk-guid').innerHTML=t?`<div class="al">ROTATION COACH</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';}
+async function genRotG(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('wk-guid').innerHTML='<div class="al">NOTE</div><p>Add API key in Settings.</p>';return;}spin('wk-guid');const type=activeRotType(),label=ROT_LABELS[type]||type;const t=await ai(`Weekly guidance for a PGY-1 internal medicine ${label} rotation. UWorld topic order, clinical focus for evaluations and LOR potential, hidden curriculum priority, and how this rotation builds the anesthesiology reapplication narrative.`);document.getElementById('wk-guid').innerHTML=t?`<div class="al">ROTATION COACH — ${label.toUpperCase()}</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>`:'<p>Add API key in Settings.</p>';}
 async function getUWRec(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){fai(null,'uw-rec');return;}const dm={};if(D&&D.uworldSessions)D.uworldSessions.forEach(s=>{if(!dm[s.topic])dm[s.topic]={q:0,scores:[]};dm[s.topic].q+=(+s.questions||0);if(s.score!=null&&!isNaN(+s.score)&&+s.score>0)dm[s.topic].scores.push(+s.score);});const sum=Object.entries(dm).map(([t,d])=>`${t}: ${d.q}q avg ${d.scores.length?Math.round(d.scores.reduce((a,b)=>a+b)/d.scores.length)+'%':'no score'}`).join('; ')||'No sessions logged';spin('uw-rec');fai(await ai(`UWorld history: ${sum}. Recommend next topic, mode (timed vs tutor), and why it matters for Step 3 AND anesthesia reapplication.`),'uw-rec');}
 async function genRd(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('rd-ai').innerHTML='<div class="air"><div class="al">NOTE</div><p>Add API key in Settings.</p></div>';return;}spin('rd-ai');const t=await ai(`5-article reading list for rotation: ${document.getElementById('rd-rot').value}, focus: ${document.getElementById('rd-focus').value}. For each: real article title and journal, why it matters for IM, why it bridges to anesthesia/perioperative medicine. Numbered list.`);document.getElementById('rd-ai').innerHTML=t?`<div class="card" style="margin-top:12px;"><div class="lbl">AI reading list</div><div class="air"><div class="al">READING LIST</div><p>${t.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`:'';}
 async function genJnlP(){if(!(document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key'))){document.getElementById('jnl-ai').innerHTML='<div class="air"><div class="al">PROMPT</div><p>Describe a moment this month when you recognized a physiologic pattern before your team. What did you notice? What did you do? How does this connect to what an anesthesiologist would need to anticipate before the OR?</p></div>';return;}spin('jnl-ai');fai(await ai(`Give Javier a specific narrative reflection prompt for rotation: ${D?D.rotation:'pre'}. Help him surface a clinical moment connecting to predictive physiologic reasoning or longitudinal disease to acute instability.`),'jnl-ai');}
