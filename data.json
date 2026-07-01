@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-30",
+  "lastUpdated": "2026-07-01",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -55,8 +55,19 @@
     }
   ],
   "activeChat": {
-    "startedAt": null,
-    "messages": []
+    "startedAt": "2026-07-01T04:50:26.981Z",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Mood today: 2/5 (Struggling).\n\nI am having a tough time right now and feel like i got cheated out of anestehsia. i feel like IM isnt really what i hoped it was. I just wanted to learn medicine, but it sounds like most of what i am doing is learning workflows to be a good hospitalist. I dont want that. and 2nd and 3rd year is worse with the crazy amount of clinic we have and i feel like clinic is a waste of my time. I really need help and feel pretty hurt. i just want to be in the OR all day. i hate this and feel like in my life, i never got what i deserved. starting in college, i should have gotten into UCLA , need two years off to get into med school, and then now i feel like i am going to be two years off from getting into anesthesia (since i will be donig 3 years of IM and hopefully match into an advaced/reserved spot for anesthesia), i will be 34 by the time i finish with this. I should have been 32. very sad and annoyed",
+        "ts": 1782881420163
+      },
+      {
+        "role": "assistant",
+        "content": "Javier, that weight you're carrying is real and heavy. The \"two years off\" pattern - college, med school, now anesthesia - I can hear how that accumulates into something that feels like the universe keeps moving the goalposts on you specifically. That's exhausting and genuinely unfair-feeling. You're not being dramatic.\n\nAnd you're grieving two things at once: the path you didn't get, AND being trapped in a training that feels misaligned with who you are. Watching clinic hours pile up when you want to be in an OR - that's not a small irritation. That's daily friction against your identity as a physician.\n\nThe \"I never got what I deserved\" thread concerns me gently - not because it's wrong to feel it, but because that story, if it hardens, can quietly poison how you show up in 2027. Bitterness is a reasonable response to repeated disappointment. It becomes dangerous when it becomes a fixed lens.\n\nYou mentioned worrying about bitterness leaking into relationships - is that happening yet, or is this more internal right now?",
+        "ts": 1782881426981
+      }
+    ]
   },
   "chatSessions": [],
   "procLog": [],
