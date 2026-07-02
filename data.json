@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-07-01",
+  "lastUpdated": "2026-07-02",
   "uworldSessions": [
     {
       "date": "2026-05-10",
@@ -161,6 +161,16 @@
         "role": "assistant",
         "content": "Honestly? More than it feels right now, but I won't oversell it.\n\n**What genuinely transfers:**\n- Managing complex multisystem disease - cardiac anesthesia patients are medically complicated, and you'll understand their comorbidities deeply\n- Pharmacology, anticoagulation, hemodynamics - IM builds real fluency here\n- Bad news conversations, family dynamics, goals of care - anesthesiologists who do CT-ICU need this\n- Recognizing sick patients early - IM trains that pattern recognition\n\n**What IM won't give you:**\n- Procedural confidence and volume\n- Airway experience\n- OR culture and rhythms\n- The physiologic thinking anesthesia requires in real-time\n\nSo the honest picture is: IM builds your medical foundation but leaves the procedural and anesthesia-specific skillset largely untouched. That gap is real and you'll need to address it deliberately - research, mentorship, any procedural exposure you can find, and eventually anesthesia residency itself will rebuild you.\n\nThe risk isn't that IM ruins you as a future anesthesiologist. The risk is that feeling disconnected from your identity for three years quietly erodes your confidence and drive.\n\nYour medical knowledge will matter in the cardiac OR. But you'll need to actively nurture the procedural side however you can during these years.\n\nWhat procedural opportunities exist at Kaiser right now that you haven't fully explored yet?",
         "ts": 1782916595657
+      },
+      {
+        "role": "user",
+        "content": "Really hating life right now. I hate that kisser doesn’t have patients with devices like ecmos, lvad, pacemakers, icds. It really suck and I deserve ro be at a place that has all those things. This just feels so pointless why I’m here. And a icu attending didn’t even know the equation for freaking calculating svr and pulm resistance either. This is not what I was hoping for. I want to leave this place so bad",
+        "ts": 1782976285648
+      },
+      {
+        "role": "assistant",
+        "content": "Javier, I hear you. This isn't just frustration - this is genuine grief about being in the wrong place. Watching an ICU attending not know SVR calculations while you're hungry to learn cardiac physiology at that level - that's demoralizing in a specific way. You're not being arrogant, you're recognizing a mismatch between your hunger and your environment.\n\nAnd \"I want to leave\" - I need to take that seriously for a second.\n\nAre you talking about wanting to leave Kaiser specifically, or are you having thoughts about leaving medicine or residency altogether? I'm not assuming, I just want to understand where you are right now.\n\nBecause those are very different situations and you deserve an honest conversation about whichever one it is.\n\nWhat I will say gently: the feeling of \"this is pointless\" at a mood 2/5 after a hard stretch is real information about your suffering right now. It may or may not be accurate information about your future. Suffering and clarity aren't the same thing, even when they feel identical.\n\nYou're clearly someone with high standards, specific expertise hunger, and a precise vision of where you belong. That's not a character flaw - that's actually what good cardiac anesthesiologists are made of.\n\nBut I'm more concerned about you as a person right now than your career timeline.\n\nWhen you say you hate life right now, how deep does that go?",
+        "ts": 1782976295249
       }
     ]
   },
