@@ -330,9 +330,10 @@
       "id": "mqzhbbsmupyceq8i96q",
       "text": "need to get my ping ID sorted out",
       "category": "academic",
-      "done": false,
+      "done": true,
       "date": "2026-06-29",
-      "ts": 1782753348982
+      "ts": 1782753348982,
+      "doneDate": "2026-07-05"
     }
   ],
   "weekProgress": {
