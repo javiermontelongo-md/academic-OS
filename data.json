@@ -298,9 +298,10 @@
       "id": "mqzbhg7ljudwqvyjso",
       "text": "Get abridge for epic",
       "category": "academic",
-      "done": false,
+      "done": true,
       "date": "2026-06-29",
-      "ts": 1782743556946
+      "ts": 1782743556946,
+      "doneDate": "2026-07-05"
     },
     {
       "id": "mqzbhulo09d88jyrjdt8",
