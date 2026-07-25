@@ -10,58 +10,116 @@
 <title>Academic OS</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f0e;--s1:#141614;--s2:#1a1d1a;--s3:#212421;--b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--g:#7fff6e;--g2:#4fc3f7;--g3:#ffb74d;--g4:#ef9a9a;--t:#e8ede8;--t2:#9aa89a;--t3:#5a665a;--red:#ef5350;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;--sans:'DM Sans',sans-serif;--r:12px;--rl:18px;--nav:64px;--safe:env(safe-area-inset-bottom,0px);}
+:root{
+  /* ── surfaces ── */
+  --bg:#0a0c11;--bg-rgb:10,12,17;
+  --s1:#12151c;--s2:#171b23;--s3:#1f242e;--s4:#272d39;
+  --b:rgba(255,255,255,0.065);--b2:rgba(255,255,255,0.13);
+  /* ── accents (hex + rgb channels for tints) ── */
+  --g:#5eead4;   --g-rgb:94,234,212;    /* primary — mint */
+  --g2:#7dd3fc;  --g2-rgb:125,211,252;  /* info — sky */
+  --g3:#fbbf24;  --g3-rgb:251,191,36;   /* warn — amber */
+  --g4:#fda4af;  --g4-rgb:253,164,175;  /* alert — rose */
+  --g5:#a78bfa;  --g5-rgb:167,139,250;  /* accent — violet */
+  --red:#f87171; --red-rgb:248,113,113;
+  --ink:#04211d;                        /* text on primary fills */
+  /* ── text ── */
+  --t:#e6ecf3;--t2:#97a3b4;--t3:#5d6878;
+  /* ── type ── */
+  --mono:'DM Mono',monospace;--serif:'Fraunces',serif;--sans:'DM Sans',sans-serif;
+  /* ── shape & depth ── */
+  --r:12px;--rl:16px;--rx:22px;
+  --sh:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  --sh-lift:0 2px 4px rgba(0,0,0,.4),0 16px 40px -16px rgba(0,0,0,.75);
+  --glow:0 0 0 1px rgba(var(--g-rgb),.18),0 8px 32px -12px rgba(var(--g-rgb),.28);
+  --nav:64px;--safe:env(safe-area-inset-bottom,0px);
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{height:100%;}
-body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:26px;line-height:1.7;min-height:100%;}
+body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:26px;line-height:1.7;min-height:100%;
+  background-image:radial-gradient(1100px 620px at 12% -8%,rgba(var(--g-rgb),.055),transparent 60%),
+                   radial-gradient(900px 540px at 92% 0%,rgba(var(--g5-rgb),.05),transparent 62%);
+  background-attachment:fixed;}
 .app{display:flex;flex-direction:column;min-height:100vh;}
-.hdr{padding:16px 32px 0;border-bottom:1px solid var(--b);background:var(--s1);position:sticky;top:0;z-index:50;}
+/* ── HEADER — glass, with accent hairline ── */
+.hdr{padding:16px 32px 0;background:rgba(18,21,28,.82);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+  position:sticky;top:0;z-index:50;border-bottom:1px solid var(--b);box-shadow:0 1px 0 rgba(255,255,255,.02),0 12px 32px -24px #000;}
+.hdr::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--g-rgb),.5),rgba(var(--g5-rgb),.35),transparent);}
 .htop{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
-.logo{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--g);letter-spacing:-.5px;}
-.logo span{color:var(--t2);font-style:italic;}
-.ptag{font-family:var(--mono);font-size:24px;background:rgba(127,255,110,.1);color:var(--g);border:1px solid rgba(127,255,110,.2);border-radius:4px;padding:2px 8px;}
-.ptag.b2{background:rgba(79,195,247,.1);color:var(--g2);border-color:rgba(79,195,247,.2);}
+.logo{font-family:var(--serif);font-size:28px;font-weight:600;letter-spacing:-.6px;
+  background:linear-gradient(100deg,var(--g),#bef7ec 55%,var(--g5));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.logo span{-webkit-text-fill-color:var(--t2);color:var(--t2);font-style:italic;font-weight:300;}
+.ptag{font-family:var(--mono);font-size:24px;background:rgba(var(--g-rgb),.1);color:var(--g);border:1px solid rgba(var(--g-rgb),.22);border-radius:999px;padding:3px 12px;letter-spacing:.04em;}
+.ptag.b2{background:rgba(var(--g2-rgb),.1);color:var(--g2);border-color:rgba(var(--g2-rgb),.22);}
+.ptag.b3{background:rgba(var(--g5-rgb),.1);color:var(--g5);border-color:rgba(var(--g5-rgb),.22);}
 .spill{margin-left:auto;font-family:var(--mono);font-size:24px;color:var(--t3);display:flex;align-items:center;gap:6px;}
-.sdot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
-.sdot.ok{background:var(--g);}.sdot.saving{background:var(--g3);animation:blink 1s infinite;}.sdot.err{background:var(--red);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--t3);transition:background .2s,box-shadow .2s;}
+.sdot.ok{background:var(--g);box-shadow:0 0 0 3px rgba(var(--g-rgb),.14);}
+.sdot.saving{background:var(--g3);animation:blink 1s infinite;}
+.sdot.err{background:var(--red);box-shadow:0 0 0 3px rgba(var(--red-rgb),.16);}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-.tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none;}
+/* ── TABS — pills ── */
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{font-family:var(--mono);font-size:25px;padding:10px 14px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;border:none;background:none;transition:color .15s;}
-.tab:hover{color:var(--t2);}.tab.on{color:var(--g);border-bottom:2px solid var(--g);}
-.main{flex:1;padding:24px 32px;max-width:80%;width:100%;margin:0 auto;}
+.tab{font-family:var(--mono);font-size:25px;padding:8px 16px;color:var(--t3);cursor:pointer;white-space:nowrap;
+  border:1px solid transparent;background:none;border-radius:999px;letter-spacing:.03em;
+  transition:color .18s,background .18s,border-color .18s;}
+.tab:hover{color:var(--t2);background:rgba(255,255,255,.035);}
+.tab.on{color:var(--g);background:rgba(var(--g-rgb),.12);border-color:rgba(var(--g-rgb),.28);box-shadow:0 4px 14px -8px rgba(var(--g-rgb),.55);}
+.main{flex:1;padding:28px 32px;max-width:min(1240px,88%);width:100%;margin:0 auto;}
 .panel{display:none;}.panel.on{display:block;animation:fadeUp .25s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .bnav{display:none;}.mbar{display:none;}
-.card{background:var(--s1);border:1px solid var(--b);border-radius:var(--rl);padding:18px 20px;margin-bottom:16px;transition:border-color .2s;}.card:hover{border-color:var(--b2);}
+.card{background:linear-gradient(168deg,var(--s2),var(--s1) 58%);border:1px solid var(--b);border-radius:var(--rx);
+  padding:20px 22px;margin-bottom:16px;box-shadow:var(--sh);position:relative;
+  transition:border-color .22s,box-shadow .22s,transform .22s;}
+.card:hover{border-color:var(--b2);box-shadow:var(--sh-lift);transform:translateY(-1px);}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.lbl{font-family:var(--mono);font-size:24px;letter-spacing:.08em;color:var(--t3);text-transform:uppercase;margin-bottom:10px;}
-.h1{font-family:var(--serif);font-size:29px;font-weight:300;color:var(--t);margin-bottom:18px;}
-.h1 span{color:var(--g);}
-.stat{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:14px 16px;}
-.sv{font-family:var(--mono);font-size:32px;font-weight:500;line-height:1;margin-bottom:5px;}
+.lbl{font-family:var(--mono);font-size:24px;letter-spacing:.12em;color:var(--t3);text-transform:uppercase;margin-bottom:10px;}
+/* ── HEADINGS — display serif with accent rule ── */
+.h1{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--t);margin-bottom:20px;letter-spacing:-.5px;line-height:1.2;
+  display:flex;align-items:baseline;gap:12px;}
+.h1::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(var(--g-rgb),.28),transparent);}
+.h1 span{color:var(--g);font-style:italic;font-weight:400;}
+/* ── STAT TILES ── */
+.stat{background:linear-gradient(160deg,var(--s3),var(--s2) 62%);border:1px solid var(--b);border-radius:var(--r);
+  padding:15px 17px;position:relative;overflow:hidden;transition:border-color .2s;}
+.stat::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--t3);opacity:.5;}
+.stat:hover{border-color:var(--b2);}
+.stat:has(.sv.g)::before{background:var(--g);}
+.stat:has(.sv.b)::before{background:var(--g2);}
+.stat:has(.sv.o)::before{background:var(--g3);}
+.stat:has(.sv.r)::before{background:var(--g4);}
+.sv{font-family:var(--mono);font-size:32px;font-weight:500;line-height:1;margin-bottom:5px;letter-spacing:-.02em;}
 .sv.g{color:var(--g);}.sv.b{color:var(--g2);}.sv.o{color:var(--g3);}.sv.r{color:var(--g4);}
 .sl{font-size:25px;color:var(--t3);}
-input,select,textarea{background:var(--s2);border:1px solid var(--b2);border-radius:10px;color:var(--t);font-family:var(--sans);font-size:23px;padding:9px 12px;width:100%;outline:none;transition:border .15s;-webkit-appearance:none;}
-input:focus,select:focus,textarea:focus{border-color:var(--g);}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a665a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;}
+input,select,textarea{background:var(--s2);border:1px solid var(--b2);border-radius:11px;color:var(--t);font-family:var(--sans);font-size:23px;padding:10px 13px;width:100%;outline:none;transition:border-color .16s,box-shadow .16s,background .16s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--g);background:var(--s3);box-shadow:0 0 0 3px rgba(var(--g-rgb),.13);}
+input::placeholder,textarea::placeholder{color:var(--t3);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235d6878' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;}
 select option{background:var(--s2);}
 textarea{resize:vertical;min-height:75px;line-height:1.5;}
 .ig{margin-bottom:12px;}.ig label{display:block;font-size:25px;color:var(--t2);margin-bottom:5px;font-family:var(--mono);}
-.btn{font-family:var(--mono);font-size:25px;padding:9px 16px;border-radius:9px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
-.bp{background:var(--g);color:#0a0f0a;font-weight:500;}.bp:active{background:#9fff90;}
-.bs{background:transparent;color:var(--t2);border:1px solid var(--b2);}.bs:active{color:var(--g);border-color:var(--g);}
-.bd{background:transparent;color:var(--red);border:1px solid rgba(239,83,80,.3);}
+.btn{font-family:var(--mono);font-size:25px;padding:10px 18px;border-radius:999px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;letter-spacing:.02em;transition:all .16s;}
+.bp{background:linear-gradient(135deg,var(--g),#3fd6c0);color:var(--ink);font-weight:500;box-shadow:0 4px 16px -8px rgba(var(--g-rgb),.75);}
+.bp:hover{filter:brightness(1.07);box-shadow:0 6px 22px -8px rgba(var(--g-rgb),.9);}
+.bp:active{background:#99f6e4;transform:translateY(1px);}
+.bs{background:rgba(255,255,255,.03);color:var(--t2);border:1px solid var(--b2);}
+.bs:hover{color:var(--t);border-color:rgba(var(--g-rgb),.4);background:rgba(var(--g-rgb),.07);}
+.bs:active{color:var(--g);border-color:var(--g);}
+.bd{background:transparent;color:var(--red);border:1px solid rgba(var(--red-rgb),.3);}
+.bd:hover{background:rgba(var(--red-rgb),.1);border-color:rgba(var(--red-rgb),.5);}
 .brow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 input[type=range]{-webkit-appearance:none;height:4px;background:var(--s3);border:none;border-radius:2px;padding:0;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--g);cursor:pointer;}
-.bdg{display:inline-block;font-family:var(--mono);font-size:24px;padding:2px 9px;border-radius:5px;}
-.bdg.g{background:rgba(127,255,110,.12);color:var(--g);border:1px solid rgba(127,255,110,.2);}
-.bdg.b{background:rgba(79,195,247,.12);color:var(--g2);border:1px solid rgba(79,195,247,.2);}
-.bdg.o{background:rgba(255,183,77,.12);color:var(--g3);border:1px solid rgba(255,183,77,.2);}
-.bdg.r{background:rgba(239,83,80,.12);color:var(--g4);border:1px solid rgba(239,83,80,.2);}
+.bdg{display:inline-block;font-family:var(--mono);font-size:24px;padding:3px 11px;border-radius:999px;letter-spacing:.04em;}
+.bdg.g{background:rgba(var(--g-rgb),.12);color:var(--g);border:1px solid rgba(var(--g-rgb),.2);}
+.bdg.b{background:rgba(var(--g2-rgb),.12);color:var(--g2);border:1px solid rgba(var(--g2-rgb),.2);}
+.bdg.o{background:rgba(var(--g3-rgb),.12);color:var(--g3);border:1px solid rgba(var(--g3-rgb),.2);}
+.bdg.r{background:rgba(var(--red-rgb),.12);color:var(--g4);border:1px solid rgba(var(--red-rgb),.2);}
 .bdg.gr{background:var(--s3);color:var(--t2);border:1px solid var(--b);}
 .ci{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--b);}
 .ci:last-child{border-bottom:none;}
@@ -69,11 +127,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .ci label{font-size:23px;color:var(--t2);cursor:pointer;line-height:1.5;flex:1;}
 .ci.done label{text-decoration:line-through;color:var(--t3);}
 .pbw{margin-bottom:10px;}.pbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:24px;color:var(--t3);margin-bottom:4px;}
-.pbb{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;}.pbf{height:100%;border-radius:3px;background:var(--g);transition:width .4s;}
-.bbar{height:8px;border-radius:4px;background:var(--s3);overflow:hidden;margin:8px 0;}
-.bfill{height:100%;border-radius:4px;transition:width .3s,background .3s;}
-.air{background:var(--s2);border:1px solid rgba(127,255,110,.2);border-radius:var(--r);padding:15px 17px;margin-top:12px;}
-.air .al{font-family:var(--mono);font-size:24px;color:var(--g);letter-spacing:.08em;margin-bottom:8px;}
+.pbb{height:7px;background:var(--s3);border-radius:999px;overflow:hidden;}
+.pbf{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--g),#3fd6c0);transition:width .4s;box-shadow:0 0 12px -2px rgba(var(--g-rgb),.5);}
+.bbar{height:8px;border-radius:999px;background:var(--s3);overflow:hidden;margin:8px 0;}
+.bfill{height:100%;border-radius:999px;transition:width .3s,background .3s;}
+/* ── AI RESPONSE BLOCK ── */
+.air{background:linear-gradient(150deg,rgba(var(--g-rgb),.07),var(--s2) 55%);border:1px solid rgba(var(--g-rgb),.22);
+  border-radius:var(--rl);padding:16px 18px;margin-top:12px;position:relative;overflow:hidden;}
+.air::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--g),var(--g5));}
+.air .al{font-family:var(--mono);font-size:24px;color:var(--g);letter-spacing:.14em;margin-bottom:8px;text-transform:uppercase;}
 .air p{font-size:26px;color:var(--t2);line-height:1.7;margin-bottom:8px;}
 .air p:last-child{margin-bottom:0;}.air strong{color:var(--t);font-weight:500;}
 .spin{display:flex;align-items:center;gap:8px;color:var(--t3);font-family:var(--mono);font-size:24px;padding:10px 0;}
@@ -84,22 +146,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .lc{flex:1;}.lt{font-size:26px;color:var(--t);margin-bottom:2px;}.ldt{font-size:25px;color:var(--t2);}
 .wkg{display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:4px;scrollbar-width:none;}
 .wkg::-webkit-scrollbar{display:none;}
-.dc{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:11px 9px;min-height:100px;min-width:85px;flex:1;}
-.dc.today{border-color:var(--g);}.dc.rest{opacity:.45;}
+.dc{background:linear-gradient(165deg,var(--s3),var(--s2) 60%);border:1px solid var(--b);border-radius:var(--r);padding:11px 9px;min-height:100px;min-width:85px;flex:1;transition:border-color .18s,transform .18s;}
+.dc:hover{border-color:var(--b2);transform:translateY(-1px);}
+.dc.today{border-color:rgba(var(--g-rgb),.55);box-shadow:var(--glow);}
+.dc.rest{opacity:.45;}
 .dn{font-family:var(--mono);font-size:24px;color:var(--t3);margin-bottom:5px;}
 .dd{font-size:29px;font-weight:500;color:var(--t);margin-bottom:7px;}
 .dt{font-size:24px;color:var(--t2);padding:3px 5px;border-radius:4px;margin-bottom:3px;background:var(--s3);}
-.dt.uw{border-left:2px solid var(--g);}.dt.rd{border-left:2px solid var(--g2);}.dt.rt{border-left:2px solid var(--g3);color:var(--g3);background:rgba(255,183,77,.08);}
-.chip{display:inline-block;font-family:var(--mono);font-size:24px;padding:4px 10px;border-radius:20px;margin:3px;cursor:pointer;border:1px solid var(--b2);color:var(--t2);transition:all .15s;}
-.chip.on{background:rgba(127,255,110,.12);color:var(--g);border-color:rgba(127,255,110,.3);}
+.dt.uw{border-left:2px solid var(--g);}.dt.rd{border-left:2px solid var(--g2);}.dt.rt{border-left:2px solid var(--g3);color:var(--g3);background:rgba(var(--g3-rgb),.08);}
+.chip{display:inline-block;font-family:var(--mono);font-size:24px;padding:5px 13px;border-radius:999px;margin:3px;cursor:pointer;border:1px solid var(--b2);color:var(--t2);background:rgba(255,255,255,.02);transition:all .16s;}
+.chip:hover{color:var(--t);border-color:rgba(var(--g-rgb),.35);background:rgba(var(--g-rgb),.06);}
+.chip.on{background:rgba(var(--g-rgb),.13);color:var(--g);border-color:rgba(var(--g-rgb),.35);box-shadow:0 3px 12px -6px rgba(var(--g-rgb),.6);}
 .tl{padding-left:15px;border-left:1px solid var(--b);}
 .tli{position:relative;padding:0 0 16px 18px;}
 .tli::before{content:'';position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--s3);border:1px solid var(--b2);}
 .tli.done::before{background:var(--g);border-color:var(--g);}
-.tli.now::before{background:var(--g2);border-color:var(--g2);box-shadow:0 0 8px rgba(79,195,247,.4);}
+.tli.now::before{background:var(--g2);border-color:var(--g2);box-shadow:0 0 8px rgba(var(--g2-rgb),.4);}
 .tli-d{font-family:var(--mono);font-size:24px;color:var(--t3);margin-bottom:2px;}
 .tli-t{font-size:26px;color:var(--t);margin-bottom:2px;}.tli-s{font-size:25px;color:var(--t3);}
-.qbox{background:rgba(127,255,110,.05);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:15px;margin-bottom:12px;}
+.qbox{background:rgba(var(--g-rgb),.05);border:1px solid rgba(var(--g-rgb),.15);border-radius:var(--r);padding:15px;margin-bottom:12px;}
 .qbox-q{font-family:var(--mono);font-size:24px;color:var(--g);margin-bottom:8px;}
 .qbox-a{font-size:26px;color:var(--t2);line-height:1.75;}.qbox-a strong{color:var(--t);}
 .lrow{background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:12px;margin-bottom:8px;}
@@ -110,7 +175,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 /* schedule */
 .sched-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;margin-bottom:3px;cursor:pointer;transition:background .15s;}
 .sched-row:hover{background:var(--s3);}
-.sched-row.sched-now{background:rgba(127,255,110,.08);outline:1px solid rgba(127,255,110,.3);}
+.sched-row.sched-now{background:rgba(var(--g-rgb),.08);outline:1px solid rgba(var(--g-rgb),.3);}
 .sched-wnum{font-family:var(--mono);font-size:21px;color:var(--t3);min-width:26px;}
 .sched-dates{font-family:var(--mono);font-size:21px;color:var(--t3);min-width:92px;}
 .sched-chip{font-family:var(--mono);font-size:23px;padding:3px 10px;border-radius:5px;font-weight:500;min-width:80px;text-align:center;flex-shrink:0;}
@@ -146,10 +211,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .cal-cell{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:5px 4px 4px;min-height:68px;cursor:pointer;position:relative;overflow:hidden;transition:border-color .12s,opacity .12s;}
 .cal-cell:active{opacity:.75;}
-.cal-cell.cal-today{border-color:var(--g);box-shadow:0 0 0 1px rgba(127,255,110,.2),inset 0 0 12px rgba(127,255,110,.04);}
+.cal-cell.cal-today{border-color:var(--g);box-shadow:0 0 0 1px rgba(var(--g-rgb),.2),inset 0 0 12px rgba(var(--g-rgb),.04);}
 .cal-cell.cal-future{opacity:.35;cursor:default;pointer-events:none;}
 .cal-cell.cal-empty{background:transparent;border-color:transparent;cursor:default;pointer-events:none;}
-.cal-cell.cal-selected{border-color:var(--g2);box-shadow:0 0 0 1px rgba(79,195,247,.2);}
+.cal-cell.cal-selected{border-color:var(--g2);box-shadow:0 0 0 1px rgba(var(--g2-rgb),.2);}
 .cal-rot-strip{height:3px;border-radius:2px 2px 0 0;position:absolute;top:0;left:0;right:0;}
 .cal-daynum{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--t2);margin-bottom:3px;margin-top:1px;line-height:1;}
 .cal-today .cal-daynum{color:var(--g);}
@@ -160,7 +225,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .cal-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .cal-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--b);}
 /* day detail */
-.cal-detail-card{background:var(--s1);border:1px solid rgba(79,195,247,.25);border-radius:var(--rl);padding:14px;margin-bottom:12px;animation:fadeUp .2s ease;}
+.cal-detail-card{background:var(--s1);border:1px solid rgba(var(--g2-rgb),.25);border-radius:var(--rl);padding:14px;margin-bottom:12px;animation:fadeUp .2s ease;}
 .cal-detail-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
 .cal-detail-close{background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
 /* year timeline toggle */
@@ -181,20 +246,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   .cal-stats-bar{grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;padding-top:10px;}
   .cal-detail-card{padding:11px;border-radius:11px;}
 }
-.rbanner{background:linear-gradient(135deg,rgba(127,255,110,.05),rgba(79,195,247,.05));border:1px solid rgba(127,255,110,.15);border-radius:var(--rl);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.sbtn{background:var(--g);color:#0a0f0a;font-family:var(--mono);font-size:25px;font-weight:500;padding:12px 20px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;transition:all .15s;}
-.sbtn:active{background:#9fff90;}.sbtn.saving{opacity:.6;pointer-events:none;}
+.rbanner{background:linear-gradient(135deg,rgba(var(--g-rgb),.09),rgba(var(--g5-rgb),.07) 55%,var(--s1));
+  border:1px solid rgba(var(--g-rgb),.2);border-radius:var(--rx);padding:18px 22px;margin-bottom:18px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.rbanner::after{content:'';position:absolute;right:-60px;top:-60px;width:190px;height:190px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--g-rgb),.14),transparent 68%);pointer-events:none;}
+.sbtn{background:linear-gradient(135deg,var(--g),#3fd6c0);color:var(--ink);font-family:var(--mono);font-size:25px;font-weight:500;padding:13px 20px;border-radius:999px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;transition:all .16s;box-shadow:0 4px 18px -8px rgba(var(--g-rgb),.75);}
+.sbtn:hover{filter:brightness(1.07);}
+.sbtn:active{background:#99f6e4;transform:translateY(1px);}.sbtn.saving{opacity:.6;pointer-events:none;}
 .smsg{font-family:var(--mono);font-size:24px;color:var(--t3);text-align:center;margin-top:6px;min-height:16px;}
-.abox{background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+.abox{background:rgba(var(--g-rgb),.04);border:1px solid rgba(var(--g-rgb),.15);border-radius:var(--r);padding:14px;margin-bottom:12px;}
 .abox p{font-size:26px;color:var(--t2);line-height:1.8;margin-bottom:8px;}.abox p:last-child{margin-bottom:0;}.abox strong{color:var(--t);}
-.ov{position:fixed;inset:0;background:rgba(13,15,14,.92);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px;}
+.ov{position:fixed;inset:0;background:rgba(var(--bg-rgb),.92);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px;}
 .ov p{font-family:var(--mono);font-size:26px;color:var(--t2);}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
 @media(max-width:768px){
   /* ── TOKENS ── */
-  :root{--nav:56px;--r:10px;--rl:12px;}
+  :root{--nav:56px;--r:10px;--rl:13px;--rx:15px;}
 
   /* ── LAYOUT ── */
   .hdr{display:none;}
@@ -205,22 +275,31 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   .panel.on{display:block !important;}
 
   /* ── TOP BAR ── */
-  .mbar{display:flex !important;background:var(--s1);border-bottom:1px solid var(--b);
+  .mbar{display:flex !important;background:rgba(18,21,28,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--b);position:relative;
     padding:10px 14px;align-items:center;justify-content:space-between;flex-shrink:0;height:46px;}
-  .mlogo{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--g);letter-spacing:-.3px;}
-  .mlogo span{color:var(--t2);font-style:italic;}
+  .mbar::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(var(--g-rgb),.45),rgba(var(--g5-rgb),.3),transparent);}
+  .mlogo{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:-.3px;
+    background:linear-gradient(100deg,var(--g),var(--g5));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .mlogo span{-webkit-text-fill-color:var(--t2);color:var(--t2);font-style:italic;font-weight:300;}
   #ms{font-size:10px !important;color:var(--t3);}
   #md{font-size:10px !important;color:var(--t3);}
 
   /* ── BOTTOM NAV ── */
-  .bnav{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--s1);
+  .bnav{display:flex !important;position:fixed;bottom:0;left:0;right:0;
+    background:rgba(18,21,28,.93);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
     border-top:1px solid var(--b);padding-bottom:var(--safe);z-index:100;
     height:calc(var(--nav) + var(--safe));touch-action:pan-y;overflow-x:hidden;}
-  .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;
     padding:5px 2px;cursor:pointer;gap:2px;border:none;background:none;-webkit-tap-highlight-color:transparent;min-width:0;}
-  .nicon{font-size:18px;color:var(--t2);line-height:1.2;}
-  .nlbl{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;}
+  .ni::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%) scaleX(0);
+    width:26px;height:2px;border-radius:0 0 3px 3px;background:var(--g);transition:transform .2s;}
+  .ni.on::before{transform:translateX(-50%) scaleX(1);}
+  .nicon{font-size:18px;color:var(--t2);line-height:1.2;transition:color .18s,transform .18s;}
+  .nlbl{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;transition:color .18s;}
   .ni.on .nicon,.ni.on .nlbl{color:var(--g);}
+  .ni.on .nicon{transform:translateY(-1px);}
   /* ── MORE TRAY ── */
   .more-tray{display:none;position:fixed;inset:0;z-index:200;}
   .more-tray.open{display:block;}
@@ -240,10 +319,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   .more-hdl{width:36px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 4px;}
 
   /* ── TYPOGRAPHY — reset ALL the giant px values ── */
-  body{font-size:14px;line-height:1.55;}
-  .h1{font-size:18px;font-weight:400;margin-bottom:10px;line-height:1.3;}
+  body{font-size:14px;line-height:1.55;background-attachment:scroll;}
+  .h1{font-size:19px;font-weight:600;margin-bottom:11px;line-height:1.25;letter-spacing:-.3px;gap:9px;}
   .h1 span{color:var(--g);}
-  .lbl{font-size:10px;letter-spacing:.07em;margin-bottom:6px;}
+  .lbl{font-size:10px;letter-spacing:.1em;margin-bottom:6px;}
   .sl{font-size:12px;}
   .sv{font-size:21px;margin-bottom:3px;}
   .smsg{font-size:10px;margin-top:4px;}
@@ -263,7 +342,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   [style*="font-size:20px"]{font-size:10px !important;}
 
   /* ── CARDS ── */
-  .card{padding:11px 12px;border-radius:11px;margin-bottom:9px;}
+  .card{padding:12px 13px;border-radius:15px;margin-bottom:9px;box-shadow:0 1px 2px rgba(0,0,0,.35);}
+  .card:hover{transform:none;}
   .stat{padding:10px 11px;border-radius:9px;}
   .abox{padding:10px 12px;margin-bottom:9px;}
   .abox p{font-size:13px !important;line-height:1.55;margin-bottom:6px;}
@@ -382,8 +462,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <div class="hdr">
   <div class="htop">
     <div class="logo">Academic <span>OS</span></div>
-    <div class="ptag">PRE-RESIDENCY</div>
+    <div class="ptag" id="ptag-rot">PGY-1</div>
     <div class="ptag b2">ANESTHESIA TRACK</div>
+    <div class="ptag b3" id="ptag-cycle">MATCH 2028</div>
     <div class="spill">
       <div class="sdot" id="sd"></div>
       <span id="sl2">Loading...</span>
@@ -458,7 +539,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="ci" id="ci-aki"><input type="checkbox" id="cb-aki" onchange="chk('ci-aki')"><label for="cb-aki">Ask about shadowing anesthesia / identify one anesthesia contact at Kaiser</label></div>
     </div>
   </div>
-  <div class="card" id="today-study-plan" style="border-color:rgba(127,255,110,.2);">
+  <div class="card" id="today-study-plan" style="border-color:rgba(var(--g-rgb),.2);">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
       <div class="lbl" style="margin-bottom:0;">today's rotation-tailored plan</div>
       <button class="btn bs" style="font-size:23px;padding:5px 10px;" onclick="gT('schedule',null);document.querySelector('.tab[onclick*=schedule]')&&document.querySelector('.tab[onclick*=schedule]').classList.add('on')">Full schedule →</button>
@@ -466,7 +547,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div id="today-study-body"><div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
   </div>
 
-  <div class="card" style="background:linear-gradient(135deg,rgba(127,255,110,.04),rgba(79,195,247,.04));border-color:rgba(127,255,110,.2);">
+  <div class="card" style="background:linear-gradient(135deg,rgba(var(--g-rgb),.04),rgba(var(--g2-rgb),.04));border-color:rgba(var(--g-rgb),.2);">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
       <div class="lbl" style="margin-bottom:0;">weekly momentum score</div>
       <div style="display:flex;align-items:baseline;gap:6px;"><span id="mom-score" style="font-family:var(--mono);font-size:38px;font-weight:500;color:var(--g);">--</span><span style="font-family:var(--mono);font-size:24px;color:var(--t3);">/ 100</span></div>
@@ -482,7 +563,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
   <div class="card">
     <div class="lbl">ai coach</div>
-    <div id="today-out"><div class="air"><div class="al">COACH</div><p>Pre-residency -- the most underused week most residents ever get. Use it deliberately.</p><p><strong>UWorld today: Cardiology first.</strong> Hemodynamics, HF, arrhythmias map directly onto perioperative cases and anesthesia interviews.</p><p><strong>Most important task today:</strong> Know every patient before rounds. One clinical win per day builds the file.</p></div></div>
+    <div id="today-out"><div class="air"><div class="al">COACH</div><p>Intern year is underway. The file you are building now is the one anesthesia programs will read.</p><p><strong>UWorld today: Cardiology first.</strong> Hemodynamics, HF, arrhythmias map directly onto perioperative cases and anesthesia interviews.</p><p><strong>Most important task today:</strong> Know every patient before rounds. One clinical win per day builds the file.</p></div></div>
     <div class="brow"><button class="btn bs bi" onclick="genToday()">Regenerate</button><button class="btn bs bi" onclick="gT('uworld',null)">Log UWorld</button></div>
   </div>
 </div>
@@ -497,7 +578,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="stat"><div class="sv o" id="st-str">0</div><div class="sl">Day streak</div></div>
     <div class="stat"><div class="sv" id="st-pct">0%</div><div class="sl">Est. complete</div></div>
   </div>
-  <div class="card" style="border-color:rgba(127,255,110,.25);">
+  <div class="card" style="border-color:rgba(var(--g-rgb),.25);">
     <div class="lbl" style="color:var(--g);">log session -- saves to data.json</div>
     <div class="g3" style="margin-bottom:10px;">
       <div class="ig"><label>Date</label><input type="date" id="uw-date"></div>
@@ -532,12 +613,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="card" style="margin-bottom:14px;">
     <div class="lbl">generate reading list</div>
     <div class="g2 k2" style="margin-bottom:10px;">
-      <div class="ig"><label>Rotation</label><select id="rd-rot"><option value="pre">Pre-residency</option><option value="micu">MICU / ICU</option><option value="ccu">CCU</option><option value="cards">Cardiology</option><option value="neph">Nephrology</option><option value="pulm">Pulmonology</option><option value="gen">General IM</option><option value="periop">Periop medicine</option></select></div>
+      <div class="ig"><label>Rotation</label><select id="rd-rot"><option>General wards</option><option>MICU / ICU</option><option>CCU</option><option>Cardiology</option><option>Nephrology</option><option>Pulmonology</option><option>General IM</option><option>Perioperative medicine</option><option>Night float</option><option>Emergency medicine</option></select></div>
       <div class="ig"><label>Focus</label><select id="rd-focus"><option>Clinical reasoning and management</option><option>Perioperative relevance (anesthesia bridge)</option><option>Physiology and mechanisms</option><option>Critical care systems</option><option>Landmark trials</option></select></div>
     </div>
     <button class="btn bp bi" onclick="genRd()">Generate with AI</button>
   </div>
-  <div class="card"><div class="lbl">pre-residency foundation (Mon-Fri -- Sat protected)</div><div id="rdlist"></div></div>
+  <div class="card"><div class="lbl">weekly reading foundation (Mon-Fri -- one day protected)</div><div id="rdlist"></div></div>
   <div id="rd-ai"></div>
 </div>
 
@@ -639,10 +720,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="lrow"><div class="lbad">"IM gave me perspective"</div><div class="larr">REPLACE WITH:</div><div class="lgood">"IM gave me a longitudinal view of disease evolution -- I now understand not just what a creatinine is, but where it has been and where it is going."</div></div>
     </div>
   </div>
-  <div class="card" style="border-color:rgba(127,255,110,.25);">
+  <div class="card" style="border-color:rgba(var(--g-rgb),.25);">
     <div class="lbl" style="color:var(--g);">monthly journal -- saves to data.json</div>
     <div class="g2 k2" style="margin-bottom:10px;">
-      <div class="ig"><label>Month</label><select id="jnl-mo"><option>May 2026 (pre-residency)</option><option>July 2026</option><option>August 2026</option><option>September 2026</option><option>October 2026</option><option>November 2026</option><option>December 2026</option><option>January 2027</option></select></div>
+      <div class="ig"><label>Month</label><select id="jnl-mo"></select></div>
       <div class="ig"><label>Clinical case</label><input type="text" id="jnl-case" placeholder="e.g. HFrEF admitted pre-op..."></div>
     </div>
     <div class="ig"><label>Physiology -- what happened, what did you miss?</label><textarea id="jnl-physio" placeholder="Write the clinical reasoning. Mechanism, what you would do differently."></textarea></div>
@@ -684,7 +765,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);"><div><div style="font-size:26px;color:var(--t);font-weight:500;">ICU / senior IM attending</div><div style="font-size:24px;color:var(--t3);">After MICU or CCU block</div></div><span class="bdg gr">PENDING</span></div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;"><div><div style="font-size:26px;color:var(--t);font-weight:500;">Additional (optional)</div></div><span class="bdg gr">OPTIONAL</span></div>
       </div>
-      <div style="margin-top:10px;padding:10px;background:rgba(255,183,77,.06);border:1px solid rgba(255,183,77,.15);border-radius:var(--r);font-size:26px;color:var(--g3);line-height:1.6;"><strong>Mentor cadence:</strong> Email anesthesia mentor every 6-8 weeks with a clinical case connecting IM to perioperative thinking. Do not go silent for months.</div>
+      <div style="margin-top:10px;padding:10px;background:rgba(var(--g3-rgb),.06);border:1px solid rgba(var(--g3-rgb),.15);border-radius:var(--r);font-size:26px;color:var(--g3);line-height:1.6;"><strong>Mentor cadence:</strong> Email anesthesia mentor every 6-8 weeks with a clinical case connecting IM to perioperative thinking. Do not go silent for months.</div>
     </div>
     <div class="card">
       <div class="lbl">personal statement</div>
@@ -716,7 +797,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="lbl">timeline</div>
       <div class="tl">
         <div class="tli done"><div class="tli-d">MAY 2026</div><div class="tli-t">Matched Kaiser SF IM</div></div>
-        <div class="tli now"><div class="tli-d">NOW</div><div class="tli-t">Pre-residency transition</div><div class="tli-s">Build habits. Establish UWorld routine. Find one anesthesia contact.</div></div>
+        <div class="tli now"><div class="tli-d">NOW</div><div class="tli-t">PGY-1 intern year underway</div><div class="tli-s">Hold the UWorld routine through call weeks. Build LOR relationships now, not in 2027.</div></div>
         <div class="tli"><div class="tli-d">JUNE 15</div><div class="tli-t">Orientation</div><div class="tli-s">Ask about anesthesia faculty. Confirm elective options.</div></div>
         <div class="tli"><div class="tli-d">JULY 1</div><div class="tli-t">Intern year begins</div><div class="tli-s">Every attending = LOR in progress from day one.</div></div>
         <div class="tli"><div class="tli-d">OCT 2026</div><div class="tli-t">Anesthesia mentor named</div><div class="tli-s">Begin 6-8 week email cadence with clinical updates.</div></div>
@@ -791,7 +872,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <div id="panel-roadmap" class="panel">
   <div class="h1">Roadmap <span>to match</span></div>
-  <div class="card" style="background:linear-gradient(135deg,rgba(127,255,110,.04),rgba(79,195,247,.03));border-color:rgba(127,255,110,.2);margin-bottom:18px;">
+  <div class="card" style="background:linear-gradient(135deg,rgba(var(--g-rgb),.04),rgba(var(--g2-rgb),.03));border-color:rgba(var(--g-rgb),.2);margin-bottom:18px;">
     <div class="lbl">overall progress</div>
     <div id="roadmap-overall" style="margin-bottom:4px;">Loading...</div>
     <div style="font-size:25px;color:var(--t3);line-height:1.6;">Sequential milestones — cross off each item and the next phase unlocks. Every checkbox saves to GitHub automatically.</div>
@@ -804,24 +885,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="h1">Anki <span>engine</span></div>
 
   <!-- ── SETTINGS DIAGNOSIS ── -->
-  <div class="card" style="border-color:rgba(255,183,77,.25);">
+  <div class="card" style="border-color:rgba(var(--g3-rgb),.25);">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
       <div class="lbl" style="margin-bottom:0;color:var(--g3);">your settings — diagnosis &amp; fix</div>
       <span class="bdg o">FSRS 0.90</span><span class="bdg r">⚠ LEECH = 1</span><span class="bdg g">FSRS ON</span>
     </div>
-    <div class="qbox" style="border-color:rgba(239,83,80,.25);">
+    <div class="qbox" style="border-color:rgba(var(--red-rgb),.25);">
       <div class="qbox-q" style="color:var(--g4);">🚨 Critical fix: Leech threshold = 1 → Change to 8</div>
       <div class="qbox-a">A leech threshold of 1 means <strong>any card you miss once gets tagged as a leech</strong>. Everything becomes a leech. Anki's default is 8 (wrong 4 times = leech). Set yours to 8 — it flags genuinely hard cards, not normal learning difficulty. This is your most urgent settings fix.</div>
     </div>
-    <div class="qbox" style="border-color:rgba(255,183,77,.25);">
+    <div class="qbox" style="border-color:rgba(var(--g3-rgb),.25);">
       <div class="qbox-q" style="color:var(--g3);">⚠ Auto Advance: 4s question timer → Disable or set 20s+</div>
       <div class="qbox-a">For Step 3 and anesthesia boards, clinical vignettes need 30–90 seconds of real thinking. A 4-second auto-advance is training your brain to guess reflexively, not reason. <strong>Disable Speed Focus Mode during active study.</strong> Use it only for quick review runs on cards you know cold.</div>
     </div>
-    <div class="qbox" style="border-color:rgba(255,183,77,.25);">
+    <div class="qbox" style="border-color:rgba(var(--g3-rgb),.25);">
       <div class="qbox-q" style="color:var(--g3);">⚠ Learning steps: 1m 25m → Change to 1m 10m 1440m</div>
       <div class="qbox-a">Adding a 1-day step (1440m) forces the card into the next day before it graduates. This dramatically improves consolidation — you test recall after a sleep cycle, not just 25 minutes later. This one change measurably improves long-term retention with minimal extra reviews.</div>
     </div>
-    <div class="qbox" style="border-color:rgba(127,255,110,.15);">
+    <div class="qbox" style="border-color:rgba(var(--g-rgb),.15);">
       <div class="qbox-q" style="color:var(--g);">✓ What you have right: FSRS at 0.90</div>
       <div class="qbox-a">FSRS at 90% desired retention is the correct long-term target for boards prep. Your parameters look well-optimized (they come from your actual review history). <strong>Do not change the FSRS parameters manually</strong> — let Anki recompute them every 1–2 months as you accumulate more data. Historical retention 0.90 matches your target — you're on track.</div>
     </div>
@@ -844,15 +925,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="lbl">daily anki targets — by rotation phase</div>
     <div style="font-size:26px;color:var(--t2);margin-bottom:14px;line-height:1.6;">Based on your FSRS 0.90 setup and PGY-1 schedule. <strong style="color:var(--t);">Reviews always before new cards.</strong> Never skip reviews — they compound. New cards are optional when time is short.</div>
     <div class="g2">
-      <div class="stat" style="border-color:rgba(127,255,110,.2);">
+      <div class="stat" style="border-color:rgba(var(--g-rgb),.2);">
         <div class="sv g">20–30</div><div class="sl">new cards/day</div>
-        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Pre-residency now. You have the time. Build the foundation before July 1. Focus: IM core deck + UWorld missed Qs.</div>
+        <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Intern year: protect the review queue over new cards. On call/post-call days, reviews only. Focus: IM core deck + UWorld missed Qs.</div>
       </div>
-      <div class="stat" style="border-color:rgba(79,195,247,.2);">
+      <div class="stat" style="border-color:rgba(var(--g2-rgb),.2);">
         <div class="sv b">10–15</div><div class="sl">new cards/day on rotation</div>
         <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Normal clinical day. Reviews first — always. New cards in the morning before rounds or after dinner. Never post-call.</div>
       </div>
-      <div class="stat" style="border-color:rgba(255,183,77,.2);">
+      <div class="stat" style="border-color:rgba(var(--g3-rgb),.2);">
         <div class="sv o">0</div><div class="sl">new cards on call/post-call</div>
         <div style="font-size:24px;color:var(--t3);margin-top:5px;line-height:1.5;">Reviews only on call days — 10-minute pass if you get a break. Post-call: skip entirely. Sleep encodes memory better than Anki does.</div>
       </div>
@@ -961,7 +1042,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div class="dvdr"></div>
       <div class="lbl">data</div>
       <div class="brow"><button class="btn bs bi" onclick="exportData()">Export data.json</button><button class="btn bd bi" onclick="clrCFG()">Clear local settings</button></div>
-      <div style="margin-top:10px;padding:10px;background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.1);border-radius:var(--r);font-size:24px;color:var(--t3);line-height:1.6;">Your data lives in <strong style="color:var(--t);">data.json</strong> on GitHub -- separate from this UI file. Update index.html freely: add tabs, change colors, add fields. Your logged data is always safe.</div>
+      <div style="margin-top:10px;padding:10px;background:rgba(var(--g-rgb),.04);border:1px solid rgba(var(--g-rgb),.1);border-radius:var(--r);font-size:24px;color:var(--t3);line-height:1.6;">Your data lives in <strong style="color:var(--t);">data.json</strong> on GitHub -- separate from this UI file. Update index.html freely: add tabs, change colors, add fields. Your logged data is always safe.</div>
     </div>
   </div>
 </div>
@@ -985,7 +1066,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 
   <!-- Social leak prevention -->
-  <div class="card" style="border-color:rgba(255,183,77,.25);margin-bottom:14px;">
+  <div class="card" style="border-color:rgba(var(--g3-rgb),.25);margin-bottom:14px;">
     <div class="lbl" style="color:var(--g3);">before conversations — leak prevention</div>
     <div style="font-size:26px;color:var(--t2);margin-bottom:12px;line-height:1.6;">Check these before a family dinner, social event, or any conversation where it might come up. These reset every visit — the act of reviewing them is the point.</div>
     <div class="ci"><input type="checkbox" id="lk1" onchange="this.closest('.ci').classList.toggle('done',this.checked)"><label for="lk1">I have one genuine, positive rotation story ready to share</label></div>
@@ -1009,7 +1090,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 
   <!-- Talk it out — persistent chat -->
-  <div class="card" style="border-color:rgba(127,255,110,.25);margin-bottom:14px;padding:0;overflow:hidden;">
+  <div class="card" style="border-color:rgba(var(--g-rgb),.25);margin-bottom:14px;padding:0;overflow:hidden;">
     <div style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <div class="lbl" style="color:var(--g);margin-bottom:0;">talk it out — coaching chat</div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -1022,7 +1103,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div style="font-size:26px;color:var(--t3);font-style:italic;text-align:center;padding:24px 0;line-height:1.7;">This space is private. Write what is actually there — the coach knows your history and responds without judgment.</div>
     </div>
     <div style="border-top:1px solid var(--b);padding:10px 12px;display:flex;gap:8px;align-items:flex-end;background:var(--s2);">
-      <textarea id="chat-input" style="flex:1;min-height:52px;max-height:130px;resize:none;background:var(--s1);border-color:rgba(127,255,110,.2);" placeholder="Reply to the coach... (Enter to send, Shift+Enter for new line)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"></textarea>
+      <textarea id="chat-input" style="flex:1;min-height:52px;max-height:130px;resize:none;background:var(--s1);border-color:rgba(var(--g-rgb),.2);" placeholder="Reply to the coach... (Enter to send, Shift+Enter for new line)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"></textarea>
       <button class="btn bp" id="chat-sbtn" onclick="sendChatMessage()" style="min-width:64px;height:52px;padding:9px 14px;font-size:25px;">Send</button>
     </div>
   </div>
@@ -1045,7 +1126,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="h1">Tasks &amp; <span>capture</span></div>
   <div style="font-size:26px;color:var(--t2);margin-bottom:18px;line-height:1.7;">Dump anything here — academics, appointments, groceries, apartment, meetings, errands. Type one thing or a full brain dump and let AI split and organize it. Everything saves to data.json.</div>
 
-  <div class="card" style="border-color:rgba(127,255,110,.25);margin-bottom:14px;">
+  <div class="card" style="border-color:rgba(var(--g-rgb),.25);margin-bottom:14px;">
     <div class="lbl" style="color:var(--g);">capture</div>
     <div class="ig"><textarea id="task-input" style="min-height:90px;" placeholder="One task, or dump everything:&#10;'buy dish soap, schedule dentist, review cardiology UWorld, email landlord about hot water, pick up dry cleaning'&#10;&#10;Hit Smart Add — AI splits and labels each one."></textarea></div>
     <div style="margin-bottom:12px;">
@@ -1147,7 +1228,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 
   <!-- kept for showSchedDetail() click handler -->
-  <div class="card" id="sched-detail-card" style="display:none;border-color:rgba(127,255,110,.25);">
+  <div class="card" id="sched-detail-card" style="display:none;border-color:rgba(var(--g-rgb),.25);">
     <div class="lbl" style="color:var(--g);">rotation study plan</div>
     <div id="sched-detail-body"></div>
   </div>
@@ -1158,7 +1239,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="h1">Procedures <span>&amp; skills</span></div>
   <div style="font-size:26px;color:var(--t2);margin-bottom:16px;line-height:1.7;">Log every procedure you attempt or observe. Ask to do things — attendings respect residents who ask. Aim for signed-off before end of residency. ★ = anesthesia-critical.</div>
 
-  <div class="card" style="border-color:rgba(127,255,110,.2);margin-bottom:14px;">
+  <div class="card" style="border-color:rgba(var(--g-rgb),.2);margin-bottom:14px;">
     <div class="lbl" style="color:var(--g);">log a procedure</div>
     <div class="g2 k2" style="margin-bottom:10px;">
       <div class="ig"><label>Procedure</label>
@@ -1278,7 +1359,7 @@ var RI={
   pom:{title:'Periop Medicine ★',tag:'Your anesthesia bridge',items:['Know POISE cold -- the numbers, the controversy, what it changed.','RCRI + DASI on every patient -- risk-stratify like a consultant.','Anticoagulation bridging protocols -- when to hold, when to resume.','Multimodal postoperative pain -- the anesthesia overlap is total.','This is THE block to secure an anesthesia-adjacent LOR. Be exceptional.']},
   vac:{title:'Vacation',tag:'Recover deliberately',items:['Sleep is the priority. Protect it.','Keep the streak alive: 10-15 mixed UWorld Qs max, no pressure.','Pick one topic you have been avoiding and chip at it lightly.','Step back and look at the narrative arc -- where are you vs the plan?','Come back rested. Burnout compounds; so does recovery.']}
 };
-var RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, Prevention',journal:'NEJM',day:'MON',why:'Periop AKI is the intersection of IM and anesthesia. You understand this territory -- read the current literature and own it on rounds.',q:'perioperative acute kidney injury prevention 2024'},{title:'Hemodynamic Monitoring in Critically Ill Patients -- Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility -- the spine of ICU and anesthesia both.',q:'hemodynamic monitoring critically ill framework 2023'},{title:'Lung-Protective Ventilation -- Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',q:'lung protective ventilation ARDS driving pressure 2023'},{title:'Acid-Base Interpretation -- A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',q:'acid base systematic approach mixed disorders 2022'},{title:'Vasopressors and Inotropes in Shock -- Mechanism, Selection, Dosing',journal:'Crit Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine -- used on every ICU rotation and intraoperatively by anesthesiologists.',q:'vasopressors inotropes shock mechanism selection 2023'}];
+var RDL=[{title:'Perioperative Acute Kidney Injury -- Risk Factors, Mechanisms, Prevention',journal:'NEJM',day:'MON',why:'Periop AKI is the cleanest example of longitudinal disease meeting acute instability -- your core narrative thread. Own the mechanism on rounds.',q:'perioperative acute kidney injury prevention 2024'},{title:'Hemodynamic Monitoring in Critically Ill Patients -- Practical Framework',journal:'CHEST',day:'TUE',why:'Frank-Starling, preload/afterload/contractility -- the spine of ICU and anesthesia both.',q:'hemodynamic monitoring critically ill framework 2023'},{title:'Lung-Protective Ventilation -- Evidence, Driving Pressure, Clinical Application',journal:'AJRCCM',day:'WED',why:'You will manage vented patients on MICU. Direct anesthesia airway bridge.',q:'lung protective ventilation ARDS driving pressure 2023'},{title:'Acid-Base Interpretation -- A Systematic Five-Step Approach',journal:'Annals IM',day:'THU',why:'Step 3 high-yield, nephrology core, anesthesia interviewer favorite.',q:'acid base systematic approach mixed disorders 2022'},{title:'Vasopressors and Inotropes in Shock -- Mechanism, Selection, Dosing',journal:'Crit Care',day:'FRI',why:'NE, epi, vasopressin, phenylephrine -- used on every ICU rotation and intraoperatively by anesthesiologists.',q:'vasopressors inotropes shock mechanism selection 2023'}];
 // ============================================================
 // SCHEDULE — full PGY-1 year
 // ============================================================
@@ -1312,10 +1393,10 @@ var SCHED=[
 var ROT_META={
   BOOT:{type:'boot',label:'Bootcamp',bg:'rgba(180,180,180,.12)',border:'rgba(180,180,180,.35)',text:'#b0b0b0'},
   ICU:{type:'icu',label:'ICU',bg:'rgba(123,31,162,.22)',border:'rgba(156,39,176,.55)',text:'#ce93d8'},
-  'E-CARD':{type:'cards',label:'Elective: Cardiology',bg:'rgba(79,195,247,.15)',border:'rgba(79,195,247,.45)',text:'#4fc3f7'},
+  'E-CARD':{type:'cards',label:'Elective: Cardiology',bg:'rgba(var(--g2-rgb),.15)',border:'rgba(var(--g2-rgb),.45)',text:'#7dd3fc'},
   ADM:{type:'adm',label:'Day Admitting',bg:'rgba(25,25,25,.9)',border:'rgba(70,70,70,.7)',text:'#8a8a8a'},
   NF:{type:'nf',label:'Night Float',bg:'rgba(10,10,10,1)',border:'rgba(55,55,55,.8)',text:'#666'},
-  VAC:{type:'vac',label:'Vacation',bg:'rgba(90,102,90,.15)',border:'rgba(90,102,90,.3)',text:'#5a665a'},
+  VAC:{type:'vac',label:'Vacation',bg:'rgba(90,102,90,.15)',border:'rgba(90,102,90,.3)',text:'#5d6878'},
   'AC-G':{type:'clinic',label:'Ambulatory – Geary',bg:'rgba(33,150,243,.12)',border:'rgba(33,150,243,.3)',text:'#64b5f6'},
   WD:{type:'wards',label:'Wards',bg:'rgba(30,80,180,.18)',border:'rgba(60,120,220,.4)',text:'#90caf9'},
   ED:{type:'ed',label:'ED – Kaiser SF',bg:'rgba(210,210,200,.06)',border:'rgba(180,180,170,.25)',text:'#c0c0b0'},
@@ -1347,7 +1428,7 @@ function getCurrentSched(){
     if(today>=ws&&today<we)return{i,code:SCHED[i][1],start:SCHED[i][0],week:i+1,meta:getRotMeta(SCHED[i][1])};
   }
   // Before schedule starts
-  if(new Date()<new Date(SCHED[0][0]+'T12:00:00'))return{i:-1,code:'PRE',start:'',week:0,meta:{type:'boot',label:'Pre-residency / Bootcamp starts June 24',bg:'rgba(127,255,110,.08)',border:'rgba(127,255,110,.25)',text:'var(--g)'}};
+  if(new Date()<new Date(SCHED[0][0]+'T12:00:00'))return{i:-1,code:'PRE',start:'',week:0,meta:{type:'boot',label:'Pre-residency / Bootcamp starts June 24',bg:'rgba(var(--g-rgb),.08)',border:'rgba(var(--g-rgb),.25)',text:'var(--g)'}};
   return null;
 }
 var ROT_STUDY={
@@ -1426,7 +1507,25 @@ async function push(btnId,msgId){
   }
 }
 
-function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',activeChat:{startedAt:null,messages:[]},chatSessions:[],tasks:[],procLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'Pre-residency',program:'Kaiser Permanente SF',matchGoal:'Anesthesiology 2027-2028',orientation:'June 15 2026',firstRotation:'July 1 2026'}}; }
+function defD(){ return{schemaVersion:1,lastUpdated:new Date().toISOString().split('T')[0],uworldSessions:[],journalEntries:[],exposureLog:[],burnoutLog:[],burnoutSummary:'',activeChat:{startedAt:null,messages:[]},chatSessions:[],tasks:[],procLog:[],checks:{},restDays:['Sat'],rotation:'pre',shadowingHours:0,anesthesiaContacts:0,lorStatus:{pd:'not started',anesthesia:'not started',icu:'not started'},profile:{step2:237,step3Target:'Jan-Feb 2027',currentRotation:'PGY-1',program:'Kaiser Permanente SF -- IM Categorical',matchGoal:'Anesthesiology 2027-2028',erasOpens:'Fall 2027',matchDay:'March 2028'}}; }
+
+// Journal month options — generated so the list always covers the current
+// academic year instead of drifting stale. Defaults to the current month.
+function buildJnlMonths(){
+  const sel=document.getElementById('jnl-mo'); if(!sel)return;
+  const t=new Date(), cy=t.getFullYear(), cm=t.getMonth();
+  // Academic year runs July -> June; anchor to whichever July we're past.
+  const startY=cm>=6?cy:cy-1;
+  let html='',curVal='';
+  for(let i=0;i<12;i++){
+    const d=new Date(startY,6+i,1);
+    const label=d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    if(d.getFullYear()===cy&&d.getMonth()===cm)curVal=label;
+    html+=`<option>${label}</option>`;
+  }
+  sel.innerHTML=html;
+  if(curVal)sel.value=curVal;
+}
 
 // ============================================================
 // INIT
@@ -1441,6 +1540,7 @@ document.getElementById('gh-repo').value=CFG.repo;
 document.getElementById('gh-file').value=CFG.file;
 if(CFG.api){ document.getElementById('api-key').value=CFG.api; document.getElementById('api-st').textContent='Key loaded'; }
 fetchData();
+buildJnlMonths();
 buildRdList();
 buildTodayRotation();
 renderSchedPanel();
@@ -1530,7 +1630,7 @@ function upB(){
   document.getElementById('vm').textContent=m+'/10';
   const r=Math.max(0,Math.min(100,Math.round((10-((e+(s/9*10)+m)/3))*10)));
   document.getElementById('bfill').style.width=r+'%';
-  const c=r<25?'#7fff6e':r<50?'#ffb74d':r<75?'#ef9a9a':'#ef5350';
+  const c=r<25?'#5eead4':r<50?'#fbbf24':r<75?'#fda4af':'#f87171';
   const l=r<25?'LOW':r<50?'MODERATE':r<75?'HIGH':'CRITICAL';
   document.getElementById('bfill').style.background=c;
   document.getElementById('blbl').textContent=l;
@@ -1653,7 +1753,7 @@ function renderExpStats(){ if(!D) return; const s=document.getElementById('sh-h'
 // WEEK GRID
 // ============================================================
 // Pre-residency pseudo-rotation meta (dates before the schedule starts)
-var PRE_META={type:'boot',label:'Pre-residency',bg:'rgba(127,255,110,.08)',border:'rgba(127,255,110,.25)',text:'var(--g)'};
+var PRE_META={type:'boot',label:'Pre-residency',bg:'rgba(var(--g-rgb),.08)',border:'rgba(var(--g-rgb),.25)',text:'var(--g)'};
 var _rotPreview=null;
 function curRotType(){const c=getCurrentSched();return c?(c.meta.type||'wards'):'wards';}
 function activeRotType(){return _rotPreview||curRotType();}
@@ -1850,7 +1950,22 @@ async function ai(prompt){
   const apiKey=document.getElementById('api-key')?.value?.trim()||CFG.api||localStorage.getItem('jm_api_key')||'';
   if(!apiKey){ return null; }
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser SF pursuing anesthesia reapplication 2027-2028. Step 2 CK 237. Build themes: predictive physiologic reasoning, longitudinal disease to acute instability, operational systems thinking. Retire: vigilance, last line of defense, love procedures. Be specific, physician-level, 150 words max.`,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5',thinking:{type:'disabled'},max_tokens:800,system:`You are Javier Montelongo's academic coach. PGY-1 IM at Kaiser Permanente SF, mid-intern-year, pursuing anesthesia reapplication for the 2027-2028 match (ERAS opens fall 2027). Step 2 CK 237. Did not match anesthesia on the first attempt.
+
+BUILD these narrative themes:
+- Predictive physiologic reasoning / trajectory recognition
+- Longitudinal disease progressing to acute instability (the IM-to-periop bridge)
+- Operational systems thinking
+
+NEVER use these phrases or framings — they are cliches he has explicitly retired:
+- "last line of defense"
+- "vigilant advocate while asleep" / vigilance as a personality trait
+- "love procedures" / "drawn to procedures"
+- "fast-paced environment"
+
+Draw evidence from his actual IM rotations and clinical encounters. Do NOT reference the perioperative AKI research project as active or upcoming — that project ended and will not publish. He can still speak to the perioperative physiology he learned from it, but never as a pending publication.
+
+Be specific, physician-level, concrete. 150 words max.`,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     if(d.error){ return 'Error: '+d.error.message; }
     return d.content?.[0]?.text||null;
@@ -1977,18 +2092,18 @@ function selMood(el,v){
 function renderMoodTrend(){
   const el=document.getElementById('mood-trend'); if(!el||!D||!D.burnoutLog||!D.burnoutLog.length) return;
   const recent=[...D.burnoutLog].slice(-7);
-  const mc={1:'#ef5350',2:'#ef9a9a',3:'#ffb74d',4:'#4fc3f7',5:'#7fff6e'};
+  const mc={1:'#f87171',2:'#fda4af',3:'#fbbf24',4:'#7dd3fc',5:'#5eead4'};
   const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
-  const dots=recent.map(e=>`<span title="${escHtml(e.date)}: ${ml[e.mood]||e.mood}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${mc[e.mood]||'#5a665a'};margin:0 3px;vertical-align:middle;"></span>`).join('');
+  const dots=recent.map(e=>`<span title="${escHtml(e.date)}: ${ml[e.mood]||e.mood}" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${mc[e.mood]||'#5d6878'};margin:0 3px;vertical-align:middle;"></span>`).join('');
   const avg=(recent.reduce((a,e)=>a+(+e.mood||3),0)/recent.length).toFixed(1);
   el.innerHTML=`<span>Last ${recent.length} entr${recent.length===1?'y':'ies'}:</span> ${dots} <span style="color:var(--t2);margin-left:6px;">avg ${avg}/5</span>`;
 }
 function renderMindHistory(){
   const el=document.getElementById('mind-hist');
   if(!el||!D||!D.burnoutLog||!D.burnoutLog.length){ if(el) el.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No entries yet. Write something above.</div>'; return; }
-  const mc={1:'#ef5350',2:'#ef9a9a',3:'#ffb74d',4:'#4fc3f7',5:'#7fff6e'};
+  const mc={1:'#f87171',2:'#fda4af',3:'#fbbf24',4:'#7dd3fc',5:'#5eead4'};
   const ml={1:'Rough',2:'Struggling',3:'Okay',4:'Grounded',5:'Strong'};
-  el.innerHTML=[...D.burnoutLog].reverse().slice(0,10).map(e=>`<div class="le" style="flex-direction:column;gap:8px;padding:14px 0;"><div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;"><div class="ld">${escHtml(e.date)}</div><span style="font-family:var(--mono);font-size:24px;color:${mc[e.mood]||'#5a665a'};">${ml[e.mood]||e.mood+'/5'}</span></div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml((e.entry||'').substring(0,250))}${(e.entry||'').length>250?'…':''}</div>${e.response?`<div style="font-size:25px;color:var(--t3);border-left:2px solid var(--g);padding-left:10px;margin-top:6px;line-height:1.5;">${escHtml(e.response.substring(0,300))}${e.response.length>300?'…':''}</div>`:''}</div>`).join('');
+  el.innerHTML=[...D.burnoutLog].reverse().slice(0,10).map(e=>`<div class="le" style="flex-direction:column;gap:8px;padding:14px 0;"><div style="display:flex;gap:10px;align-items:center;margin-bottom:4px;"><div class="ld">${escHtml(e.date)}</div><span style="font-family:var(--mono);font-size:24px;color:${mc[e.mood]||'#5d6878'};">${ml[e.mood]||e.mood+'/5'}</span></div><div style="font-size:26px;color:var(--t2);line-height:1.5;">${escHtml((e.entry||'').substring(0,250))}${(e.entry||'').length>250?'…':''}</div>${e.response?`<div style="font-size:25px;color:var(--t3);border-left:2px solid var(--g);padding-left:10px;margin-top:6px;line-height:1.5;">${escHtml(e.response.substring(0,300))}${e.response.length>300?'…':''}</div>`:''}</div>`).join('');
 }
 // ============================================================
 // COACHING CHAT — GitHub-backed, cross-device, capped history
@@ -2019,7 +2134,7 @@ function renderChatThread(){
   el.innerHTML=_chatThread.map(m=>{
     const isUser=m.role==='user';
     if(m.role==='thinking')return`<div style="align-self:flex-start;"><div style="font-family:var(--mono);font-size:23px;color:var(--g);margin-bottom:5px;">COACH</div><div style="background:var(--s2);border:1px solid var(--b);border-radius:4px 16px 16px 16px;padding:12px 15px;"><div class="spin"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Thinking...</span></div></div></div>`;
-    if(isUser)return`<div style="align-self:flex-end;max-width:82%;background:rgba(127,255,110,.1);border:1px solid rgba(127,255,110,.22);border-radius:16px 16px 4px 16px;padding:12px 15px;"><div style="font-size:26px;color:var(--t);line-height:1.55;">${escHtml(m.content).replace(/\n/g,'<br>')}</div></div>`;
+    if(isUser)return`<div style="align-self:flex-end;max-width:82%;background:rgba(var(--g-rgb),.1);border:1px solid rgba(var(--g-rgb),.22);border-radius:16px 16px 4px 16px;padding:12px 15px;"><div style="font-size:26px;color:var(--t);line-height:1.55;">${escHtml(m.content).replace(/\n/g,'<br>')}</div></div>`;
     const fmt=(m.content||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
     return`<div style="align-self:flex-start;max-width:88%;"><div style="font-family:var(--mono);font-size:23px;color:var(--g);margin-bottom:5px;">COACH</div><div style="background:var(--s2);border:1px solid var(--b);border-radius:4px 16px 16px 16px;padding:12px 15px;"><p style="font-size:26px;color:var(--t2);line-height:1.75;margin:0;">${fmt}</p></div></div>`;
   }).join('');
@@ -2049,7 +2164,7 @@ async function sendChatMessage(){
   const sysPrompt=`You are a psychological support coach for Javier Montelongo, MD. PGY-1 IM at Kaiser Permanente San Francisco, pursuing anesthesia reapplication 2027-2028. Did not match anesthesia on first attempt. Carries grief, frustration, and determination. Worries about bitterness leaking into relationships.\n\nRole: warm, honest, direct psychological support. ALWAYS acknowledge feelings before any reframe. Never minimize. No toxic positivity. Hold pain and goal simultaneously. End each response with one focused follow-up question. 180 words max.\n\nPrior session summary:\n${summary}`;
   const apiMessages=_chatThread.filter(m=>m.role==='user'||m.role==='assistant').slice(-20).map(m=>({role:m.role,content:m.content}));
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:450,system:sysPrompt,messages:apiMessages})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5',thinking:{type:'disabled'},max_tokens:450,system:sysPrompt,messages:apiMessages})});
     const data=await r.json();
     const responseText=data.content?.[0]?.text||null;
     _chatThread=_chatThread.filter(m=>m.role!=='thinking');
@@ -2090,7 +2205,7 @@ function renderPastSessions(){
   if(!D||!D.chatSessions||!D.chatSessions.length){if(card)card.style.display='none';return;}
   if(card)card.style.display='';
   const el=document.getElementById('sessions-list');if(!el)return;
-  el.innerHTML=D.chatSessions.map(s=>`<div style="border:1px solid var(--b);border-radius:var(--r);margin-bottom:8px;overflow:hidden;"><div style="display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;background:var(--s2);" onclick="toggleSess('ss${s.id}')"><span style="font-family:var(--mono);font-size:23px;color:var(--t3);white-space:nowrap;">${escHtml(s.date)}</span><span style="font-size:25px;color:var(--t);flex:1;">${escHtml(s.title)}</span><span style="font-family:var(--mono);font-size:23px;color:var(--t3);">${s.messages.length} msgs ▾</span></div><div id="ss${s.id}" style="display:none;padding:12px 14px;border-top:1px solid var(--b);">${s.messages.filter(m=>m.role==='user'||m.role==='assistant').map(m=>{const u=m.role==='user';return`<div style="margin-bottom:10px;display:flex;flex-direction:column;align-items:${u?'flex-end':'flex-start'};"><div style="font-family:var(--mono);font-size:22px;color:${u?'var(--g)':'var(--t3)'};margin-bottom:3px;">${u?'YOU':'COACH'}</div><div style="max-width:88%;background:${u?'rgba(127,255,110,.08)':'var(--s3)'};border-radius:${u?'12px 12px 3px 12px':'3px 12px 12px 12px'};padding:10px 13px;font-size:25px;color:var(--t2);line-height:1.6;">${escHtml(m.content||'').replace(/\n/g,'<br>')}</div></div>`;}).join('')}</div></div>`).join('');
+  el.innerHTML=D.chatSessions.map(s=>`<div style="border:1px solid var(--b);border-radius:var(--r);margin-bottom:8px;overflow:hidden;"><div style="display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;background:var(--s2);" onclick="toggleSess('ss${s.id}')"><span style="font-family:var(--mono);font-size:23px;color:var(--t3);white-space:nowrap;">${escHtml(s.date)}</span><span style="font-size:25px;color:var(--t);flex:1;">${escHtml(s.title)}</span><span style="font-family:var(--mono);font-size:23px;color:var(--t3);">${s.messages.length} msgs ▾</span></div><div id="ss${s.id}" style="display:none;padding:12px 14px;border-top:1px solid var(--b);">${s.messages.filter(m=>m.role==='user'||m.role==='assistant').map(m=>{const u=m.role==='user';return`<div style="margin-bottom:10px;display:flex;flex-direction:column;align-items:${u?'flex-end':'flex-start'};"><div style="font-family:var(--mono);font-size:22px;color:${u?'var(--g)':'var(--t3)'};margin-bottom:3px;">${u?'YOU':'COACH'}</div><div style="max-width:88%;background:${u?'rgba(var(--g-rgb),.08)':'var(--s3)'};border-radius:${u?'12px 12px 3px 12px':'3px 12px 12px 12px'};padding:10px 13px;font-size:25px;color:var(--t2);line-height:1.6;">${escHtml(m.content||'').replace(/\n/g,'<br>')}</div></div>`;}).join('')}</div></div>`).join('');
 }
 function toggleSess(id){const el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'':'none';}
 
@@ -2101,7 +2216,7 @@ async function updateMindSummary(){
   msg('chat-smsg','Updating summary...');
   const entries=D.burnoutLog.slice(-20).map(e=>`[${e.date}, mood ${e.mood}/5]: ${e.entry}`).join('\n\n');
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:'You compress psychological support journal entries into a brief summary for future context.',messages:[{role:'user',content:`Summarize these support journal entries in 150 words max. Write in second person. Capture: recurring emotional themes, mood trend, what seems to be helping, what concerns persist, any progress visible. Be honest and specific.\n\nEntries:\n${entries}`}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5',thinking:{type:'disabled'},max_tokens:300,system:'You compress psychological support journal entries into a brief summary for future context.',messages:[{role:'user',content:`Summarize these support journal entries in 150 words max. Write in second person. Capture: recurring emotional themes, mood trend, what seems to be helping, what concerns persist, any progress visible. Be honest and specific.\n\nEntries:\n${entries}`}]})});
     const d=await r.json();const summary=d.content?.[0]?.text||'';
     if(summary){D.burnoutSummary=summary;await push(null,'chat-smsg');msg('chat-smsg','Summary updated');}
     else msg('chat-smsg','Summary failed — check API key');
@@ -2161,7 +2276,7 @@ Tags: [tags]
     return`<div style="background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:14px;margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
         <span style="font-family:var(--mono);font-size:23px;color:var(--t3);">CARD ${i+1}</span>
-        <span class="bdg" style="background:rgba(127,255,110,.08);color:${tc};border-color:${tc}33;">${escHtml(type2||'BASIC')}</span>
+        <span class="bdg" style="background:rgba(var(--g-rgb),.08);color:${tc};border-color:${tc}33;">${escHtml(type2||'BASIC')}</span>
         ${tags?`<span style="font-family:var(--mono);font-size:22px;color:var(--t3);">${escHtml(tags)}</span>`:''}
       </div>
       <div style="font-size:26px;color:var(--t);font-weight:500;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--b);">${escHtml(front)}</div>
@@ -2215,22 +2330,22 @@ var ROADMAP=[
       {id:'r0_5', text:'Create a sub-deck called "Javier Misses" inside your main deck for UWorld wrong answers'},
       {id:'r0_6', text:'Unsuspend Cardiology cards in AnkingOverhaul (start with cardio — your MICU/CCU bridge)'},
       {id:'r0_7', text:'Run FSRS Optimize: Anki → your deck → Options → FSRS → Optimize'},
-      {id:'r0_8', text:'Set daily new cards to 25 (you have time pre-residency — build before July 1)'},
+      {id:'r0_8', text:'Set daily new cards to 15 — sustainable through call weeks. Reviews always come first.'},
     ]
   },
   {
-    id:'p1', label:'PHASE 1', title:'Pre-Residency (Now → July 1)', tag:'High priority',
+    id:'p1', label:'PHASE 1', title:'Intern Year Foundation', tag:'High priority',
     color:'var(--g)',
     items:[
       {id:'r1_0', text:'Identify one anesthesia faculty at Kaiser SF — email or post-shadowing introduction. This is your first LOR seed.'},
       {id:'r1_1', text:'Log your first UWorld session in Academic OS → UWorld tab'},
-      {id:'r1_2', text:'Confirm orientation logistics for June 15 (location, what to bring, parking)'},
-      {id:'r1_3', text:'Email Kaiser anesthesia department — ask about resident shadowing opportunities starting July'},
+      {id:'r1_2', text:'Lock a repeatable weekday study block that survives call — same time, same place, non-negotiable'},
+      {id:'r1_3', text:'Email Kaiser anesthesia department — ask about OR shadowing on elective/vacation weeks'},
       {id:'r1_4', text:'Identify 3 future LOR writers: PD (IM), ICU attending (meet on MICU), anesthesiologist (from shadowing)'},
-      {id:'r1_5', text:'Read: Perioperative AKI — NEJM 2024. Take notes in Reading tab. You know this territory — own it clinically.'},
+      {id:'r1_5', text:'Read: Perioperative AKI — NEJM 2024. Take notes in Reading tab. Build the clinical case for your periop physiology narrative.'},
       {id:'r1_6', text:'Write your first journal entry in Academic OS — what is your "why anesthesia" in 3 sentences right now'},
-      {id:'r1_7', text:'Add 500+ Anki cards before July 1 to avoid starting residency with a cold deck'},
-      {id:'r1_8', text:'Register for Step 3 — target window Jan–Feb 2027 (gives you 18 months of IM exposure)'},
+      {id:'r1_7', text:'Keep the review queue at zero daily — a cold deck in 2027 is the failure mode, not a small deck'},
+      {id:'r1_8', text:'Register for Step 3 — target window Jan–Feb 2027, well before ERAS opens fall 2027'},
     ]
   },
   {
@@ -2319,7 +2434,7 @@ function renderRoadmap(){
     const isFuture=pi>currentPhaseIdx;
     const pct=Math.round(done/total*100);
 
-    const borderStyle=allDone?'rgba(127,255,110,.25)':isCurrent?ph.color+'44':'var(--b)';
+    const borderStyle=allDone?'rgba(var(--g-rgb),.25)':isCurrent?ph.color+'44':'var(--b)';
     const opacity=isFuture?'0.55':'1';
     const headerColor=allDone?'var(--g)':isCurrent?ph.color:'var(--t3)';
 
@@ -2374,7 +2489,7 @@ async function chkRoadmap(itemId, phaseId, cb){
 // ============================================================
 // TASKS
 // ============================================================
-const TCAT={urgent:{label:'URGENT',color:'#ef5350',bg:'rgba(239,83,80,.09)'},academic:{label:'ACADEMIC',color:'#7fff6e',bg:'rgba(127,255,110,.07)'},appointment:{label:'APPT',color:'#4fc3f7',bg:'rgba(79,195,247,.09)'},shopping:{label:'SHOPPING',color:'#ffb74d',bg:'rgba(255,183,77,.09)'},personal:{label:'PERSONAL',color:'#ef9a9a',bg:'rgba(239,154,154,.09)'}};
+const TCAT={urgent:{label:'URGENT',color:'#f87171',bg:'rgba(var(--red-rgb),.09)'},academic:{label:'ACADEMIC',color:'#5eead4',bg:'rgba(var(--g-rgb),.07)'},appointment:{label:'APPT',color:'#7dd3fc',bg:'rgba(var(--g2-rgb),.09)'},shopping:{label:'SHOPPING',color:'#fbbf24',bg:'rgba(var(--g3-rgb),.09)'},personal:{label:'PERSONAL',color:'#fda4af',bg:'rgba(239,154,154,.09)'}};
 const TVALID=['urgent','academic','appointment','shopping','personal'];
 let _taskCat='personal',_taskFilter='all',_doneOpen=false;
 function selTaskCat(el,cat){ document.querySelectorAll('#task-cat-chips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); _taskCat=cat; }
@@ -2386,7 +2501,7 @@ function togDone(){
   if(btn) btn.innerHTML=(_doneOpen?'&#9660; ':'&#9658; ')+'Completed (<span id="done-count">'+(dc?.textContent||'0')+'</span>)';
 }
 function _taskHtml(tasks){
-  return tasks.map(t=>{ const c=TCAT[t.category]||TCAT.personal; return `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:var(--r);background:${c.bg};border-left:3px solid ${c.color};margin-bottom:8px;"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')" style="width:18px;height:18px;min-width:18px;margin-top:4px;accent-color:${c.color};cursor:pointer;"><div style="flex:1;"><div style="font-size:26px;color:${t.done?'#5a665a':'#e8ede8'};line-height:1.5;${t.done?'text-decoration:line-through;':''}">${escHtml(t.text)}</div><div style="font-family:'DM Mono',monospace;font-size:24px;color:${c.color};margin-top:3px;">${c.label} &middot; ${escHtml(t.date)}</div></div><button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:#5a665a;font-size:26px;cursor:pointer;padding:0 6px;line-height:1;flex-shrink:0;" title="Delete">&times;</button></div>`; }).join('');
+  return tasks.map(t=>{ const c=TCAT[t.category]||TCAT.personal; return `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:var(--r);background:${c.bg};border-left:3px solid ${c.color};margin-bottom:8px;"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${t.id}')" style="width:18px;height:18px;min-width:18px;margin-top:4px;accent-color:${c.color};cursor:pointer;"><div style="flex:1;"><div style="font-size:26px;color:${t.done?'#5d6878':'#e6ecf3'};line-height:1.5;${t.done?'text-decoration:line-through;':''}">${escHtml(t.text)}</div><div style="font-family:'DM Mono',monospace;font-size:24px;color:${c.color};margin-top:3px;">${c.label} &middot; ${escHtml(t.date)}</div></div><button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:#5d6878;font-size:26px;cursor:pointer;padding:0 6px;line-height:1;flex-shrink:0;" title="Delete">&times;</button></div>`; }).join('');
 }
 function renderTasks(){
   const el=document.getElementById('task-list'),de=document.getElementById('task-done'),dw=document.getElementById('task-done-wrap');
@@ -2441,6 +2556,9 @@ function buildTodayRotation(){
     return;
   }
   const m=cur.meta;
+  // Header chip tracks the live rotation instead of a hardcoded phase label
+  const pt=document.getElementById('ptag-rot');
+  if(pt)pt.textContent=`PGY-1 · ${cur.code}`;
   // Update banner
   if(ri){
     ri.style.borderLeftColor=m.text||'var(--g)';
@@ -2630,7 +2748,7 @@ function renderProcLog(){
     if(tracker)tracker.innerHTML='<div style="font-size:26px;color:var(--t3);font-style:italic;">No procedures logged yet.</div>';
     return;
   }
-  const sc={observed:'#5a665a',attempted:'#ffb74d',performed:'#4fc3f7',signedoff:'#7fff6e'};
+  const sc={observed:'#5d6878',attempted:'#fbbf24',performed:'#7dd3fc',signedoff:'#5eead4'};
   const sl={observed:'OBSERVED',attempted:'ATTEMPTED',performed:'PERFORMED',signedoff:'SIGNED OFF ✓'};
   // History
   if(hist){
@@ -2793,7 +2911,7 @@ function calDay(dateStr, skipRebuild){
   const dow=dt.getDay(); // 0=Sun
   const uwTopic=st.uw[dow%st.uw.length];
   const pmUrl=st.paper.pm?'https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent(st.paper.pm):'';
-  const procList=st.proc.map(p=>`<span style="display:inline-block;font-size:9px;font-family:var(--mono);padding:2px 6px;border-radius:4px;background:rgba(79,195,247,.12);border:1px solid rgba(79,195,247,.25);color:#4fc3f7;margin:2px 3px 2px 0;">${escHtml(p)}</span>`).join('');
+  const procList=st.proc.map(p=>`<span style="display:inline-block;font-size:9px;font-family:var(--mono);padding:2px 6px;border-radius:4px;background:rgba(var(--g2-rgb),.12);border:1px solid rgba(var(--g2-rgb),.25);color:#7dd3fc;margin:2px 3px 2px 0;">${escHtml(p)}</span>`).join('');
 
   hdr.innerHTML=`
     <div>
@@ -2860,7 +2978,7 @@ async function smartAddTasks(){
   if(!apiKey){ addTask(); return; }
   msg('task-smsg','Organizing with AI...');
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:700,system:'You parse task input into structured JSON. Return ONLY a valid JSON array, no explanation, no markdown fences.',messages:[{role:'user',content:`Parse this into individual tasks. Return a JSON array where each item is {"text":"...","category":"..."}.\n\nCategories: urgent (time-sensitive, high-stakes), academic (study, UWorld, reading, rotation tasks), appointment (medical/dental visits, scheduled meetings), shopping (things to buy, errands), personal (home, family, life admin, everything else).\n\nSplit compound inputs generously. If something is clearly time-sensitive, label it urgent.\n\nInput: "${text.replace(/"/g,'\\"')}"`}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5',thinking:{type:'disabled'},max_tokens:700,system:'You parse task input into structured JSON. Return ONLY a valid JSON array, no explanation, no markdown fences.',messages:[{role:'user',content:`Parse this into individual tasks. Return a JSON array where each item is {"text":"...","category":"..."}.\n\nCategories: urgent (time-sensitive, high-stakes), academic (study, UWorld, reading, rotation tasks), appointment (medical/dental visits, scheduled meetings), shopping (things to buy, errands), personal (home, family, life admin, everything else).\n\nSplit compound inputs generously. If something is clearly time-sensitive, label it urgent.\n\nInput: "${text.replace(/"/g,'\\"')}"`}]})});
     const d=await r.json();
     const raw=d.content?.[0]?.text||'[]';
     let parsed=[];
