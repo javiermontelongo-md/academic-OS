@@ -27,7 +27,7 @@
   "restDays": [
     "Sat"
   ],
-  "rotation": "pre",
+  "rotation": "cards",
   "shadowingHours": 0,
   "anesthesiaContacts": 0,
   "lorStatus": {
@@ -38,11 +38,11 @@
   "profile": {
     "step2": 237,
     "step3Target": "Jan-Feb 2027",
-    "currentRotation": "Pre-residency",
+    "currentRotation": "PGY-1 — Cardiology elective (E-CARD)",
     "program": "Kaiser Permanente SF -- IM Categorical",
     "matchGoal": "Anesthesiology 2027-2028",
-    "orientation": "June 15 2026",
-    "firstRotation": "July 1 2026"
+    "erasOpens": "Fall 2027",
+    "matchDay": "March 2028"
   },
   "roadmapChecks": {},
   "burnoutLog": [
